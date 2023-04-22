@@ -1,0 +1,27 @@
+{
+  "name": "Meeting",
+  "version": "1.0.0",
+  "description": "BackEnd del Proyecto de Proyecto Final Integrador de la UnLaM",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --forceExit --detectOpenHandles",
+    "dev": "nodemon ./src"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.4.1",
+    "request": "^2.88.2",
+    "sequelize": "^6.21.1"
+  },
+  "devDependencies": {
+    "jest": "^29.5.0",
+    "nodemon": "^2.0.22",
+    "supertest": "^6.3.3"
+  }
+}
