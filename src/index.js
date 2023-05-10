@@ -2,7 +2,7 @@ const express = require('express');
 const { connectToDatabase } = require('../src/utils/database');
 const bodyParser = require('body-parser');
 const userRouter = require('../src/routes/usersRoutes');
-//const projectsRoutes = require('../src/routes/projectsRoutes');
+const projectsRoutes = require('../src/routes/projectsRoutes');
 const addHeaders = require('./middlewares/addHeaders');
 const { logErrors, errorHandler, errorNotFound } = require('./middlewares/errorHandler')
 const cors = require('cors')
@@ -26,7 +26,7 @@ app.use(bodyParser.json());
 
 // Rutas
 app.use('/api/users', userRouter);
-//app.use('/api/projects', projectsRoutes);
+app.use('/api/projects', projectsRoutes);
 
 //Middlewares de error
 app.use(logErrors);
