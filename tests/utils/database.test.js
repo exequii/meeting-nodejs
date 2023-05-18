@@ -30,9 +30,9 @@ describe('database', () => {
     it('should call mongoose connect and log "Connected to database!" when successful', async () => {
         mongoose.connect.mockResolvedValueOnce();
         console.log = jest.fn();
-
+    
         await connectToDatabase();
-
+    
         expect(mongoose.connect).toHaveBeenCalledWith(process.env.MONGODB_URL);
         expect(console.log).toHaveBeenCalledWith('Connected to database!');
     });
@@ -41,9 +41,9 @@ describe('database', () => {
         const errorMessage = 'Connection failed!';
         mongoose.connect.mockRejectedValueOnce(new Error(errorMessage));
         console.log = jest.fn();
-
+    
         await connectToDatabase();
-
+    
         expect(mongoose.connect).toHaveBeenCalledWith(process.env.MONGODB_URL);
         expect(console.log).toHaveBeenCalledWith(expect.any(Error));
         expect(console.log.mock.calls[0][0].message).toBe(errorMessage); //debugeando el error se ve que es un objeto con un atributo message

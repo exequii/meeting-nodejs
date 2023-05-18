@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const { generateHash, comparePasswordWithHash } = require('../.././src/utils/utilities');
+const { generateHash, comparePasswordWithHash, getSkipPage, updateProjectAndUser, createProjectAndUpdateUser} = require('../.././src/utils/utilities');
 
 jest.mock('bcrypt', () => ({
     genSalt: jest.fn(() => Promise.resolve('mockedSalt')),
@@ -27,4 +27,19 @@ describe('comparePasswordWithHash', () => {
         expect(bcrypt.compare).toHaveBeenCalledWith(password, passwordHash);
         expect(validPassword).toEqual(true);
     });
+});
+
+describe('getSkipPage', () => {
+    it('should return the correct skipPage', () => {
+        const pagination = '1';
+        const skipPage = 0;
+        expect(getSkipPage(pagination)).toEqual(skipPage);
+    });
+});
+
+describe('updateProjectAndUser', () => {
+});
+
+describe('createProjectAndUpdateUser', () => {
+
 });
