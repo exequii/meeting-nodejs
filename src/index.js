@@ -1,8 +1,11 @@
 const express = require('express');
 const { connectToDatabase } = require('../src/utils/database');
 const bodyParser = require('body-parser');
-const userRouter = require('../src/routes/usersRoutes');
-const projectsRoutes = require('../src/routes/projectsRoutes');
+const userRouter = require('../src/routes/users.routes');
+const projectsRoutes = require('../src/routes/projects.routes');
+const postsRoutes = require('../src/routes/posts.routes');
+const messagesRoutes = require('../src/routes/message.routes');
+const recommendationsRoutes = require('../src/routes/recommendations.routes');
 const addHeaders = require('./middlewares/addHeaders');
 const { logErrors, errorHandler, errorNotFound } = require('./middlewares/errorHandler')
 const cors = require('cors')
@@ -27,6 +30,9 @@ app.use(bodyParser.json());
 // Rutas
 app.use('/api/users', userRouter);
 app.use('/api/projects', projectsRoutes);
+app.use('/api/posts', postsRoutes);
+app.use('/api/messages', messagesRoutes);
+app.use('/api/recommendations', recommendationsRoutes);
 
 //Middlewares de error
 app.use(logErrors);
