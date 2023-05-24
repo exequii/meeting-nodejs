@@ -69,4 +69,18 @@ const deleteProjectById = async (req, res) => {
     }
 }
 
-module.exports = {createProject,getProjectsByFilters, getAllProjects, getProjectById, updateProjectById, deleteProjectById };
+const getMetricsByRepo = async (req, res) => {
+    try{
+        const metrics = await projectService.getMetricsByRepo(req.params.id);
+
+        if(!metrics) {
+            return res.status(204).json({ message: 'Project sync failed' })
+        }
+
+        res.status(200).json(metrics);
+    }catch(error){
+        res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+}
+
+module.exports = {createProject,getProjectsByFilters, getAllProjects, getProjectById, updateProjectById, deleteProjectById, getMetricsByRepo };

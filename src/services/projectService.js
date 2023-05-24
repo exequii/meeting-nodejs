@@ -1,4 +1,5 @@
 const Project = require('../models/project');
+const githubService = require('../services/githubService');
 
 const createProject = async (projectData) => {
     try{
@@ -60,4 +61,20 @@ const deleteProjectById = async (id) => {
     }
 }
 
-module.exports = {createProject,getProjectsByFilters, getAllProjects, getProjectById, updateProjectById, deleteProjectById };
+const getMetricsByRepo = async (projectId) => {
+    try{
+        const project = await getProjectById(projectId);
+
+        if(project.urlRepository === null) {
+            return false;
+        }
+
+        const metrics = await githubService.getMetricsByRepo(project.urlRepository);
+
+        return metrics;
+    }catch(error){
+        throw new Error(error);
+    }
+}
+
+module.exports = {createProject,getProjectsByFilters, getAllProjects, getProjectById, updateProjectById, deleteProjectById, getMetricsByRepo };

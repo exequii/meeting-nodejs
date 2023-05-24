@@ -1,4 +1,5 @@
 const userService = require('../services/userService');
+const githubService = require('../services/githubService');
 const { generateHash, comparePasswordWithHash } = require('../utils/utilities');
 
 
@@ -92,4 +93,43 @@ const deleteUserById = async (req, res) => {
   }
 };
 
-module.exports = { createUser, getAllUsers, getUserById, updateUserById, deleteUserById, getUserByCredentials, getUserByFilters };
+const getLanguagesByRepos = async (req, res) => {
+  try {
+    const languages = await githubService.getLanguagesForUser(req.params.username);
+    res.status(200).json(languages);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
+  }
+}
+
+const getUserMetricsByRepos = async (req, res) => {
+  try {
+    const username = req.params.username
+    const metrics = []
+    const issues = await githubService.getReportedIssuesCount(username);
+    const pullRequests = await githubService.hasContributionsInExternalProjects(username);
+    const projectStats = await githubService.calculateAveragePopularity(username);
+    const quantityProjects = await githubService.getQuantityProjects(username);
+    const commitCounts = await githubService.getUserCommitCounts(username);
+
+
+
+    metrics.push({'issuesReported' : issues,
+      'contributionsExternalProjects' : pullRequests,
+      'averagePopularityProjects': projectStats.averagePopularity,
+      'maxStarsProject': projectStats.maxStars,
+      'personalProjects': quantityProjects.quantityPersonalProjects,
+      'outsideProjects': quantityProjects.quantityOutsidelProjects,
+      'commits': commitCounts
+    })
+
+    res.status(200).json(metrics);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
+  }
+
+}
+
+module.exports = { createUser, getAllUsers, getUserById, updateUserById, deleteUserById, getUserByCredentials, getUserByFilters, getLanguagesByRepos, getUserMetricsByRepos };
