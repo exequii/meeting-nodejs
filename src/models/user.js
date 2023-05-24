@@ -17,35 +17,67 @@ const userSchema = new Schema({
   password: {
     type: String,
     required: true,
-    //minLength: [8, 'Password must be at least 8 characters long'], SACO LAS VALIDACIONES DE PASSWORD YA QUE GUARDAREMOS SOLO EL HASH
-    //match: [/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/, 'Password must contain at least one uppercase letter, one lowercase letter and one number']
   },
   role: {
     type: String,
-    enum: ['user','recruiter','admin'],
-    default: 'user'
-  },
-  githubUsername: {
-    type: String,
-    required: false,
-    default: ''
+    enum: ['FullStack','Frontend','Backend','Diseñador/a','QA','Analista Funcional','Otro'],
+    default: 'Otro'
   },
   preferences: {
     type: [String],
     required: false,
     enum: ['Angular','React','Vue','Django','Express','Laravel','Spring','Nodejs','Javascript','C#.NET','Java','Php','Python','Ruby','Swift','Typescript',
-      'C++','C','C#','Go','Kotlin','Objective-c','Scala','SQL','Dart','Html','Css',
-      'Sass','Less','Bash','Powershell','R','Rust','Swift','Visual Basic','Svelte'],
+    'C++','C','C#','Go','Kotlin','Objective-c','Scala','SQL','Dart','Html','Css',
+    'Sass','Less','Bash','Powershell','R','Rust','Swift','Visual Basic','Svelte'],
     default: []
   },
   disinterest: {
     type: [String],
     required: false,
     enum: ['Angular','React','Vue','Django','Express','Laravel','Spring','Nodejs','Javascript','C#.NET','Java','Php','Python','Ruby','Swift','Typescript',
-      'C++','C','C#','Go','Kotlin','Objective-c','Scala','SQL','Dart','Html','Css',
-      'Sass','Less','Bash','Powershell','R','Rust','Swift','Visual Basic'],
+    'C++','C','C#','Go','Kotlin','Objective-c','Scala','SQL','Dart','Html','Css',
+    'Sass','Less','Bash','Powershell','R','Rust','Swift','Visual Basic'],
     default: []
   },
+  score: {
+    type: Number,
+    required: false,
+    default: 0,
+  },
+  githubUsername: {
+    type: String,
+    required: false,
+    default:''
+  },
+  projects: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Project',
+    required: false,
+    default: []
+  }],
+  posts: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Post',
+    required: false,
+    default: []
+  }],
+  supporting: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Project',
+    required: false,
+    default: []
+  }]
 });
 
 module.exports = mongoose.model('User', userSchema);
+
+/*
+  {
+    "name": "Ezequiel",
+    "email": "eze@eze.com",
+    "password": "asdasd98",
+    "role": "user",
+    "preferences": ["javascript","C#.NET","java","php","python","ruby","swift","typescript"],
+    "score": 0,
+  }
+*/

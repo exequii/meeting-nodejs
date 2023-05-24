@@ -103,12 +103,12 @@ describe('projectController Test', () => {
             expect(fakeRes.status).toHaveBeenCalledWith(200);
         });
 
-        it('should return a 404 if projects not found', async () => {
+        it('should return a 204 if projects not found', async () => {
             projectService.getProjectsByFilters.mockResolvedValue(null);
             await getProjectsByFilters(fakeReq,fakeRes);
 
-            expect(fakeRes.json).toHaveBeenCalledWith({ message: 'Projects not found'});
-            expect(fakeRes.status).toHaveBeenCalledWith(404);
+            expect(fakeRes.json).toHaveBeenCalledWith({ results:[], message: 'Projects not found'});
+            expect(fakeRes.status).toHaveBeenCalledWith(204);
         });
 
         it('should return a 500 if an error occurs', async () => {
@@ -171,12 +171,12 @@ describe('projectController Test', () => {
             expect(fakeRes.status).toHaveBeenCalledWith(200);
         });
 
-        it('should return a 404 if projects not found', async () => {
+        it('should return a 204 if projects not found', async () => {
             projectService.getAllProjects.mockResolvedValue(null);
             await getAllProjects(fakeReq,fakeRes);
 
-            expect(fakeRes.json).toHaveBeenCalledWith({ message: 'Projects not found' });
-            expect(fakeRes.status).toHaveBeenCalledWith(404);
+            expect(fakeRes.json).toHaveBeenCalledWith({ results: [], message: 'Projects not found' });
+            expect(fakeRes.status).toHaveBeenCalledWith(204);
         });
 
         it('should return a 500 if an error occurs', async () => {
@@ -227,12 +227,12 @@ describe('projectController Test', () => {
             expect(fakeRes.status).toHaveBeenCalledWith(200);
         });
 
-        it('should return a 404 if project not found', async () => {
+        it('should return a 204 if project not found', async () => {
             projectService.getProjectById.mockResolvedValue(null);
             await getProjectById(fakeReq,fakeRes);
 
             expect(fakeRes.json).toHaveBeenCalledWith({ message: 'Project not found' });
-            expect(fakeRes.status).toHaveBeenCalledWith(404);
+            expect(fakeRes.status).toHaveBeenCalledWith(204);
         });
 
         it('should return a 500 if an error occurs', async () => {
@@ -287,12 +287,12 @@ describe('projectController Test', () => {
             expect(fakeRes.status).toHaveBeenCalledWith(200);
         });
 
-        it('should return a 404 if project not found', async () => {
+        it('should return a 204 if project not found', async () => {
             projectService.updateProjectById.mockResolvedValue(null);
             await updateProjectById(fakeReq,fakeRes);
 
             expect(fakeRes.json).toHaveBeenCalledWith({ message: 'Project not found' });
-            expect(fakeRes.status).toHaveBeenCalledWith(404);
+            expect(fakeRes.status).toHaveBeenCalledWith(204);
         });
 
         it('should return a 500 if an error occurs', async () => {
@@ -344,12 +344,12 @@ describe('projectController Test', () => {
             expect(fakeRes.status).toHaveBeenCalledWith(200);
         });
 
-        it('should return a 404 if project not found', async () => {
+        it('should return a 204 if project not found', async () => {
             projectService.deleteProjectById.mockResolvedValue(null);
             await deleteProjectById(fakeReq,fakeRes);
 
             expect(fakeRes.json).toHaveBeenCalledWith({ message: 'Project not found' });
-            expect(fakeRes.status).toHaveBeenCalledWith(404);
+            expect(fakeRes.status).toHaveBeenCalledWith(204);
         });
 
         it('should return a 500 if an error occurs', async () => {

@@ -19,7 +19,7 @@ const getAllUsers = async (req, res) => {
   try {
     const users = await userService.getAllUsers();
     if (!users) {
-      return res.status(404).json({ message: 'Users not found' });
+      return res.status(204).json({results:[], message: 'Users not found' });
     }
     res.status(200).json(users);
   } catch (error) {
@@ -32,7 +32,7 @@ const getAllUsers = async (req, res) => {
     try {
       const user = await userService.getUserById(req.params.id);
       if (!user) {
-        return res.status(404).json({ message: 'User not found' });
+        return res.status(204).json({ message: 'User not found' });
       }
       res.status(200).json(user);
     } catch (error) {
@@ -44,9 +44,10 @@ const getAllUsers = async (req, res) => {
 const getUserByCredentials = async (req, res) => {
   try{
     const user = await userService.getUserByCredentials(req.body.email);
-    if(!user) return res.status(404).json({ message: 'User not found' });
+    if(!user) return res.status(204).json({ message: 'User not found' });
     const validPassword = await comparePasswordWithHash(req.body.password, user.password);
     if (!validPassword) return res.status(400).json({ message: 'Password not valid' })
+    user.password = undefined;
     res.status(200).json(user);
   }catch(error){
     //console.error(error)
@@ -58,7 +59,7 @@ const getUserByFilters = async (req, res) => {
   try{
     const user = await userService.getUserByFilters(req.body);
     if(!user){
-      return res.status(404).json({ message: 'Users not found' });
+      return res.status(204).json({results:[], message: 'Users not found' });
     }
     res.status(200).json(user);
   }catch(error){
@@ -71,7 +72,7 @@ const updateUserById = async (req, res) => {
   try {
     const user = await userService.updateUserById(req.params.id, req.body);
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(204).json({ message: 'User not found' });
     }
     res.status(200).json(user);
   } catch (error) {
@@ -84,7 +85,7 @@ const deleteUserById = async (req, res) => {
   try {
     const user = await userService.deleteUserById(req.params.id);
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(204).json({ message: 'User not found' });
     }
     res.status(204).end();
   } catch (error) {
@@ -92,6 +93,20 @@ const deleteUserById = async (req, res) => {
     res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 };
+
+const getUsersByRanking = async (req, res) => {
+  try {
+    const users = await userService.getUsersByRanking(req.params.pagination);
+    if (!users) {
+      return res.status(204).json({ message: 'Users not found' });
+    }
+    res.status(200).json(users);
+  } catch (error) {
+    //console.error(error);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
 
 const getLanguagesByRepos = async (req, res) => {
   try {
@@ -116,12 +131,12 @@ const getUserMetricsByRepos = async (req, res) => {
 
 
     metrics.push({'issuesReported' : issues,
-      'contributionsExternalProjects' : pullRequests,
-      'averagePopularityProjects': projectStats.averagePopularity,
-      'maxStarsProject': projectStats.maxStars,
-      'personalProjects': quantityProjects.quantityPersonalProjects,
-      'outsideProjects': quantityProjects.quantityOutsidelProjects,
-      'commits': commitCounts
+                  'contributionsExternalProjects' : pullRequests,
+                  'averagePopularityProjects': projectStats.averagePopularity,
+                  'maxStarsProject': projectStats.maxStars,
+                  'personalProjects': quantityProjects.quantityPersonalProjects,
+                  'outsideProjects': quantityProjects.quantityOutsidelProjects,
+                  'commits': commitCounts
     })
 
     res.status(200).json(metrics);
@@ -132,4 +147,5 @@ const getUserMetricsByRepos = async (req, res) => {
 
 }
 
-module.exports = { createUser, getAllUsers, getUserById, updateUserById, deleteUserById, getUserByCredentials, getUserByFilters, getLanguagesByRepos, getUserMetricsByRepos };
+
+module.exports = { createUser, getAllUsers, getLanguagesByRepos, getUserById, updateUserById, deleteUserById, getUserByCredentials, getUserByFilters, getUsersByRanking, getUserMetricsByRepos };

@@ -4,6 +4,7 @@
   "description": "BackEnd del Proyecto de Proyecto Final Integrador de la UnLaM",
   "main": "index.js",
   "scripts": {
+    "coverage": "jest --coverage --forceExit --detectOpenHandles --collectCoverageFrom='./src/**'",
     "test": "jest --forceExit --detectOpenHandles",
     "dev": "nodemon ./src"
   },

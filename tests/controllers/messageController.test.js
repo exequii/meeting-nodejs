@@ -60,13 +60,13 @@ describe('Message Controller', () => {
             expect(fakeRes.status).toHaveBeenCalledWith(200);
         });
 
-        it('should return a 404 if no message is found', async () => {
+        it('should return a 204 if no message is found', async () => {
             const fakeMessage = null;
             messageService.updateMessageById.mockResolvedValue(fakeMessage);
             await updateMessageById(fakeReq, fakeRes);
 
             expect(fakeRes.json).toHaveBeenCalledWith({ message: 'Message not found' });
-            expect(fakeRes.status).toHaveBeenCalledWith(404);
+            expect(fakeRes.status).toHaveBeenCalledWith(204);
         });
 
         it('should return a 500 if an error occurs', async () => {
@@ -93,13 +93,13 @@ describe('Message Controller', () => {
             expect(fakeRes.status).toHaveBeenCalledWith(200);
         });
 
-        it('should return a 404 if no message is found', async () => {
+        it('should return a 204 if no message is found', async () => {
             const fakeMessage = null;
             messageService.deleteMessageById.mockResolvedValue(fakeMessage);
             await deleteMessageById(fakeReq, fakeRes);
 
             expect(fakeRes.json).toHaveBeenCalledWith({ message: 'Message not found' });
-            expect(fakeRes.status).toHaveBeenCalledWith(404);
+            expect(fakeRes.status).toHaveBeenCalledWith(204);
         });
 
         it('should return a 500 if an error occurs', async () => {
