@@ -16,14 +16,18 @@ const projectSchema = new Schema({
     },
     type: {
         type: String,
-        enum: ['web','mobile','videogames','desktop'],
-        default: 'web',
+        enum: ['Web','Mobile','Videogames','Desktop'],
+        default: 'Web',
         required: true
+    },
+    urlRepository: {
+        type: String,
+        default: ""
     },
     complexity: {
         type: String,
-        enum: ['trainee','junior','semisenior','senior'],
-        default: 'trainee',
+        enum: ['Trainee','Junior','Semisenior','Senior'],
+        default: 'Trainee',
         required: true
     },
     amountParticipants: {
@@ -32,10 +36,29 @@ const projectSchema = new Schema({
         min: [1, 'The amount of participants must be at least 1'],
         max: [10, 'The amount of participants must be at most 10'],
     },
-    leaderId: {
-        type: String,
-        required: true
+    leader: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
     },
+    participants : [{
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: false,
+        default: []
+    }],
+    supports: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: false,
+        default: []
+    }],
+    posts : [{
+        type: Schema.Types.ObjectId,
+        ref: 'Post',
+        required: false,
+        default: []
+    }],
     startDate: {
         type: Date,
         required: true
@@ -44,26 +67,18 @@ const projectSchema = new Schema({
         type: Date,
         required: false
     },
-    participantsId: {
-        type: [String],
-        required: false
-    },
-    languages: {
-        type: [String],
-        required: false,
-        enum: ['javascript','C#.NET','java','php','python','ruby','swift','typescript',
-        'c++','c','c#','go','kotlin','objective-c','scala','sql','dart','html','css',
-        'sass','less','bash','powershell','r','rust','swift','typescript','visual basic'],
-    },
     technologies: {
         type: [String],
         required: false,
-        enum: ['angular','react','vue','django','express','laravel','spring','nodejs'],
+        enum: ['Angular','React','Vue','Django','Express','Laravel','Spring','Nodejs','Javascript','C#.NET','Java','Php','Python','Ruby','Swift','Typescript',
+            'C++','C','C#','Go','Kotlin','Objective-c','Scala','SQL','Dart','Html','Css',
+            'Sass','Less','Bash','Powershell','R','Rust','Swift','Visual Basic','Svelte'],
+        default: []
     },
     status: {
         type: String,
-        enum: ['to do','in progress','done','cancel'],
-        default: 'to do',
+        enum: ['To Do','In Progress','Done','Cancel'],
+        default: 'To Do',
         required: true,
     },
     requestSupport: {
