@@ -1,5 +1,5 @@
 const axios = require('axios');
-const credentials = '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'
+const credentials = process.env.GITHUB_ACCES_TOKEN
 
 const headers = {
     Authorization: `Bearer ${credentials}`
