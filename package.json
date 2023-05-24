@@ -6,7 +6,8 @@
   "scripts": {
     "coverage": "jest --coverage --forceExit --detectOpenHandles --collectCoverageFrom='./src/**'",
     "test": "jest --forceExit --detectOpenHandles",
-    "dev": "nodemon ./src"
+    "dev": "nodemon ./src",
+    "start": "node ./src"
   },
   "author": "",
   "license": "ISC",
