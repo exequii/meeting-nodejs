@@ -114,7 +114,7 @@ const getLanguagesByRepos = async (req, res) => {
     res.status(200).json(languages);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 }
 
@@ -142,7 +142,7 @@ const getUserMetricsByRepos = async (req, res) => {
     res.status(200).json(metrics);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 
 }

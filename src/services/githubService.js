@@ -12,13 +12,18 @@ const getCommits = async (owner, repo) => {
             return commits.length;
         } catch (error) {
             console.error(error);
-            throw new Error('Failed to fetch commits from Github API');
+            throw new Error(error);
         }
 }
 
 async function getReposUser(username) {
-    const response = await axios.get(`https://api.github.com/users/${username}/repos`, {headers});
-    return response.data;
+    try{
+        const response = await axios.get(`https://api.github.com/users/${username}/repos`, {headers});
+        return response.data;
+    }catch(error){
+        console.error(error);
+        throw new Error(error);
+    }
 }
 
 async function getLanguagesForUser(username) {
@@ -39,6 +44,7 @@ async function getLanguagesForUser(username) {
         return languages;
     } catch (error) {
         console.error(error);
+        throw new Error(error);
     }
 }
 
@@ -47,7 +53,7 @@ async function getReportedIssuesCount(username) {
         return await getIssuesUser(username);
     } catch (error) {
         console.error(error);
-        throw error;
+        throw new Error(error);
     }
 }
 
@@ -58,7 +64,7 @@ async function getIssuesUser(username) {
         return data.total_count;
     } catch (error) {
         console.error(error);
-        throw error;
+        throw new Error(error);
     }
 }
 
@@ -68,7 +74,7 @@ async function hasContributionsInExternalProjects(username) {
         return pullRequests;
     } catch (error) {
         console.error(error);
-        throw error;
+        throw new Error(error);
     }
 }
 
@@ -79,7 +85,7 @@ async function getPullRequestsUser(username) {
         return data.total_count;
     } catch (error) {
         console.error(error);
-        throw error;
+        throw new Error(error);
     }
 }
 
@@ -103,7 +109,7 @@ async function calculateAveragePopularity(username) {
         return { averagePopularity, maxStars };
     } catch (error) {
         console.error(error);
-        throw error;
+        throw new Error(error);
     }
 }
 
@@ -113,7 +119,7 @@ async function getForksUser(username) {
         return await response.json();
     } catch (error) {
         console.error(error);
-        throw error;
+        throw new Error(error);
     }
 }
 
@@ -130,7 +136,7 @@ const getQuantityProjects = async (username) => {
         return {quantityPersonalProjects , quantityOutsidelProjects};
     } catch (error) {
         console.error(error);
-        throw error;
+        throw new Error(error);
     }
 };
 
@@ -145,15 +151,15 @@ const getUserCommitCounts = async (username) => {
 
             const commitCount = await getCommitCountByRepository(username, repositoryName);
 
-           commitCountsByRepo.push({'nameRepository' : repositoryName,
+            commitCountsByRepo.push({'nameRepository' : repositoryName,
                 'quantityCommits' : commitCount
             })
         }
 
         return commitCountsByRepo;
     } catch (error) {
-        // Manejar el error
-        throw new Error(error.message);
+        console.error(error);
+        throw new Error(error);
     }
 };
 
@@ -163,35 +169,41 @@ const getCommitCountByRepository = async (owner, repo) => {
         const commits = response.data;
         return commits.length;
     } catch (error) {
-        throw new Error('Error al obtener la cantidad de commits');
+        console.error(error);
+        throw new Error(error);
     }
 };
 
 const getMetricsByRepo = async (url) => {
-    const myUrl = new URL(url);
-
-    const owner = myUrl.pathname.split('/')[1];
-    const repo = myUrl.pathname.split('/')[2];
-
-    const contributionsData = [];
-
-    const developersUsernames = ['NahuelSavedra', 'exequii', 'JoelE7','jessicadlg','Diego2985'];
-
-    for (const developerUsername of developersUsernames) {
-        const commitFrequency = await getCommitFrequencyByDeveloper(owner, repo, developerUsername);
-
-        contributionsData.push({
-            'developerUsername': developerUsername,
-            'commits': commitFrequency,
-            })
+    try{
+        const myUrl = new URL(url);
+    
+        const owner = myUrl.pathname.split('/')[1];
+        const repo = myUrl.pathname.split('/')[2];
+    
+        const contributionsData = [];
+    
+        const developersUsernames = ['NahuelSavedra', 'exequii', 'JoelE7','jessicadlg','Diego2985'];
+    
+        for (const developerUsername of developersUsernames) {
+            const commitFrequency = await getCommitFrequencyByDeveloper(owner, repo, developerUsername);
+    
+            contributionsData.push({
+                'developerUsername': developerUsername,
+                'commits': commitFrequency,
+                })
+        }
+        // const contributionDistributionByType = await getContributionDistributionByType(owner, repo);
+        //
+        // contributionsData.push({
+        //     'contributionDistributionByType': contributionDistributionByType
+        // })
+    
+        return contributionsData
+    }catch(error){
+        console.error(error);
+        throw new Error(error);
     }
-    // const contributionDistributionByType = await getContributionDistributionByType(owner, repo);
-    //
-    // contributionsData.push({
-    //     'contributionDistributionByType': contributionDistributionByType
-    // })
-
-    return contributionsData
 };
 
 const getCommitFrequencyByDeveloper = async (owner, repo, developerUsername) => {
@@ -217,7 +229,7 @@ const getCommitFrequencyByDeveloper = async (owner, repo, developerUsername) => 
 
     } catch (error) {
         console.error(error);
-        throw new Error('Failed to fetch user commits from GitHub API');
+        throw new Error(error);
     }
 };
 
@@ -248,7 +260,7 @@ const getContributionDistributionByType = async (owner, repo) => {
         return contributionDistribution;
     } catch (error) {
         console.error(error);
-        throw new Error('Failed to fetch contribution distribution from Github API');
+        throw new Error(error);
     }
 };
 
