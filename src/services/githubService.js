@@ -59,8 +59,10 @@ async function getReportedIssuesCount(username) {
 
 async function getIssuesUser(username) {
     try {
-        const response = await fetch(`https://api.github.com/search/issues?q=type:issue+author:${username}`);
-        const data = await response.json();
+        const response = await axios.get(`https://api.github.com/search/issues?q=type:issue+author:${username}`, {headers});
+        const data = response.data;
+        // const response = await fetch(`https://api.github.com/search/issues?q=type:issue+author:${username}`);
+        // const data = await response.json();
         return data.total_count;
     } catch (error) {
         console.error(error);
@@ -80,8 +82,10 @@ async function hasContributionsInExternalProjects(username) {
 
 async function getPullRequestsUser(username) {
     try {
-        const response = await fetch(`https://api.github.com/search/issues?q=type:pr+author:${username}`);
-        const data = await response.json();
+        const response = await axios.get(`https://api.github.com/search/issues?q=type:pr+author:${username}`, {headers});
+        const data = response.data;
+        // const response = await fetch(`https://api.github.com/search/issues?q=type:pr+author:${username}`);
+        // const data = await response.json();
         return data.total_count;
     } catch (error) {
         console.error(error);
@@ -115,8 +119,11 @@ async function calculateAveragePopularity(username) {
 
 async function getForksUser(username) {
     try {
-        const response = await fetch(`https://api.github.com/users/${username}/repos?type=forks`);
-        return await response.json();
+        const response = await axios.get(`https://api.github.com/users/${username}/repos?type=forks`, {headers});
+        const data = response.data;
+        return data;
+        // const response = await fetch(`https://api.github.com/users/${username}/repos?type=forks`);
+        // return await response.json();
     } catch (error) {
         console.error(error);
         throw new Error(error);
