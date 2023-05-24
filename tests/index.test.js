@@ -10,7 +10,6 @@ describe('Test Api - Index.js', () => {
         });
 
     it("should log Server Running on port", async () => {
-
         app.listen = jest.fn((port, callback) => {
                 server = { port, callback };
                 return server;
@@ -22,4 +21,5 @@ describe('Test Api - Index.js', () => {
         expect(app.listen).toHaveBeenCalledWith(port, callback);
         expect(server).toEqual({ port, callback });
     });
+
 });

@@ -13,7 +13,7 @@ const getPostsByFilters = async (req, res) => {
     try{
         const posts = await postService.getPostsByFilters(req.body);
         if(!posts){
-            return res.status(404).json({results:[], message: 'Posts not found' });
+            return res.status(204).json({results:[], message: 'Posts not found' });
         }
         res.status(200).json(posts);
     }catch(error){
@@ -25,7 +25,7 @@ const getAllPosts = async (req, res) => {
     try{
         const posts = await postService.getAllPosts();
         if(!posts) {
-            return res.status(404).json({results:[], message: 'Posts not found' })
+            return res.status(204).json({results:[], message: 'Posts not found' })
         }
         res.status(200).json(posts);
     }catch(error){
@@ -37,7 +37,7 @@ const getPostById = async (req, res) => {
     try{
         const post = await postService.getPostById(req.params.id);
         if(!post) {
-            return res.status(404).json({ message: 'Post not found' })
+            return res.status(204).json({ message: 'Post not found' })
         }
         res.status(200).json(post);
     }catch(error){
@@ -49,7 +49,7 @@ const updatePostById = async (req, res) => {
     try{
         const post = await postService.updatePostById(req.params.id, req.body);
         if(!post) {
-            return res.status(404).json({ message: 'Post not found' })
+            return res.status(204).json({ message: 'Post not found' })
         }
         res.status(200).json(post);
     }catch(error){
@@ -61,7 +61,7 @@ const deletePostById = async (req, res) => {
     try{
         const post = await postService.deletePostById(req.params.id);
         if(!post) {
-            return res.status(404).json({ message: 'Post not found' })
+            return res.status(204).json({ message: 'Post not found' })
         }
         res.status(200).json(post);
     }catch(error){

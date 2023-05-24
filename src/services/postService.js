@@ -33,7 +33,7 @@ const getAllPosts = async () => {
 
 const getPostById = async (id) => {
     try{
-        const post = await Post.findById(id).populate('author').populate({path: 'messages', populate: { path: 'author', select: '-password' }});
+        const post = await Post.findById(id).populate({path:'author', select: '-password'}).populate({path: 'messages', populate: { path: 'author', select: '-password' }});
         if(!post) return null;
         return post;
     }catch(error){

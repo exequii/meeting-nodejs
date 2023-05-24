@@ -5,14 +5,15 @@ const headers = {
     Authorization: `Bearer ${credentials}`
 };
 const getCommits = async (owner, repo) => {
-    try {
-        const response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/commits`, {headers});
-        const commits = response.data;
-        return commits.length;
-    } catch (error) {
-        console.error(error);
-        throw new Error('Failed to fetch commits from Github API');
-    }
+        try {
+            const response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/commits`, {headers});
+            console.log("commit",credentials)
+            const commits = response.data;
+            return commits.length;
+        } catch (error) {
+            console.error(error);
+            throw new Error('Failed to fetch commits from Github API');
+        }
 }
 
 async function getReposUser(username) {
@@ -88,6 +89,7 @@ async function calculateAveragePopularity(username) {
         let totalStars = 0;
         let maxStars = 0;
 
+        // console.log(forks);
         if (Array.isArray(forks)) {
             forks.forEach(fork => {
                 totalStars += fork.stargazers_count;
@@ -143,7 +145,7 @@ const getUserCommitCounts = async (username) => {
 
             const commitCount = await getCommitCountByRepository(username, repositoryName);
 
-            commitCountsByRepo.push({'nameRepository' : repositoryName,
+           commitCountsByRepo.push({'nameRepository' : repositoryName,
                 'quantityCommits' : commitCount
             })
         }
@@ -181,7 +183,7 @@ const getMetricsByRepo = async (url) => {
         contributionsData.push({
             'developerUsername': developerUsername,
             'commits': commitFrequency,
-        })
+            })
     }
     // const contributionDistributionByType = await getContributionDistributionByType(owner, repo);
     //
@@ -207,6 +209,7 @@ const getCommitFrequencyByDeveloper = async (owner, repo, developerUsername) => 
         const lastCommitDate = new Date(commits[0].commit.author.date);
         const timeDiffInDays = Math.abs(lastCommitDate - firstCommitDate) / (1000 * 60 * 60 * 24);
 
+        console.log(commitCount);
         const commitFrequency = Math.round(commitCount / timeDiffInDays);
         return ({
             'commitCount' : commitCount,

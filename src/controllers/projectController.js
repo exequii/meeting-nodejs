@@ -13,7 +13,7 @@ const getProjectsByFilters = async (req, res) => {
     try{
         const projects = await projectService.getProjectsByFilters(req.body);
         if(!projects){
-            return res.status(404).json({ message: 'Projects not found' });
+            return res.status(204).json({results:[], message: 'Projects not found' });
         }
         res.status(200).json(projects);
     }catch(error){
@@ -25,7 +25,7 @@ const getAllProjects = async (req, res) => {
     try{
         const projects = await projectService.getAllProjects();
         if(!projects) {
-            return res.status(404).json({ message: 'Projects not found' })
+            return res.status(204).json({results:[], message: 'Projects not found' })
         }
         res.status(200).json(projects);
     }catch(error){
@@ -37,7 +37,7 @@ const getProjectById = async (req, res) => {
     try{
         const project = await projectService.getProjectById(req.params.id);
         if(!project) {
-            return res.status(404).json({ message: 'Project not found' })
+            return res.status(204).json({ message: 'Project not found' })
         }
         res.status(200).json(project);
     }catch(error){
@@ -49,7 +49,7 @@ const updateProjectById = async (req, res) => {
     try{
         const project = await projectService.updateProjectById(req.params.id, req.body);
         if(!project) {
-            return res.status(404).json({ message: 'Project not found' })
+            return res.status(204).json({ message: 'Project not found' })
         }
         res.status(200).json(project);
     }catch(error){
@@ -61,9 +61,41 @@ const deleteProjectById = async (req, res) => {
     try{
         const project = await projectService.deleteProjectById(req.params.id);
         if(!project) {
-            return res.status(404).json({ message: 'Project not found' })
+            return res.status(204).json({ message: 'Project not found' })
         }
         res.status(200).json(project);
+    }catch(error){
+        res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+}
+
+const addProjectToUser = async (req, res) => {
+    try{
+        const project = await projectService.addProjectToUser(req.body.userId, req.body.projectId,req.body.support);
+        if(!project) {
+            return res.status(204).json({message: 'Project not found' })
+        }
+        res.status(200).json(project);
+    }catch(error){
+        res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+}
+
+const getSuggestedProjects = async (req, res) => {
+    try{
+        const projects = await projectService.getSuggestedProjects(req.body);
+        if(!projects) res.status(204).json({results:[], message: 'Projects not found' });
+        res.status(200).json({result: projects});
+    }catch(error){
+        res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+}
+
+const finishProject = async (req, res) => {
+    try{
+        const project = await projectService.finishProject(req.params.id, req.body.scores);
+        if(!project) res.status(204).json({results:[], message: 'Projects not found' });
+        res.status(200).json({result: project});
     }catch(error){
         res.status(500).json({ message: 'Internal server error', error: error.message });
     }
@@ -83,4 +115,12 @@ const getMetricsByRepo = async (req, res) => {
     }
 }
 
-module.exports = {createProject,getProjectsByFilters, getAllProjects, getProjectById, updateProjectById, deleteProjectById, getMetricsByRepo };
+module.exports = {createProject,getProjectsByFilters, getAllProjects, getProjectById, updateProjectById, deleteProjectById, addProjectToUser, getSuggestedProjects, finishProject, getMetricsByRepo };
+
+
+/*
+{
+    "userId":"6439eca53007118f2d62a99e",
+    "projectId": "645e41a995e8389f0484e8ce"
+}
+*/

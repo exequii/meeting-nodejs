@@ -18,7 +18,7 @@ describe('addHeaders middleware', () => {
 
     it('should set the correct headers', () => {
         addHeaders(mockRequest, mockResponse, mockNext);
-
+    
         expect(mockResponse.setHeader).toHaveBeenNthCalledWith(1, 'Access-Control-Allow-Origin', '*');
         expect(mockResponse.setHeader).toHaveBeenNthCalledWith(2, 'Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
         expect(mockResponse.setHeader).toHaveBeenNthCalledWith(3, 'Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
@@ -27,9 +27,9 @@ describe('addHeaders middleware', () => {
 
     it('should not allow PATCH requests', () => {
         const mockRequestFail = { method: 'PATCH' };
-
+    
         addHeaders(mockRequestFail, mockResponse, mockNext);
-
+    
         expect(mockNext).not.toHaveBeenCalled();
     });
 });

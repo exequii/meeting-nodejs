@@ -63,12 +63,12 @@ describe('Post Controller', () => {
             expect(fakeRes.status).toHaveBeenCalledWith(200);
         });
 
-        it('should return a 404 if no posts are found', async () => {
+        it('should return a 204 if no posts are found', async () => {
             const fakePosts = null;
             postService.getAllPosts.mockResolvedValue(fakePosts);
             await getAllPosts(fakeReq, fakeRes);
             expect(fakeRes.json).toHaveBeenCalledWith({results:[], message: 'Posts not found' });
-            expect(fakeRes.status).toHaveBeenCalledWith(404);
+            expect(fakeRes.status).toHaveBeenCalledWith(204);
         });
 
         it('should return a 500 if an error occurs', async () => {
@@ -95,12 +95,12 @@ describe('Post Controller', () => {
             expect(fakeRes.status).toHaveBeenCalledWith(200);
         });
 
-        it('should return a 404 if no posts are found', async () => {
+        it('should return a 204 if no posts are found', async () => {
             const fakePosts = null;
             postService.getPostsByFilters.mockResolvedValue(fakePosts);
             await getPostsByFilters(fakeReq, fakeRes);
             expect(fakeRes.json).toHaveBeenCalledWith({results:[], message: 'Posts not found' });
-            expect(fakeRes.status).toHaveBeenCalledWith(404);
+            expect(fakeRes.status).toHaveBeenCalledWith(204);
         });
 
         it('should return a 500 if an error occurs', async () => {
@@ -126,12 +126,12 @@ describe('Post Controller', () => {
             expect(fakeRes.status).toHaveBeenCalledWith(200);
         });
 
-        it('should return a 404 if no post is found', async () => {
+        it('should return a 204 if no post is found', async () => {
             const fakePost = null;
             postService.getPostById.mockResolvedValue(fakePost);
             await getPostById(fakeReq, fakeRes);
             expect(fakeRes.json).toHaveBeenCalledWith({ message: 'Post not found' });
-            expect(fakeRes.status).toHaveBeenCalledWith(404);
+            expect(fakeRes.status).toHaveBeenCalledWith(204);
         });
 
         it('should return a 500 if an error occurs', async () => {
@@ -157,12 +157,12 @@ describe('Post Controller', () => {
             expect(fakeRes.status).toHaveBeenCalledWith(200);
         });
 
-        it('should return a 404 if no post is found', async () => {
+        it('should return a 204 if no post is found', async () => {
             const fakePost = null;
             postService.updatePostById.mockResolvedValue(fakePost);
             await updatePostById(fakeReq, fakeRes);
             expect(fakeRes.json).toHaveBeenCalledWith({ message: 'Post not found' });
-            expect(fakeRes.status).toHaveBeenCalledWith(404);
+            expect(fakeRes.status).toHaveBeenCalledWith(204);
         });
 
         it('should return a 500 if an error occurs', async () => {
@@ -188,12 +188,12 @@ describe('Post Controller', () => {
             expect(fakeRes.status).toHaveBeenCalledWith(200);
         });
 
-        it('should return a 404 if no post is found', async () => {
+        it('should return a 204 if no post is found', async () => {
             const fakePost = null;
             postService.deletePostById.mockResolvedValue(fakePost);
             await deletePostById(fakeReq, fakeRes);
             expect(fakeRes.json).toHaveBeenCalledWith({ message: 'Post not found' });
-            expect(fakeRes.status).toHaveBeenCalledWith(404);
+            expect(fakeRes.status).toHaveBeenCalledWith(204);
         });
 
         it('should return a 500 if an error occurs', async () => {

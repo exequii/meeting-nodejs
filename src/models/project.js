@@ -71,8 +71,8 @@ const projectSchema = new Schema({
         type: [String],
         required: false,
         enum: ['Angular','React','Vue','Django','Express','Laravel','Spring','Nodejs','Javascript','C#.NET','Java','Php','Python','Ruby','Swift','Typescript',
-            'C++','C','C#','Go','Kotlin','Objective-c','Scala','SQL','Dart','Html','Css',
-            'Sass','Less','Bash','Powershell','R','Rust','Swift','Visual Basic','Svelte'],
+        'C++','C','C#','Go','Kotlin','Objective-c','Scala','SQL','Dart','Html','Css',
+        'Sass','Less','Bash','Powershell','R','Rust','Swift','Visual Basic','Svelte'],
         default: []
     },
     status: {
@@ -88,3 +88,30 @@ const projectSchema = new Schema({
 });
 
 module.exports = mongoose.model('Project', projectSchema);
+
+
+/*
+
+{
+    "name": "Project 2",
+    "description": "Description 2",
+    "startDate": "2023-04-17T15:00:32.172Z",
+    "type": "web",
+    "status": "To Do",
+    "complexity": "trainee",
+    "amountParticipants": 5,
+    "leader": "5f9f1b9b9c9d440000a1b0f1",
+    "participants": [
+        "645e405b228bdffa4aa98a1c"
+    ],
+    "lenguages": [
+        "javascript",
+        "typescript"
+    ],
+    "technologies": [
+        "angular",
+        "react"
+    ]
+}
+
+*/

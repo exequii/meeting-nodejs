@@ -13,7 +13,7 @@ const getMessagesByFilters = async (req, res) => {
     try{
         const messages = await messageService.getMessagesByFilters(req.body);
         if(!messages){
-            return res.status(404).json({results:[], message: 'Messages not found' });
+            return res.status(204).json({results:[], message: 'Messages not found' });
         }
         res.status(200).json(messages);
     }catch(error){
@@ -26,7 +26,7 @@ const updateMessageById = async (req, res) => {
     try{
         const message = await messageService.updateMessageById(req.params.id, req.body);
         if(!message) {
-            return res.status(404).json({ message: 'Message not found' })
+            return res.status(204).json({ message: 'Message not found' })
         }
         res.status(200).json(message);
     }catch(error){
@@ -38,7 +38,7 @@ const deleteMessageById = async (req, res) => {
     try{
         const message = await messageService.deleteMessageById(req.params.id);
         if(!message) {
-            return res.status(404).json({ message: 'Message not found' })
+            return res.status(204).json({ message: 'Message not found' })
         }
         res.status(200).json(message);
     }catch(error){

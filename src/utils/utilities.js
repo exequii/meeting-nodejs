@@ -21,13 +21,18 @@ const getSkipPage = (pagination) => {
     return skipPage;
 };
 
-const updateProjectAndUser = async (userId, projectId) => {
+const updateProjectAndUser = async (userId, projectId,support) => {
     const session = await mongoose.startSession();
     try{
         let project = {};
         await session.withTransaction(async () => {
-            await User.findByIdAndUpdate(userId, { $push: { projects: projectId } }, { session });
-            project = await Project.findByIdAndUpdate(projectId, { $push: { participants: userId } }, { session, new: true });
+            if(support){
+                await User.findByIdAndUpdate(userId, { $push: { supporting: projectId } }, { session });
+                project = await Project.findByIdAndUpdate(projectId, { $push: { supports: userId } }, { session, new: true });
+            }else{
+                await User.findByIdAndUpdate(userId, { $push: { projects: projectId } }, { session });
+                project = await Project.findByIdAndUpdate(projectId, { $push: { participants: userId } }, { session, new: true });
+            }
         });
         await session.commitTransaction();
         return project;
@@ -107,6 +112,26 @@ const formatQuestionOfTechnologies = (questionsOfTechnologies,technologie) => {
     return question.replace("{{technologie}}",technologie);
 }
 
+const updateScoreUsersAndFinishProyect = async (projectId,scores) => {
+    const session = await mongoose.startSession();
+    try{
+        let project = {}
+        await session.withTransaction(async () => {
+            project = await Project.findByIdAndUpdate(projectId, { status: 'Done' }, { new: true });
+            scores.forEach(async (score) => {
+                await User.findByIdAndUpdate(score.userId, { $inc: { score: score.score } });
+            });
+        });
+        await session.commitTransaction();
+        return project;
+    }catch(error){
+        await session.abortTransaction();
+        throw new Error(error);
+    }finally{
+        session.endSession();
+    }
+}
+
 
 module.exports = { 
     generateHash,
@@ -116,6 +141,7 @@ module.exports = {
     createPostAndUpdateRelations, 
     createMessageAndUpdateRelations,
     getTechnologieForQuestions,
-    formatQuestionOfTechnologies
+    formatQuestionOfTechnologies,
+    updateScoreUsersAndFinishProyect
 };
 
