@@ -1,43 +1,51 @@
 class User {
-  id;
-  name;
-  email;
-  password;
-  role;
-  preferences;
-  disinterest;
-  score;
-  githubUsername;
-  projects;
-  posts;
-  supporting;
+  name = "";
+  email = "";
+  password = "";
+  role = 'Otro';
+  preferences = [];
+  disinterest = [];
+  score = 0;
+  githubUsername = '';
+  projects = [];
+  posts = [];
+  supporting = [];
 
-  constructor(id,name, email, password, role, preferences, disinterest, score, githubUsername, projects, posts, supporting) {
-    this.id = id;
-    this.name = name;
-    this.email = email;
-    this.password = password;
-    this.role = role || 'Otro';
-    this.preferences = preferences || [];
-    this.disinterest = disinterest || [];
-    this.score = score || 0;
-    this.githubUsername = githubUsername || '';
-    this.projects = projects || [];
-    this.posts = posts || [];
-    this.supporting = supporting || [];
+  constructor(userData) {
+    for(let key in userData){
+      if(this.hasOwnProperty(key)){
+        this[key] = userData[key];
+      }
+    }
   }
 
-  validate(user){
-    
+  validateEssentialData(){
+    if(!this.name || !this.email || !this.password) return false;
+    return true;
   }
 
   validateFilters(filters){
-
+    const validUser = new User();
+    let valid = true;
+    for(let key in filters){
+      if(!validUser.hasOwnProperty(key)){
+        valid = false;
+        break;
+      }
+    }
+    return valid;
   }
   
 }
 
 module.exports = User;
+
+var userData = {
+  name: 'Juan',
+  email: '',
+}
+var user = new User(userData);
+console.log(user)
 
 
 

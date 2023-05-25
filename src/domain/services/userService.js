@@ -5,7 +5,7 @@ const { getSkipPage } = require('../utils/utilities');
 const createUser = async (userData) => {
   try {
     const user = new User(userData);
-    //if(!user.validate()) throw new Error("Invalid user data");
+    if (!user.validateEssentialData()) throw new Error("Invalid user data");
     return await UserRepository.create(user);
   } catch (error) {
     throw new Error(error);
@@ -22,10 +22,10 @@ const getUserByCredentials = async(email) => {
   }
 };
 
-const getUserByFilters = async(body) => {
+const getUserByFilters = async(filters) => {
   try {
-      //const filters = User.validate(body);
-      const filters = body;
+      let user = new User();
+      if(!user.validateFilters(filters)) throw new Error("Invalid filters");
       const users = await User.getByFilters(filters);
       if(!users || users.length == 0) return null;
       return users;
