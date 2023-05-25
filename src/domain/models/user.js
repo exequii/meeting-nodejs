@@ -40,12 +40,6 @@ class User {
 
 module.exports = User;
 
-var userData = {
-  name: 'Juan',
-  email: '',
-}
-var user = new User(userData);
-console.log(user)
 
 
 
