@@ -1,4 +1,5 @@
-const { technologies, questionsOfTechnologies , questionsOfPosts, questionsOfProyects } = require('../models/matching');
+const { technologies} = require('../models/technologies');
+const { questionsOfTechnologies , questionsOfPosts, questionsOfProyects } = require('../models/questions');
 const { getTechnologieForQuestions,formatQuestionOfTechnologies } = require('../utils/utilities');
 
 const getRecommendation = async (user) => {

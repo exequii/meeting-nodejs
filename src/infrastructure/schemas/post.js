@@ -14,12 +14,6 @@ const postSchema = new Schema({
         minLength: [5, 'Name must be at least 5 characters long'],
         maxLength: [300, 'Name must be at most 300 characters long'],
     },
-    type:{
-        type: String,
-        enum: ['informative','collaborative'],
-        default: 'informative',
-        required: true
-    },
     technologies: {
         type: [String],
         required: false,
