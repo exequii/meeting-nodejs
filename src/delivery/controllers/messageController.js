@@ -1,4 +1,4 @@
-const messageService = require('../services/messageService');
+const messageService = require('../../domain/services/messageService');
 
 const createMessage = async (req, res) => {
     try{

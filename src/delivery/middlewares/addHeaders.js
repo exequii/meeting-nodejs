@@ -10,4 +10,4 @@ function addHeaders(req, res, next) {
     next();
     }
 
-module.exports = addHeaders;
+module.exports = {addHeaders};

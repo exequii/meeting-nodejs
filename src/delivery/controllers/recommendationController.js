@@ -1,4 +1,4 @@
-const recommendationService = require('../services/recommendationService');
+const recommendationService = require('../../domain/services/recommendationService');
 
 const getRecommendation = async (req, res) => {
     try{

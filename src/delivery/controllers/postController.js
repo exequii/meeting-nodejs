@@ -1,4 +1,4 @@
-const postService = require('../services/postService');
+const postService = require('../../domain/services/postService');
 
 const createPost = async (req, res) => {
     try{

@@ -1,6 +1,6 @@
-const userService = require('../services/userService');
-const githubService = require('../services/githubService');
-const { generateHash, comparePasswordWithHash } = require('../utils/utilities');
+const userService = require('../../domain/services/userService');
+const githubService = require('../../domain/services/githubService');
+const { generateHash, comparePasswordWithHash } = require('../../domain/utils/utilities');
 
 
 const createUser = async (req, res) => {
