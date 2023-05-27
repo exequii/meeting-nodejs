@@ -36,10 +36,3 @@ describe('getSkipPage', () => {
         expect(getSkipPage(pagination)).toEqual(skipPage);
     });
 });
-
-describe('updateProjectAndUser', () => {
-});
-
-describe('createProjectAndUpdateUser', () => {
-
-});
