@@ -1,6 +1,7 @@
 const userService = require('../services/userService');
 const githubService = require('../services/githubService');
 const { generateHash, comparePasswordWithHash } = require('../utils/utilities');
+const jwt = require('jsonwebtoken');
 
 
 const createUser = async (req, res) => {
@@ -9,6 +10,7 @@ const createUser = async (req, res) => {
     if(existUser) return res.status(400).json({ message: 'User already exists' });
     const passwordHashed = await generateHash(req.body.password);
     const user = await userService.createUser({ ...req.body, password: passwordHashed });
+    const token = jwt.sign({ user: user._id }, process.env.JWT_SECRET);
     res.status(201).json(user);
   } catch (error) {
     res.status(500).json({ message: 'Internal server error', error: error.message });
@@ -47,8 +49,8 @@ const getUserByCredentials = async (req, res) => {
     if(!user) return res.status(204).json({ message: 'User not found' });
     const validPassword = await comparePasswordWithHash(req.body.password, user.password);
     if (!validPassword) return res.status(400).json({ message: 'Password not valid' })
-    user.password = undefined;
-    res.status(200).json(user);
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION });
+    res.status(200).json({'token' : token});
   }catch(error){
     //console.error(error)
     res.status(500).json({ message: 'Internal Server Error', error: error.message });

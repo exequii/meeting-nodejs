@@ -3,8 +3,8 @@ const router = express.Router();
 const authMiddleware = require('../middlewares/authMiddleware');
 const { createUser, getAllUsers, getUserById, updateUserById, deleteUserById, getUserByCredentials, getUserByFilters, getUsersByRanking, getLanguagesByRepos,getUserMetricsByRepos } = require('../controllers/userController');
 
-router.post('/', authMiddleware, createUser);
-router.post('/login', authMiddleware ,getUserByCredentials);
+router.post('/', createUser);
+router.post('/login', getUserByCredentials);
 router.post('/find' ,authMiddleware, getUserByFilters);
 router.get('/ranking/:pagination', authMiddleware, getUsersByRanking);
 router.get('/', authMiddleware, getAllUsers);
