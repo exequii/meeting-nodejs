@@ -14,7 +14,7 @@ const createUser = async (userData) => {
 
 const getUserByCredentials = async(email) => {
   try {
-      const user = await User.getByCredentials(email);
+      const user = await UserRepository.getByCredentials(email);
       if(!user) return null;
       return user;
   } catch (error) {
@@ -26,7 +26,7 @@ const getUserByFilters = async(filters) => {
   try {
       let user = new User();
       if(!user.validateFilters(filters)) throw new Error("Invalid filters");
-      const users = await User.getByFilters(filters);
+      const users = await UserRepository.getByFilters(filters);
       if(!users || users.length == 0) return null;
       return users;
   } catch (error) {

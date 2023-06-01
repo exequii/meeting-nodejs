@@ -1,3 +1,18 @@
+const typesUser = {
+  name: 'string',
+  email: 'string',
+  password: 'string',
+  role: 'string',
+  preferences: 'object',
+  disinterest: 'object',
+  score: 'number',
+  githubUsername: 'object',
+  projects: 'object',
+  posts: 'object',
+  supporting: 'object',
+};
+
+
 class User {
   name = "";
   email = "";
@@ -14,7 +29,9 @@ class User {
   constructor(userData) {
     for(let key in userData){
       if(this.hasOwnProperty(key)){
-        this[key] = userData[key];
+        if(typeof userData[key] === typesUser[key])
+          this[key] = userData[key];
+        else throw new Error("Invalid type for property " + key)
       }
     }
   }
@@ -35,7 +52,6 @@ class User {
     }
     return valid;
   }
-  
 }
 
 module.exports = User;

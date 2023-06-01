@@ -63,7 +63,7 @@ const updateById = async (id, newData) => {
 
 const deleteById = async (id) => {
     try {
-        const response = await User.deleteOne({ _id: id }).select('-password');
+        const response = await User.deleteOne({ _id: id });
         if(response.deletedCount == 0) return null;
         return response;
     } catch (error) {
