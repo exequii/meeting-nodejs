@@ -1,7 +1,8 @@
-const Project = require("../.././src/models/project");
-const { createProject, getAllProjects, getProjectById, getProjectsByFilters, updateProjectById, deleteProjectById } = require("../.././src/services/projectService");
-const Utils = require("../.././src/utils/utilities");
-jest.mock('../.././src/utils/utilities');
+const { createProject, getAllProjects, getProjectById, getProjectsByFilters, updateProjectById, deleteProjectById } = require("../../../src/domain/services/projectService");
+const projectRepository = require("../../../src/infrastructure/persistence/projectRepository");
+const Utils = require("../../../src/infrastructure/utils/utilities");
+jest.mock('../../../src/infrastructure/utils/utilities');
+jest.mock('../../../src/infrastructure/persistence/projectRepository');
 
 describe("Project Service Test", () => {
     afterEach(() => {
@@ -12,44 +13,46 @@ describe("Project Service Test", () => {
             const project = {
                 name: 'Project 2',
                 description: 'Description 2',
-                startDate: new Date,
-                type: 'web',
-                complexity: 'trainee',
+                startDate: '19/10/2020',
+                type: 'Web',
+                complexity: 'Trainee',
                 amountParticipants: 5,
                 leaderId: '5f9f1b9b9c9d440000a1b0f1',
                 participantsId: ['5f9f1b9b9c9d440000a1b0f1','5f9f1b9b9c9d440000a1b0f1'],
                 languages: ['javascript','typescript'],
                 technologies: ['angular','react'],
+                leader: '5f9f1b9b9c9d440000a1b0f1'
             };
-            const spy = jest.spyOn(Utils, "createProjectAndUpdateUser").mockImplementation(jest.fn().mockResolvedValue(project));
+            projectRepository.create.mockResolvedValue(project);
             const result = await createProject(project);
 
             expect(result.name).toEqual(project.name);
             expect(result.description).toEqual(project.description);
             expect(result.complexity).toEqual(project.complexity);
-            expect(spy).toHaveBeenCalled();
+            expect(projectRepository.create).toHaveBeenCalled();
         });
 
         it("should throw an error", async () => {
             const project = {
                 name: 'Project 2',
                 description: 'Description 2',
-                startDate: new Date,
-                type: 'web',
-                complexity: 'trainee',
+                startDate: '19/10/2020',
+                type: 'Web',
+                complexity: 'Trainee',
                 amountParticipants: 5,
                 leaderId: '5f9f1b9b9c9d440000a1b0f1',
                 participantsId: ['5f9f1b9b9c9d440000a1b0f1','5f9f1b9b9c9d440000a1b0f1'],
                 languages: ['javascript','typescript'],
                 technologies: ['angular','react'],
+                leader: '5f9f1b9b9c9d440000a1b0f1'
             };
-            const spy = jest.spyOn(Utils, "createProjectAndUpdateUser").mockImplementation(jest.fn().mockRejectedValue(new Error("Error")));
-            await expect(createProject(project)).rejects.toThrowError("Error");
-            expect(spy).toHaveBeenCalled();
+            projectRepository.create.mockRejectedValue(new Error());
+            await expect(createProject(project)).rejects.toThrowError();
+            expect(projectRepository.create).toHaveBeenCalled();
         });
     });
 
-    /********************************************************************************************** */
+//     /********************************************************************************************** */
 
     describe("getAllProjects", () => {
         it("should get all projects", async () => {
@@ -79,69 +82,69 @@ describe("Project Service Test", () => {
                     technologies: ['angular','react'],
                 }
             ]
-            const spy = jest.spyOn(Project, "find").mockResolvedValue(projects);
+            projectRepository.getAll.mockResolvedValue(projects);
             const result = await getAllProjects();
 
             expect(result).toEqual(projects);
-            expect(spy).toHaveBeenCalled();
+            expect(projectRepository.getAll).toHaveBeenCalled();
         });
 
         it("should return null if not found projects", async () => {
-            const spy = jest.spyOn(Project, "find").mockResolvedValue([]);
+            projectRepository.getAll.mockResolvedValue([]);
             const result = await getAllProjects();
 
             expect(result).toEqual(null);
-            expect(spy).toHaveBeenCalled();
+            expect(projectRepository.getAll).toHaveBeenCalled();
 
         });
 
         it("should throw an error when i try get all projects", async () => {
-            const spy = jest.spyOn(Project, "find").mockRejectedValue(new Error("Error"));
-            await expect(getAllProjects()).rejects.toThrowError("Error");
-            expect(spy).toHaveBeenCalled();
+            projectRepository.getAll.mockRejectedValue(new Error());
+            await expect(getAllProjects()).rejects.toThrowError();
+            expect(projectRepository.getAll).toHaveBeenCalled();
         });
     });
 
-        /********************************************************************************************** */
+//         /********************************************************************************************** */
 
         describe("getProjectById", () => {
-            // it("should get a project by id", async () => {
-            //     const project = {
-            //         name: 'Project 2',
-            //         description: 'Description 2',
-            //         startDate: new Date,
-            //         type: 'web',
-            //         complexity: 'trainee',
-            //         amountParticipants: 5,
-            //         leaderId: '5f9f1b9b9c9d440000a1b0f1',
-            //         participants: ['5f9f1b9b9c9d440000a1b0f1'],
-            //         languages: ['javascript','typescript'],
-            //         technologies: ['angular','react'],
-            //     };
-            //     const spy = jest.spyOn(Project, "findById").mockResolvedValue(project);
-            //     const result = await getProjectById("5f9f1b9b9c9d440000a1b0f1");
+            it("should get a project by id", async () => {
+                const project = {
+                    name: 'Project 2',
+                    description: 'Description 2',
+                    startDate: new Date,
+                    type: 'web',
+                    complexity: 'trainee',
+                    amountParticipants: 5,
+                    leaderId: '5f9f1b9b9c9d440000a1b0f1',
+                    participants: ['5f9f1b9b9c9d440000a1b0f1'],
+                    languages: ['javascript','typescript'],
+                    technologies: ['angular','react'],
+                };
+                projectRepository.getById.mockResolvedValue(project);
+                const result = await getProjectById("5f9f1b9b9c9d440000a1b0f1");
 
-            //     expect(result).toEqual(project);
-            //     expect(spy).toHaveBeenCalled();
-            // });
+                expect(result).toEqual(project);
+                expect(projectRepository.getById).toHaveBeenCalled();
+            });
 
-            // it("should return null if not found project", async () => {
-            //     const spy = jest.spyOn(Project, "findById").mockResolvedValue(null);
-            //     const result = await getProjectById("5f9f1b9b9c9d440000a1b0f1");
+            it("should return null if not found project", async () => {
+                projectRepository.getById.mockResolvedValue(null);
+                const result = await getProjectById("5f9f1b9b9c9d440000a1b0f1");
 
-            //     expect(result).toEqual(null);
-            //     expect(spy).toHaveBeenCalled();
+                expect(result).toEqual(null);
+                expect(projectRepository.getById).toHaveBeenCalled();
 
-            // });
+            });
 
-            // it("should throw an error when i try get a project by id", async () => {
-            //     const spy = jest.spyOn(Project, "findById").mockRejectedValue(new Error("Error"));
-            //     await expect(getProjectById("5f9f1b9b9c9d440000a1b0f1")).rejects.toThrowError("Error");
-            //     expect(spy).toHaveBeenCalled();
-            // });
+            it("should throw an error when i try get a project by id", async () => {
+                projectRepository.getById.mockRejectedValue(new Error());
+                await expect(getProjectById("5f9f1b9b9c9d440000a1b0f1")).rejects.toThrowError();
+                expect(projectRepository.getById).toHaveBeenCalled();
+            });
         });
 
-        /********************************************************************************************** */
+//         /********************************************************************************************** */
 
         describe("getProjectsByFilters", () => {
             it("should get projects by filters", async () => {
@@ -174,22 +177,22 @@ describe("Project Service Test", () => {
                 const body = {
                     type: "web"
                 }
-                const spy = jest.spyOn(Project, "find").mockResolvedValue(projects);
+                projectRepository.getByFilters.mockResolvedValue(projects);
                 const result = await getProjectsByFilters(body);
 
                 expect(result).toEqual(projects);
-                expect(spy).toHaveBeenCalled();
+                expect(projectRepository.getByFilters).toHaveBeenCalled();
             });
 
             it("should return null if not found projects", async () => {
                 const body = {
                     type: "web"
                 }
-                const spy = jest.spyOn(Project, "find").mockResolvedValue([]);
+                projectRepository.getByFilters.mockResolvedValue([]);
                 const result = await getProjectsByFilters(body);
 
                 expect(result).toEqual(null);
-                expect(spy).toHaveBeenCalled();
+                expect(projectRepository.getByFilters).toHaveBeenCalled();
 
             });
 
@@ -197,13 +200,13 @@ describe("Project Service Test", () => {
                 const body = {
                     type: "web"
                 }
-                const spy = jest.spyOn(Project, "find").mockRejectedValue(new Error("Error"));
-                await expect(getProjectsByFilters(body)).rejects.toThrowError("Error");
-                expect(spy).toHaveBeenCalled();
+                projectRepository.getByFilters.mockRejectedValue(new Error());
+                await expect(getProjectsByFilters(body)).rejects.toThrowError();
+                expect(projectRepository.getByFilters).toHaveBeenCalled();
             });
         });
 
-        /********************************************************************************************** */
+//         /********************************************************************************************** */
 
         describe("updateProjectById", () => {
             it("should update a project by id", async () => {
@@ -224,11 +227,11 @@ describe("Project Service Test", () => {
                     technologies: ['angular','react'],
                 }
                 const fakeId = "5f9f1b9b9c9d440000a1b0f1"
-                const spy = jest.spyOn(Project, "findByIdAndUpdate").mockResolvedValue(response);
+                projectRepository.updateById.mockResolvedValue(response);
                 const result = await updateProjectById(fakeId, body);
 
                 expect(result).toEqual(response);
-                expect(spy).toHaveBeenCalled();
+                expect(projectRepository.updateById).toHaveBeenCalled();
             });
 
             it("should return null if not found project", async () => {
@@ -237,11 +240,11 @@ describe("Project Service Test", () => {
                     technologies: ['angular','react'],
                 }
                 const fakeId = "5f9f1b9b9c9d440000a1b0f1"
-                const spy = jest.spyOn(Project, "findByIdAndUpdate").mockResolvedValue(null);
+                projectRepository.updateById.mockResolvedValue(null);
                 const result = await updateProjectById(fakeId, body);
 
                 expect(result).toEqual(null);
-                expect(spy).toHaveBeenCalled();
+                expect(projectRepository.updateById).toHaveBeenCalled();
 
             });
 
@@ -259,39 +262,39 @@ describe("Project Service Test", () => {
                     technologies: ['angular','react'],
                 }
                 const fakeId = null
-                const spy = jest.spyOn(Project, "findByIdAndUpdate").mockRejectedValue(new Error("Error"));
-                await expect(updateProjectById(fakeId, body)).rejects.toThrowError("Error");
-                expect(spy).toHaveBeenCalled();
+                projectRepository.updateById.mockRejectedValue(new Error());
+                await expect(updateProjectById(fakeId, body)).rejects.toThrowError();
+                expect(projectRepository.updateById).toHaveBeenCalled();
             });
         });
 
-        /********************************************************************************************** */
+//         /********************************************************************************************** */
 
         describe("deleteProjectById", () => {
             it("should delete a project by id", async () => {
                 const fakeId = "5f9f1b9b9c9d440000a1b0f1"
-                const spy = jest.spyOn(Project, "findByIdAndDelete").mockResolvedValue(fakeId);
+                projectRepository.deleteById.mockResolvedValue(fakeId);
                 const result = await deleteProjectById(fakeId);
 
                 expect(result).toEqual(fakeId);
-                expect(spy).toHaveBeenCalled();
+                expect(projectRepository.deleteById).toHaveBeenCalled();
             });
 
             it("should return null if not found project", async () => {
                 const fakeId = "5f9f1b9b9c9d440000a1b0f1"
-                const spy = jest.spyOn(Project, "findByIdAndDelete").mockResolvedValue(null);
+                projectRepository.deleteById.mockResolvedValue(null);
                 const result = await deleteProjectById(fakeId);
 
                 expect(result).toEqual(null);
-                expect(spy).toHaveBeenCalled();
+                expect(projectRepository.deleteById).toHaveBeenCalled();
 
             });
 
             it("should throw an error when i try delete a project by id", async () => {
                 const fakeId = null
-                const spy = jest.spyOn(Project, "findByIdAndDelete").mockRejectedValue(new Error("Error"));
-                await expect(deleteProjectById(fakeId)).rejects.toThrowError("Error");
-                expect(spy).toHaveBeenCalled();
+                projectRepository.deleteById.mockRejectedValue(new Error());
+                await expect(deleteProjectById(fakeId)).rejects.toThrowError();
+                expect(projectRepository.deleteById).toHaveBeenCalled();
             });
         });
 });

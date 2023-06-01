@@ -1,4 +1,4 @@
-const addHeaders = require('../.././src/middlewares/addHeaders');
+const {addHeaders} = require('../../../src/delivery/middlewares/addHeaders');
 
 describe('addHeaders middleware', () => {
     const mockRequest = {

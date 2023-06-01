@@ -1,6 +1,6 @@
-const {createMessage, getMessagesByFilters, updateMessageById, deleteMessageById } = require('../.././src/controllers/messageController');
-const messageService = require('../.././src/services/messageService');
-jest.mock('../.././src/services/messageService');
+const {createMessage, getMessagesByFilters, updateMessageById, deleteMessageById } = require('../../../src/delivery/controllers/messageController');
+const messageService = require('../../../src/domain/services/messageService');
+jest.mock('../../../src/domain/services/messageService');
 
 describe('Message Controller', () => {
 

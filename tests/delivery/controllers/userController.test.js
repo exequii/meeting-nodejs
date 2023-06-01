@@ -1,8 +1,8 @@
-const { createUser, getAllUsers, getUserById, updateUserById, deleteUserById,getUserByCredentials, getUserByFilters, getUsersByRanking } = require('../.././src/controllers/userController');
-const { generateHash, comparePasswordWithHash } = require('../.././src/utils/utilities');
-const userService = require('../.././src/services/userService');
-jest.mock('../.././src/services/userService');
-jest.mock('../.././src/utils/utilities');
+const { createUser, getAllUsers, getUserById, updateUserById, deleteUserById,getUserByCredentials, getUserByFilters, getUsersByRanking } = require('../../../src/delivery/controllers/userController');
+const { generateHash, comparePasswordWithHash } = require('../../../src/domain/utils/utilities');
+const userService = require('../../../src/domain/services/userService');
+jest.mock('../../../src/domain/services/userService');
+jest.mock('../../../src/domain/utils/utilities');
 
 describe('userController Test', () => {
     describe('getUserById', () => {

@@ -1,6 +1,6 @@
-const {createProject,getProjectsByFilters, getAllProjects, getProjectById, updateProjectById, deleteProjectById } = require('../.././src/controllers/projectController');
-const projectService = require('../.././src/services/projectService');
-jest.mock('../.././src/services/projectService');
+const {createProject,getProjectsByFilters, getAllProjects, getProjectById, updateProjectById, deleteProjectById } = require('../../../src/delivery/controllers/projectController');
+const projectService = require('../../../src/domain/services/projectService');
+jest.mock('../../../src/domain/services/projectService');
 
 
 describe('projectController Test', () => {

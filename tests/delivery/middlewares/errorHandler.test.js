@@ -1,4 +1,4 @@
-const { logErrors, errorHandler, errorNotFound } = require("../.././src/middlewares/errorHandler")
+const { logErrors, errorHandler, errorNotFound } = require("../../../src/delivery/middlewares/errorHandler")
 
 describe('errorHandler middleware', () => {
     it('should log the error', () => {

@@ -1,6 +1,6 @@
-const {createPost,getAllPosts, getPostsByFilters, getPostById, updatePostById, deletePostById } = require('../.././src/controllers/postController');
-const postService = require('../.././src/services/postService');
-jest.mock('../.././src/services/postService');
+const {createPost,getAllPosts, getPostsByFilters, getPostById, updatePostById, deletePostById } = require('../../../src/delivery/controllers/postController');
+const postService = require('../../../src/domain/services/postService');
+jest.mock('../../../src/domain/services/postService');
 
 describe('Post Controller', () => {
 
