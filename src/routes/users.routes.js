@@ -5,14 +5,14 @@ const { createUser, getAllUsers, getUserById, updateUserById, deleteUserById, ge
 
 router.post('/', createUser);
 router.post('/login', getUserByCredentials);
-router.post('/find' ,authMiddleware, getUserByFilters);
-router.get('/ranking/:pagination', authMiddleware, getUsersByRanking);
-router.get('/', authMiddleware, getAllUsers);
-router.get('/:id', authMiddleware, getUserById);
+router.post('/find' , getUserByFilters);
+router.get('/ranking/:pagination', getUsersByRanking);
+router.get('/', getAllUsers);
+router.get('/:id', getUserById);
 router.put('/:id', authMiddleware, updateUserById);
 router.delete('/:id', authMiddleware, deleteUserById);
-router.get('/languages/:username', authMiddleware ,getLanguagesByRepos);
-router.get('/metrics/:username', authMiddleware , getUserMetricsByRepos);
+router.get('/languages/:username' ,getLanguagesByRepos);
+router.get('/metrics/:username' , getUserMetricsByRepos);
 
 
 
