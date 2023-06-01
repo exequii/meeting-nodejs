@@ -79,7 +79,7 @@ const projectSchema = new Schema({
         type: String,
         enum: ['To Do','In Progress','Done','Cancel'],
         default: 'To Do',
-        required: true,
+        required: false,
     },
     requestSupport: {
         type: Boolean,
