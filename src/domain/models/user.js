@@ -42,10 +42,9 @@ class User {
   }
 
   validateFilters(filters){
-    const validUser = new User();
     let valid = true;
     for(let key in filters){
-      if(!validUser.hasOwnProperty(key)){
+      if(!this.hasOwnProperty(key)){
         valid = false;
         break;
       }

@@ -24,8 +24,6 @@ const getUserByCredentials = async(email) => {
 
 const getUserByFilters = async(filters) => {
   try {
-      let user = new User();
-      if(!user.validateFilters(filters)) throw new Error("Invalid filters");
       const users = await UserRepository.getByFilters(filters);
       if(!users || users.length == 0) return null;
       return users;

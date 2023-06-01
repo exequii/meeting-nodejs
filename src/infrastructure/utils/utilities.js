@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-const Project = require('../models/project');
-const User = require('../models/user');
-const Post = require('../models/post');
+const Project = require('../schemas/project');
+const User = require('../schemas/user');
+const Post = require('../schemas/post');
 
 
 const updateProjectAndUser = async (userId, projectId,support) => {

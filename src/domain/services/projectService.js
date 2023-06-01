@@ -1,20 +1,20 @@
 const Project = require('../models/project');
-const { updateProjectAndUser, createProjectAndUpdateUser, updateScoreUsersAndFinishProyect } = require('../utils/utilities');
 const githubService = require('../services/githubService');
+const ProjectRepository = require('../../infrastructure/persistence/projectRepository');
 
 const createProject = async (projectData) => {
     try{
         let project = new Project(projectData);
-        project = await createProjectAndUpdateUser(project);
-        return project;
+        if(!project.validateEssentialData()) throw new Error("Invalid project data");
+        return await ProjectRepository.create(project);
     }catch(error){
         throw new Error(error);
     }
 }
 
-const getProjectsByFilters = async(body) => {
+const getProjectsByFilters = async(filters) => {
     try {
-        const projects = await Project.find(body);
+        const projects = await ProjectRepository.getByFilters(filters);
         if(!projects || projects.length == 0) return null;
         return projects;
     } catch (error) {
@@ -24,7 +24,7 @@ const getProjectsByFilters = async(body) => {
 
 const getAllProjects = async () => {
     try{
-        const projects = await Project.find();
+        const projects = await ProjectRepository.getAll();
         if(!projects || projects.length == 0) return null;
         return projects;
     }catch(error){
@@ -34,11 +34,7 @@ const getAllProjects = async () => {
 
 const getProjectById = async (id) => {
     try{
-        const project = await Project.findById(id)
-        .populate({path: 'leader', select: '-password'})
-        .populate({path: 'participants', select: '-password'})
-        .populate({path: 'supports',select: '-password'})
-        .populate('posts');
+        const project = await ProjectRepository.getById(id);
         if(!project) return null;
         return project;
     }catch(error){
@@ -49,7 +45,7 @@ const getProjectById = async (id) => {
 
 const updateProjectById = async (id, newData) => {
     try{
-        const projectUpdated = await Project.findByIdAndUpdate(id,newData, { new: true });
+        const projectUpdated = await ProjectRepository.updateById(id,newData);
         if(!projectUpdated) return null;
         return projectUpdated;
     }catch(error){
@@ -59,9 +55,9 @@ const updateProjectById = async (id, newData) => {
 
 const deleteProjectById = async (id) => {
     try{
-        const projectDeleted = await Project.findByIdAndDelete(id);
-        if(!projectDeleted) return null;
-        return projectDeleted;
+        const response = await ProjectRepository.deleteById(id);
+        if(!response) return null;
+        return response;
     }catch(error){
         throw new Error(error);
     }
@@ -71,7 +67,7 @@ const addProjectToUser = async (userId, projectId, support) => {
     try{
         let project = await getProjectsByFilters({ _id: projectId ,participants: userId });
         if(!project){
-            project = await updateProjectAndUser(userId, projectId,support);
+            project = await ProjectRepository.addProjectToUser(userId, projectId,support);
         }
         return project;
     }catch(error){
@@ -81,13 +77,8 @@ const addProjectToUser = async (userId, projectId, support) => {
 
 const getSuggestedProjects = async (user) => {
     try{
-        let projects = []
-        projects = await Project.find({ technologies: { $in: user.preferences }}).limit(5);
-        if(projects.length < 5) {
-            var concatenacion = await Project.find({ technologies: { $nin: user.preferences }}).limit(5 - projects.length)
-            if(projects.length == 0) projects = concatenacion;
-            else projects.concat(concatenacion);
-        }
+        const projects = await ProjectRepository.getSuggestedProjects(user);
+        if(!projects || projects.length == 0) return null;
         return projects;
     }catch(error){
         throw new Error(error);
@@ -96,7 +87,7 @@ const getSuggestedProjects = async (user) => {
 
 const finishProject = async (projectId,scores) => {
     try{
-        const project = await updateScoreUsersAndFinishProyect(projectId,scores);
+        const project = await ProjectRepository.finishProject(projectId,scores);
         return project;
     }catch(error){
         throw new Error(error);
