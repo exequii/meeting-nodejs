@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../middlewares/authMiddleware');
-const { createUser, getAllUsers, getUserById, updateUserById, deleteUserById, getUserByCredentials, getUserByFilters, getUsersByRanking, getLanguagesByRepos,getUserMetricsByRepos } = require('../controllers/userController');
+const { createUser, getAllUsers, getUserById, updateUserById, deleteUserById, getUserByCredentials, getUserByFilters, getUsersByRanking, getLanguagesByRepos,getUserMetricsByRepos, verifyCurrentUser } = require('../controllers/userController');
 
 router.post('/', createUser);
 router.post('/login', getUserByCredentials);
@@ -13,6 +13,7 @@ router.put('/:id', authMiddleware, updateUserById);
 router.delete('/:id', authMiddleware, deleteUserById);
 router.get('/languages/:username' ,getLanguagesByRepos);
 router.get('/metrics/:username' , getUserMetricsByRepos);
+router.post('/verify' , verifyCurrentUser);
 
 
 

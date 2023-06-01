@@ -10,7 +10,7 @@ const createUser = async (req, res) => {
     if(existUser) return res.status(400).json({ message: 'User already exists' });
     const passwordHashed = await generateHash(req.body.password);
     const user = await userService.createUser({ ...req.body, password: passwordHashed });
-    const token = jwt.sign({ user: user._id }, process.env.JWT_SECRET);
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION });
     res.status(201).json(user);
   } catch (error) {
     res.status(500).json({ message: 'Internal server error', error: error.message });
@@ -120,6 +120,23 @@ const getLanguagesByRepos = async (req, res) => {
   }
 }
 
+const verifyCurrentUser = async (req, res) => {
+  try {
+    let validate = false;
+
+    const decoded = jwt.verify(req.body.token, process.env.JWT_SECRET);
+
+    if (decoded.userId === req.body.userId) {
+      validate = true;
+    }
+
+    res.status(200).json({ 'validate': validate });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
 const getUserMetricsByRepos = async (req, res) => {
   try {
     const username = req.params.username
@@ -150,4 +167,4 @@ const getUserMetricsByRepos = async (req, res) => {
 }
 
 
-module.exports = { createUser, getAllUsers, getLanguagesByRepos, getUserById, updateUserById, deleteUserById, getUserByCredentials, getUserByFilters, getUsersByRanking, getUserMetricsByRepos };
+module.exports = { createUser, getAllUsers, getLanguagesByRepos, getUserById, updateUserById, deleteUserById, getUserByCredentials, getUserByFilters, getUsersByRanking, getUserMetricsByRepos, verifyCurrentUser };
