@@ -1,7 +1,7 @@
 const Project = require('../models/project');
 const githubService = require('../services/githubService');
 const ProjectRepository = require('../../infrastructure/persistence/projectRepository');
-
+const { getSkipPage } = require('../utils/utilities');
 const createProject = async (projectData) => {
     try{
         let project = new Project(projectData);
@@ -22,9 +22,13 @@ const getProjectsByFilters = async(filters) => {
     }
 }
 
-const getAllProjects = async () => {
+const getAllProjects = async (pagination) => {
     try{
-        const projects = await ProjectRepository.getAll();
+        let skipPage = 0;
+        if(pagination) {
+            skipPage = getSkipPage(pagination);
+        }
+        const projects = await ProjectRepository.getAll(skipPage);
         if(!projects || projects.length == 0) return null;
         return projects;
     }catch(error){

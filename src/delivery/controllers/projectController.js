@@ -23,7 +23,7 @@ const getProjectsByFilters = async (req, res) => {
 
 const getAllProjects = async (req, res) => {
     try{
-        const projects = await projectService.getAllProjects();
+        const projects = await projectService.getAllProjects(req?.params?.pagination);
         if(!projects) {
             return res.status(204).json({results:[], message: 'Projects not found' })
         }

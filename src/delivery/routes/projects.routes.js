@@ -8,7 +8,7 @@ router.post('/join', authMiddleware, addProjectToUser)
 router.post('/filter', authMiddleware, getProjectsByFilters);
 router.post('/suggestions', authMiddleware, getSuggestedProjects);
 router.post('/finish/:id', authMiddleware, finishProject);
-router.get('/', authMiddleware, getAllProjects);
+router.get('/:pagination?', authMiddleware, getAllProjects);
 router.get('/:id', authMiddleware, getProjectById);
 router.put('/:id', authMiddleware, updateProjectById);
 router.delete('/:id', authMiddleware, deleteProjectById);

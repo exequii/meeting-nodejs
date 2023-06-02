@@ -1,4 +1,5 @@
 const User = require('../schemas/user');
+const { getLength } = require('../utils/utilities');
 
 const create = async (userData) => {
     try {
@@ -82,15 +83,6 @@ const getByRanking = async (skipPage) => {
     }
 };
 
-const getLength = async (users) => {
-    try {
-        const count = await User.count();
-        users = {users, count};
-        return users;
-    } catch (error) {
-        throw new Error(error);
-    }
-};
 
 
 module.exports = { create, getAll, getById, updateById, deleteById, getByCredentials, getByFilters, getByRanking };
