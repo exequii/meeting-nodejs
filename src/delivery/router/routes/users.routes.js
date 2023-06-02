@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const authMiddleware = require('../middlewares/authMiddleware');
-const { createUser, getAllUsers, getUserById, updateUserById, deleteUserById, getUserByCredentials, getUserByFilters, getUsersByRanking, getLanguagesByRepos,getUserMetricsByRepos, sendEmailContact } = require('../controllers/userController');
+const authMiddleware = require('../../middlewares/authMiddleware');
+const { createUser, getAllUsers, getUserById, updateUserById, deleteUserById, getUserByCredentials, getUserByFilters, getUsersByRanking, getLanguagesByRepos,getUserMetricsByRepos, sendEmailContact } = require('../../controllers/userController');
 
 router.post('/', authMiddleware, createUser);
 router.post('/login', authMiddleware ,getUserByCredentials);

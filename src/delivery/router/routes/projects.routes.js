@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const authMiddleware = require('../middlewares/authMiddleware');
-const {createProject,getProjectsByFilters, getAllProjects, getProjectById, updateProjectById, deleteProjectById, addProjectToUser, getSuggestedProjects, finishProject , getMetricsByRepo, sendEmailInvite} = require('../controllers/projectController');
+const authMiddleware = require('../../middlewares/authMiddleware');
+const {createProject,getProjectsByFilters, getAllProjects, getProjectById, updateProjectById, deleteProjectById, addProjectToUser, getSuggestedProjects, finishProject , getMetricsByRepo, sendEmailInvite} = require('../../controllers/projectController');
 
 router.post('/', authMiddleware, createProject);
 router.post('/join', authMiddleware, addProjectToUser)
