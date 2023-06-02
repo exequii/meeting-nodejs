@@ -1,6 +1,7 @@
 const cors = require('cors')
 const express = require('express');
 const bodyParser = require('body-parser');
+const commonRoutes = require('./delivery/routes/common.routes');
 const userRouter = require('./delivery/routes/users.routes');
 const projectsRoutes = require('./delivery/routes/projects.routes');
 const postsRoutes = require('./delivery/routes/posts.routes');
@@ -28,6 +29,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // Rutas
+app.use('/api/common', commonRoutes)
 app.use('/api/users', userRouter);
 app.use('/api/projects', projectsRoutes);
 app.use('/api/posts', postsRoutes);
