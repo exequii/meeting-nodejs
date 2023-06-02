@@ -1,19 +1,19 @@
 const Post = require('../models/post');
-const { createPostAndUpdateRelations } = require('../utils/utilities');
+const PostRepository = require('../../infrastructure/persistence/postRepository');
 
 const createPost = async (postData) => {
     try{
         let post = new Post(postData);
-        post = await createPostAndUpdateRelations(post);
-        return post;
+        if (!post.validateEssentialData()) throw new Error("Invalid post data");
+        return await PostRepository.create(post);
     }catch(error){
         throw new Error(error);
     }
 }
 
-const getPostsByFilters = async(body) => {
+const getPostsByFilters = async(filters) => {
     try {
-        const posts = await Post.find(body).populate({path: 'author', select: '-password'});
+        const posts = await PostRepository.getByFilters(filters);
         if(!posts || posts.length == 0) return null;
         return posts;
     } catch (error) {
@@ -23,7 +23,7 @@ const getPostsByFilters = async(body) => {
 
 const getAllPosts = async () => {
     try{
-        const posts = await Post.find().populate({path: 'author', select: '-password'});
+        const posts = await PostRepository.getAll();
         if(!posts || posts.length == 0) return null;
         return posts;
     }catch(error){
@@ -33,7 +33,7 @@ const getAllPosts = async () => {
 
 const getPostById = async (id) => {
     try{
-        const post = await Post.findById(id).populate({path:'author', select: '-password'}).populate({path: 'messages', populate: { path: 'author', select: '-password' }});
+        const post = await PostRepository.getById(id);
         if(!post) return null;
         return post;
     }catch(error){
@@ -43,7 +43,7 @@ const getPostById = async (id) => {
 
 const updatePostById = async (id, newData) => {
     try{
-        const postUpdated = await Post.findByIdAndUpdate(id,newData, { new: true });
+        const postUpdated = await PostRepository.updateById(id,newData);
         if(!postUpdated) return null;
         return postUpdated;
     }catch(error){
@@ -53,7 +53,7 @@ const updatePostById = async (id, newData) => {
 
 const deletePostById = async (id) => {
     try{
-        const postDeleted = await Post.findByIdAndDelete(id);
+        const postDeleted = await PostRepository.deleteById(id);
         if(!postDeleted) return null;
         return postDeleted;
     }catch(error){
