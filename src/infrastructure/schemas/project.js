@@ -84,7 +84,11 @@ const projectSchema = new Schema({
     requestSupport: {
         type: Boolean,
         default: false,
-    }
+    },
+    validateSystem: {
+        type: Boolean,
+        default: true,
+    },
 });
 
 module.exports = mongoose.model('Project', projectSchema);

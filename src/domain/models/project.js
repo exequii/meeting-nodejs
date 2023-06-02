@@ -32,6 +32,7 @@ class Project{
     technologies = [];
     status = "To Do";
     requestSupport = false;
+    validateSystem = true;
 
     constructor(projectData) {
         for(let key in projectData){
