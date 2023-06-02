@@ -1,4 +1,5 @@
 const postService = require('../../domain/services/postService');
+const emailService = require('../../domain/services/emailService');
 
 const createPost = async (req, res) => {
     try{
@@ -69,11 +70,22 @@ const deletePostById = async (req, res) => {
     }
 }
 
+const sendEmailSuggest = async (req, res) => {
+    try{
+        const { user, email, message, post } = req.body;
+        const emailResponse = await emailService.sendEmail(user, email, message, null, post);
+        res.status(200).json(emailResponse);
+    }catch(error){
+        res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+}
+
 module.exports = {
     createPost,
     getPostsByFilters,
     getAllPosts,
     getPostById,
     updatePostById,
-    deletePostById
+    deletePostById,
+    sendEmailSuggest
 }
