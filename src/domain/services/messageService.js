@@ -1,11 +1,12 @@
 const Message = require('../models/message');
-const { createMessageAndUpdateRelations } = require('../utils/utilities');
+const MessageRepository = require('../../infrastructure/persistence/messageRepository');
 
 const createMessage = async (messageData) => {
     try{
         let message = new Message(messageData);
-        message = await createMessageAndUpdateRelations(message);
-        return message;
+        console.log(message)
+        if (!message.validateEssentialData()) throw new Error("Invalid message data");
+        return await MessageRepository.create(message);
     }catch(error){
         throw new Error(error);
     }
@@ -13,7 +14,7 @@ const createMessage = async (messageData) => {
 
 const updateMessageById = async (id, newData) => {
     try{
-        const messageUpdated = await Message.findByIdAndUpdate(id,newData, { new: true });
+        const messageUpdated = await MessageRepository.updateById(id,newData, { new: true });
         if(!messageUpdated) return null;
         return messageUpdated;
     }catch(error){
@@ -23,9 +24,9 @@ const updateMessageById = async (id, newData) => {
 
 const deleteMessageById = async (id) => {
     try{
-        const messageDeleted = await Message.findByIdAndDelete(id);
-        if(!messageDeleted) return null;
-        return messageDeleted;
+        const response = await MessageRepository.deleteById(id);
+        if(!response) return null;
+        return response;
     }catch(error){
         throw new Error(error);
     }

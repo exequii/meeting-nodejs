@@ -1,45 +1,40 @@
-// const mongoose = require('mongoose');
-// const { Schema } = mongoose;
+const typesMessage = {
+    message: 'string',
+    date: 'string',
+    author: 'string',
+    post: 'string'
+}
 
-// const messageSchema = new Schema({
-//     message: {
-//         type: String,
-//         required: [true, 'Message is required'],
-//         minLength: [0, 'Name must be at least 3 characters long'],
-//         maxLength: [300, 'Name must be at most 300 characters long'],
-//     },
-//     date: {
-//         type: Date,
-//         required: true,
-//         default: new Date(),
-//     },
-//     author: {
-//         type: Schema.Types.ObjectId,
-//         ref: 'User',
-//         required: true,
-//     },
-//     post: {
-//         type: Schema.Types.ObjectId,
-//         ref: 'Post',
-//         required: true,
-//     },
-// });
+class Message{
+    message = "";
+    date = new Date();
+    author = "";
+    post = "";
 
-// module.exports = mongoose.model('Message', messageSchema);
+    constructor(messageData) {
+        for(let key in messageData){
+            if(this.hasOwnProperty(key)){
+                if(typeof messageData[key] === typesMessage[key])
+                    this[key] = messageData[key];
+                else throw new Error("Invalid type for property " + key)
+            }
+        }
+    }
 
-class Message {
-    id;
-    message;
-    date;
-    author;
-    post;
+    validateEssentialData(){
+        if(!this.message || !this.date || !this.author || !this.post) return false;
+        return true;
+    }
 
-    constructor(id, message, date, author, post) {
-        this.id = id;
-        this.message = message;
-        this.date = date || new Date();
-        this.author = author;
-        this.post = post;
+    validateFilters(filters){
+        let valid = true;
+        for(let key in filters){
+            if(!this.hasOwnProperty(key)){
+                valid = false;
+                break;
+            }
+        }
+        return valid;
     }
 }
 
