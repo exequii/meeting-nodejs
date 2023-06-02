@@ -2,14 +2,30 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const authMiddleware = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    return res.status(401).json({ message: 'Authorization header not found' });
+  }
+
+  const token = authHeader.split(' ')[1];
+
   try {
-    // const token = req.header('Authorization').replace('Bearer ', '');
-    // const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    // req.user = decoded;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    if (decoded.userId) {
+      req.userId = decoded.userId;
+    }
+
+    // const remainingTime = decoded.exp - Math.floor(Date.now() / 1000);
+    // if (remainingTime < 60 * 60 * 24) {
+    //   const newToken = jwt.sign({ userId: decoded.userId }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION });
+    //   req.headers.authorization = 'Bearer ' + newToken;
+    // }
+
     next();
   } catch (error) {
-    // //console.error(error);
-    // res.status(401).json({ message: 'Unauthorized' });
+    return res.status(401).json({ message: 'Invalid token' });
   }
 };
 
