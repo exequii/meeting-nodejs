@@ -5,14 +5,14 @@ const {createProject,getProjectsByFilters, getAllProjects, getProjectById, updat
 
 router.post('/', authMiddleware, createProject);
 router.post('/join', authMiddleware, addProjectToUser)
-router.post('/filter', authMiddleware, getProjectsByFilters);
-router.post('/suggestions', authMiddleware, getSuggestedProjects);
+router.post('/filter', getProjectsByFilters);
+router.post('/suggestions', getSuggestedProjects);
 router.post('/finish/:id', authMiddleware, finishProject);
 router.post('/invite', authMiddleware, sendEmailInvite)
-router.get('/:pagination?', authMiddleware, getAllProjects);
-router.get('/:id', authMiddleware, getProjectById);
+router.get('/:pagination?', getAllProjects);
+router.get('/:id', getProjectById);
 router.put('/:id', authMiddleware, updateProjectById);
-router.get('/getMetrics/:id', authMiddleware , getMetricsByRepo);
+router.get('/getMetrics/:id' , getMetricsByRepo);
 router.delete('/:id', authMiddleware, deleteProjectById);
 
 

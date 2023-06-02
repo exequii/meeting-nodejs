@@ -4,10 +4,10 @@ const authMiddleware = require('../../middlewares/authMiddleware');
 const {createPost,getPostsByFilters, getAllPosts, getPostById, updatePostById, deletePostById, sendEmailSuggest } = require('../../controllers/postController');
 
 router.post('/', authMiddleware, createPost);
-router.post('/filter', authMiddleware, getPostsByFilters);
+router.post('/filter', getPostsByFilters);
 router.post('/suggest', authMiddleware, sendEmailSuggest);
-router.get('/:pagination?', authMiddleware, getAllPosts);
-router.get('/:id', authMiddleware, getPostById);
+router.get('/:pagination?', getAllPosts);
+router.get('/:id', getPostById);
 router.put('/:id', authMiddleware, updatePostById);
 router.delete('/:id', authMiddleware, deletePostById);
 
