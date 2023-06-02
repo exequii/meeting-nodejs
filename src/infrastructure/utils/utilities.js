@@ -105,7 +105,7 @@ const updateScoreUsersAndFinishProyect = async (projectId,scores) => {
 const getLength = async (entity) => {
     try {
         const count = await User.count();
-        entity = {entity, count};
+        entity = {results: entity, count};
         return entity;
     } catch (error) {
         throw new Error(error);

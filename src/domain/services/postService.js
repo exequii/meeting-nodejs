@@ -1,5 +1,6 @@
 const Post = require('../models/post');
 const PostRepository = require('../../infrastructure/persistence/postRepository');
+const { getSkipPage } = require('../utils/utilities');
 
 const createPost = async (postData) => {
     try{
@@ -21,9 +22,13 @@ const getPostsByFilters = async(filters) => {
     }
 }
 
-const getAllPosts = async () => {
+const getAllPosts = async (pagination) => {
     try{
-        const posts = await PostRepository.getAll();
+        let skipPage = 0;
+        if(pagination) {
+            skipPage = getSkipPage(pagination);
+        }
+        const posts = await PostRepository.getAll(skipPage);
         if(!posts || posts.length == 0) return null;
         return posts;
     }catch(error){

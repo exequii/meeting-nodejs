@@ -1,5 +1,5 @@
 const Post = require('../schemas/post');
-const { createPostAndUpdateRelations } = require('../utils/utilities');
+const { createPostAndUpdateRelations, getLength } = require('../utils/utilities');
 
 const create = async (postData) => {
     try{
@@ -21,9 +21,10 @@ const getByFilters = async(filters) => {
     }
 }
 
-const getAll = async () => {
+const getAll = async (skipPage) => {
     try{
-        const posts = await Post.find();
+        let posts = await Post.find().skip(skipPage).limit(10).cursor().toArray();
+        posts = await getLength(posts);
         if(!posts || posts.length == 0) return null;
         return posts;
     }catch(error){

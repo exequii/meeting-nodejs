@@ -6,7 +6,7 @@ const {createPost,getPostsByFilters, getAllPosts, getPostById, updatePostById, d
 router.post('/', authMiddleware, createPost);
 router.post('/filter', authMiddleware, getPostsByFilters);
 router.post('/suggest', authMiddleware, sendEmailSuggest);
-router.get('/', authMiddleware, getAllPosts);
+router.get('/:pagination?', authMiddleware, getAllPosts);
 router.get('/:id', authMiddleware, getPostById);
 router.put('/:id', authMiddleware, updatePostById);
 router.delete('/:id', authMiddleware, deletePostById);

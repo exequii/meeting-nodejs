@@ -24,7 +24,7 @@ const getPostsByFilters = async (req, res) => {
 
 const getAllPosts = async (req, res) => {
     try{
-        const posts = await postService.getAllPosts();
+        const posts = await postService.getAllPosts(req?.params?.pagination);
         if(!posts) {
             return res.status(204).json({results:[], message: 'Posts not found' })
         }
