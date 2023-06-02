@@ -10,11 +10,12 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-
-transporter.verify().then(() => {
-    console.log('Ready for send emails');
-}).catch(error => {
-    console.log(error);
-});
+if (process.env.NODE_ENV !== 'test') {
+    transporter.verify().then(() => {
+        console.log('Ready for send emails');
+    }).catch(error => {
+        console.log(error);
+    });
+}
 
 module.exports = { transporter };
