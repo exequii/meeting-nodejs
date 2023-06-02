@@ -13,7 +13,7 @@ const create = async (postData) => {
 
 const getByFilters = async(filters) => {
     try {
-        const posts = await Post.find(filters)
+        const posts = await Post.find(filters).populate({path: 'author', select: '-password'});
         if(!posts || posts.length == 0) return null;
         return posts;
     } catch (error) {
@@ -23,7 +23,7 @@ const getByFilters = async(filters) => {
 
 const getAll = async (skipPage) => {
     try{
-        let posts = await Post.find().skip(skipPage).limit(10).cursor().toArray();
+        let posts = await Post.find().populate({path: 'author', select: '-password'}).skip(skipPage).limit(10).cursor().toArray();
         posts = await getLength(posts);
         if(!posts || posts.length == 0) return null;
         return posts;
@@ -34,8 +34,7 @@ const getAll = async (skipPage) => {
 
 const getById = async (id) => {
     try{
-        const post = await Post.findById(id)
-            .populate({path: 'author', select: '-password'});
+        const post = await Post.findById(id).populate({path:'author', select: '-password'}).populate({path: 'messages', populate: { path: 'author', select: '-password' }});
         if(!post) return null;
         return post;
     }catch(error){
