@@ -1,6 +1,7 @@
 const userService = require('../../domain/services/userService');
 const githubService = require('../../domain/services/githubService');
 const { generateHash, comparePasswordWithHash } = require('../../domain/utils/utilities');
+const emailService = require('../../domain/services/emailService');
 
 
 const createUser = async (req, res) => {
@@ -147,5 +148,22 @@ const getUserMetricsByRepos = async (req, res) => {
 
 }
 
+const sendEmailContact = async (req, res) => {
+  try {
+    const { user, email, message } = req.body;
+    const emailResponse = await emailService.sendEmail(user, email, message);
+    res.status(200).json(emailResponse);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+}
 
-module.exports = { createUser, getAllUsers, getLanguagesByRepos, getUserById, updateUserById, deleteUserById, getUserByCredentials, getUserByFilters, getUsersByRanking, getUserMetricsByRepos };
+
+module.exports = { createUser, getAllUsers,
+  getLanguagesByRepos, getUserById,
+  updateUserById, deleteUserById,
+  getUserByCredentials, getUserByFilters,
+  getUsersByRanking, getUserMetricsByRepos,
+  sendEmailContact 
+};
