@@ -11,9 +11,10 @@ const create = async (postData) => {
     }
 }
 
-const getByFilters = async(filters) => {
+const getByFilters = async(filters, skipPage) => {
     try {
-        const posts = await Post.find(filters).populate({path: 'author', select: '-password'});
+        let posts = await Post.find(filters).populate({path: 'author', select: '-password'}).skip(skipPage).limit(10).cursor().toArray();
+        posts = await getLength(posts);
         if(!posts || posts.length == 0) return null;
         return posts;
     } catch (error) {

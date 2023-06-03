@@ -12,9 +12,13 @@ const createPost = async (postData) => {
     }
 }
 
-const getPostsByFilters = async(filters) => {
+const getPostsByFilters = async(filters,pagination) => {
     try {
-        const posts = await PostRepository.getByFilters(filters);
+        let skipPage = 0;
+        if(pagination) {
+            skipPage = getSkipPage(pagination);
+        }
+        const posts = await PostRepository.getByFilters(filters,skipPage);
         if(!posts || posts.length == 0) return null;
         return posts;
     } catch (error) {

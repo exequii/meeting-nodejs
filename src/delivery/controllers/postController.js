@@ -12,7 +12,7 @@ const createPost = async (req, res) => {
 
 const getPostsByFilters = async (req, res) => {
     try{
-        const posts = await postService.getPostsByFilters(req.body);
+        const posts = await postService.getPostsByFilters(req.body, req?.params?.pagination);
         if(!posts){
             return res.status(204).json({results:[], message: 'Posts not found' });
         }
