@@ -5,7 +5,7 @@ const {createProject,getProjectsByFilters, getAllProjects, getProjectById, updat
 
 router.post('/', authMiddleware, createProject);
 router.post('/join', authMiddleware, addProjectToUser)
-router.post('/filter', getProjectsByFilters);
+router.post('/filter/:pagination?', getProjectsByFilters);
 router.post('/suggestions', getSuggestedProjects);
 router.post('/finish/:id', authMiddleware, finishProject);
 router.post('/invite', authMiddleware, sendEmailInvite)

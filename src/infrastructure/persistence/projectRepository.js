@@ -10,9 +10,10 @@ const create = async (projectData) => {
     }
 }
 
-const getByFilters = async(filters) => {
+const getByFilters = async(filters, skipPage) => {
     try {
-        const projects = await Project.find(filters)
+        let projects = await Project.find(filters).skip(skipPage).limit(10).cursor().toArray();
+        projects = await getLength(projects);
         if(!projects || projects.length == 0) return null;
         return projects;
     } catch (error) {
@@ -22,7 +23,7 @@ const getByFilters = async(filters) => {
 
 const getAll = async (skipPage) => {
     try{
-        let projects = await Project.find().skip(skipPage).limit(10).cursor().toArray();
+        let projects = await Project.find().skip(skipPage).limit(2).cursor().toArray();
         projects = await getLength(projects);
         if(!projects || projects.length == 0) return null;
         return projects;

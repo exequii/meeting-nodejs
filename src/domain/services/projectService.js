@@ -12,9 +12,13 @@ const createProject = async (projectData) => {
     }
 }
 
-const getProjectsByFilters = async(filters) => {
+const getProjectsByFilters = async(filters, pagination) => {
     try {
-        const projects = await ProjectRepository.getByFilters(filters);
+        let skipPage = 0;
+        if(pagination) {
+            skipPage = getSkipPage(pagination);
+        }
+        const projects = await ProjectRepository.getByFilters(filters, skipPage);
         if(!projects || projects.length == 0) return null;
         return projects;
     } catch (error) {
