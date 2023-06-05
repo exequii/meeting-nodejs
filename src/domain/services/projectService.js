@@ -75,11 +75,16 @@ const deleteProjectById = async (id) => {
 
 const addProjectToUser = async (userId, projectId, support) => {
     try{
-        let project = await getProjectsByFilters({ _id: projectId ,participants: userId });
+        let project = await validateParticipantInProject(projectId,userId);
+        if(!project) throw new Error("User already in project");
         let user = await userRepository.getById(userId);
-        if(project.validateSystem && !validateJoinProject(project, user)) throw new Error("User not allowed to join project");
-        if(!project && !user) project = await ProjectRepository.addProjectToUser(userId, project,support);
-        return project;
+        if(project.validateSystem && user) {
+            if(!validateJoinProject(project, user)) {
+                throw new Error("User can't join project");
+            }
+            return await ProjectRepository.addProjectToUser(userId, projectId,support);
+        }
+        return null;
     }catch(error){
         throw new Error(error);
     }
@@ -128,6 +133,18 @@ const validateJoinProject = (project, user) => {
         throw new Error(error);
     }
 }
+
+const validateParticipantInProject = async (projectId, userId) => {
+    try{
+        let project = await getProjectsByFilters({ _id: projectId ,participants: userId });
+        if(project.results.length != 0) return null;
+        project = await getProjectById({ _id: projectId });
+        return project;
+    }catch(error){
+        throw new Error(error);
+    }
+}
+
 
 module.exports = {createProject,getProjectsByFilters, getAllProjects, getProjectById, updateProjectById, deleteProjectById, addProjectToUser, getSuggestedProjects, finishProject, getMetricsByRepo };
 

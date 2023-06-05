@@ -67,9 +67,9 @@ const deleteById = async (id) => {
     }
 }
 
-const addProjectToUser = async (userId, project, support) => {
+const addProjectToUser = async (userId, projectId, support) => {
     try{
-        project = await updateProjectAndUser(userId, project._id,support);
+        project = await updateProjectAndUser(userId, projectId,support);
         return project;
     }catch(error){
         throw new Error(error);
@@ -82,7 +82,6 @@ const getSuggestedProjects = async (user) => {
         projects = await Project.find({ technologies: { $in: user.preferences }}).limit(5);
         console.log(projects.length)
         if(projects.length < 5) {
-            console.log("entre")
             var concatenacion = await Project.find({ technologies: { $nin: user.preferences }}).limit(5 - projects.length)
             if(projects.length == 0) projects = concatenacion;
             else projects = projects.concat(concatenacion);
