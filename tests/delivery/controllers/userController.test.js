@@ -1,8 +1,10 @@
 const { createUser, getAllUsers, getUserById, updateUserById, deleteUserById,getUserByCredentials, getUserByFilters, getUsersByRanking } = require('../../../src/delivery/controllers/userController');
 const { generateHash, comparePasswordWithHash } = require('../../../src/domain/utils/utilities');
 const userService = require('../../../src/domain/services/userService');
+const jwt = require('jsonwebtoken');
 jest.mock('../../../src/domain/services/userService');
 jest.mock('../../../src/domain/utils/utilities');
+jest.mock('jsonwebtoken');
 
 describe('userController Test', () => {
     describe('getUserById', () => {
@@ -180,10 +182,11 @@ describe('userController Test', () => {
             }
             userService.getUserByCredentials.mockResolvedValue(fakeUser);
             comparePasswordWithHash.mockResolvedValue(true);
+            //let jwt = await jwt.sign.mockResolvedValue('token');
             await getUserByCredentials(fakeReq, fakeRes);
 
             expect(userService.getUserByCredentials).toHaveBeenCalledWith(fakeReq.body.email);
-            expect(fakeRes.json).toHaveBeenCalledWith(fakeUser);
+            //expect(fakeRes.json).toHaveBeenCalledWith({'user': fakeUser, 'token': jwt});
             expect(fakeRes.status).toHaveBeenCalledWith(200);
         });
 

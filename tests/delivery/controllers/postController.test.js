@@ -10,7 +10,8 @@ describe('Post Controller', () => {
 
     const fakeReq = {
         params: {
-            id: "60a9b0b9e1b3a1b4b8b0b8b0"
+            id: "60a9b0b9e1b3a1b4b8b0b8b0",
+            pagination: 1
         },
         body: {
             title: "Post 1",
@@ -59,7 +60,7 @@ describe('Post Controller', () => {
             await getAllPosts(fakeReq, fakeRes);
 
             expect(fakeRes.json).toHaveBeenCalledWith(fakePosts);
-            expect(postService.getAllPosts).toHaveBeenCalledWith();
+            expect(postService.getAllPosts).toHaveBeenCalledWith(fakeReq.params.pagination);
             expect(fakeRes.status).toHaveBeenCalledWith(200);
         });
 
@@ -91,7 +92,7 @@ describe('Post Controller', () => {
             await getPostsByFilters(fakeReq, fakeRes);
 
             expect(fakeRes.json).toHaveBeenCalledWith(fakePosts);
-            expect(postService.getPostsByFilters).toHaveBeenCalledWith(fakeReq.body);
+            expect(postService.getPostsByFilters).toHaveBeenCalledWith(fakeReq.body,fakeReq.params.pagination);
             expect(fakeRes.status).toHaveBeenCalledWith(200);
         });
 

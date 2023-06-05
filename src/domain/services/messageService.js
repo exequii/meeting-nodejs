@@ -4,7 +4,6 @@ const MessageRepository = require('../../infrastructure/persistence/messageRepos
 const createMessage = async (messageData) => {
     try{
         let message = new Message(messageData);
-        console.log(message)
         if (!message.validateEssentialData()) throw new Error("Invalid message data");
         return await MessageRepository.create(message);
     }catch(error){

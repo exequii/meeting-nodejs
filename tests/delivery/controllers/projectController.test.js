@@ -52,6 +52,9 @@ describe('projectController Test', () => {
 
     describe('getProjectsByFilters', () => {
         const fakeReq = {
+            params: {
+                pagination: 1,
+            },
             body:{
                 complexity: "trainee",
                 type: "web",
@@ -99,7 +102,7 @@ describe('projectController Test', () => {
             await getProjectsByFilters(fakeReq,fakeRes);
 
             expect(fakeRes.json).toHaveBeenCalledWith(fakeProjects);
-            expect(projectService.getProjectsByFilters).toHaveBeenCalledWith(fakeReq.body);
+            expect(projectService.getProjectsByFilters).toHaveBeenCalledWith(fakeReq.body,fakeReq.params.pagination);
             expect(fakeRes.status).toHaveBeenCalledWith(200);
         });
 
