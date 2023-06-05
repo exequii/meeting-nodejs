@@ -14,6 +14,7 @@ const typesProject = {
     technologies: 'object',
     status: 'string',
     requestSupport: 'boolean',
+    validateSystem: 'boolean',
 }
 
 class Project{

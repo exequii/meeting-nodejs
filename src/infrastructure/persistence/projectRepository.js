@@ -67,12 +67,9 @@ const deleteById = async (id) => {
     }
 }
 
-const addProjectToUser = async (userId, projectId, support) => {
+const addProjectToUser = async (userId, project, support) => {
     try{
-        let project = await getByFilters({ _id: projectId ,participants: userId });
-        if(!project){
-            project = await updateProjectAndUser(userId, projectId,support);
-        }
+        project = await updateProjectAndUser(userId, project._id,support);
         return project;
     }catch(error){
         throw new Error(error);

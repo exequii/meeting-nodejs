@@ -2,6 +2,8 @@ const Project = require('../models/project');
 const githubService = require('../services/githubService');
 const ProjectRepository = require('../../infrastructure/persistence/projectRepository');
 const { getSkipPage } = require('../utils/utilities');
+const userRepository = require('../../infrastructure/persistence/userRepository');
+
 const createProject = async (projectData) => {
     try{
         let project = new Project(projectData);
@@ -74,9 +76,9 @@ const deleteProjectById = async (id) => {
 const addProjectToUser = async (userId, projectId, support) => {
     try{
         let project = await getProjectsByFilters({ _id: projectId ,participants: userId });
-        if(!project){
-            project = await ProjectRepository.addProjectToUser(userId, projectId,support);
-        }
+        let user = await userRepository.getById(userId);
+        if(project.validateSystem && !validateJoinProject(project, user)) throw new Error("User not allowed to join project");
+        if(!project && !user) project = await ProjectRepository.addProjectToUser(userId, project,support);
         return project;
     }catch(error){
         throw new Error(error);
@@ -113,6 +115,15 @@ const getMetricsByRepo = async (projectId) => {
         const metrics = await githubService.getMetricsByRepo(project.urlRepository);
 
         return metrics;
+    }catch(error){
+        throw new Error(error);
+    }
+}
+
+const validateJoinProject = (project, user) => {
+    try{
+        const validate = project.technologies.some(tech => user.preferences.includes(tech));
+        return validate;
     }catch(error){
         throw new Error(error);
     }
