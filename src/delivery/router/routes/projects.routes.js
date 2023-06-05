@@ -9,7 +9,6 @@ router.post('/filter/:pagination?', getProjectsByFilters);
 router.post('/suggestions', getSuggestedProjects);
 router.post('/finish/:id', authMiddleware, finishProject);
 router.post('/invite', authMiddleware, sendEmailInvite)
-router.get('/:pagination?', getAllProjects);
 router.get('/:id', getProjectById);
 router.put('/:id', authMiddleware, updateProjectById);
 router.get('/getMetrics/:id' , getMetricsByRepo);
