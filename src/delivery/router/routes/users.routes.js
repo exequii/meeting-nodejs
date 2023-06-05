@@ -7,7 +7,6 @@ router.post('/', createUser);
 router.post('/login',getUserByCredentials);
 router.post('/find' , getUserByFilters);
 router.post('/contact', authMiddleware, sendEmailContact);
-router.get('/', getAllUsers);
 router.get('/:id', getUserById);
 router.get('/ranking/:pagination', getUsersByRanking);
 router.get('/languages/:username',getLanguagesByRepos);
