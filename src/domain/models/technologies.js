@@ -5,4 +5,6 @@ const technologies = [
     'Sass','Less','Bash','Powershell','R','Rust','Swift','Visual Basic'
 ]
 
-module.exports = technologies;
+const technologiesLength = technologies.length;
+
+module.exports = {technologies, technologiesLength};
