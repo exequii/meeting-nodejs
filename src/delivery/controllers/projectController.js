@@ -73,8 +73,8 @@ const deleteProjectById = async (req, res) => {
 const addProjectToUser = async (req, res) => {
     try{
         const project = await projectService.addProjectToUser(req.body.userId, req.body.projectId,req.body.support);
-        if(!project) {
-            return res.status(204).json({message: 'Project or User not found' })
+        if(!project || project.message != undefined) {
+            return res.status(207).json(project)
         }
         res.status(200).json(project);
     }catch(error){

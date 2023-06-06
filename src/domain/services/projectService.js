@@ -76,15 +76,15 @@ const deleteProjectById = async (id) => {
 const addProjectToUser = async (userId, projectId, support) => {
     try{
         let project = await validateParticipantInProject(projectId,userId);
-        if(!project) throw new Error("User already in project");
+        if(!project) return { message: "El usuario ya forma parte del proyecto indicado" };
         let user = await userRepository.getById(userId);
         if(project.validateSystem && user) {
             if(!validateJoinProject(project, user)) {
-                throw new Error("User can't join project");
+                return { message: "No cumplis con los requisitos minimos para unirte al proyecto" };
             }
             return await ProjectRepository.addProjectToUser(userId, projectId,support);
         }
-        return null;
+        return { message: "No se encontro el proyecto o usuario indicado" };
     }catch(error){
         throw new Error(error);
     }
