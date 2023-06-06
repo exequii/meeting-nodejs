@@ -74,7 +74,7 @@ const addProjectToUser = async (req, res) => {
     try{
         const project = await projectService.addProjectToUser(req.body.userId, req.body.projectId,req.body.support);
         if(!project) {
-            return res.status(204).json({message: 'Project not found' })
+            return res.status(204).json({message: 'Project or User not found' })
         }
         res.status(200).json(project);
     }catch(error){
