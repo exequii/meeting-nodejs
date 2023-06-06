@@ -1,4 +1,6 @@
 const bcrypt = require('bcrypt');
+const { technologies,technologiesLength } = require('../models/technologies');
+const { questionsOfTechnologies } = require('../models/questions');
 
 const generateHash = async (password) => {
     const salt = await bcrypt.genSalt(10);
@@ -18,15 +20,15 @@ const getSkipPage = (pagination) => {
 };
 
 
-const getTechnologieForQuestions = (technologies,user) => {
+const getTechnologieForQuestions = (user) => {
     var technologie;
     do{
-        technologie = technologies[Math.floor(Math.random() * technologies.length)];
+        technologie = technologies[Math.floor(Math.random() * technologiesLength)];
     }while(user.preferences.includes(technologie) || user.disinterest.includes(technologie))
     return technologie;
 }
 
-const formatQuestionOfTechnologies = (questionsOfTechnologies,technologie) => {
+const formatQuestionOfTechnologies = (technologie) => {
     var question = questionsOfTechnologies[Math.floor(Math.random() * questionsOfTechnologies.length)];
     return question.replace("{{technologie}}",technologie);
 }
