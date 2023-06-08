@@ -46,7 +46,7 @@ class Project{
     }
 
     validateEssentialData(){
-        if(!this.name || !this.description || !this.type || !this.leader || !this.complexity || !this.amountParticipants) return false;
+        if(!this.name || !this.description || !this.type || !this.complexity || !this.amountParticipants) return false;
         return true;
     }
     

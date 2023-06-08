@@ -39,7 +39,7 @@ const projectSchema = new Schema({
     leader: {
         type: Schema.Types.ObjectId,
         ref: 'User',
-        required: true,
+        required: false,
     },
     participants : [{
         type: Schema.Types.ObjectId,

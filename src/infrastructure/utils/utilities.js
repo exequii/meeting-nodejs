@@ -33,7 +33,7 @@ const createProjectAndUpdateUser = async (projectData) => {
         let project = {};
         await session.withTransaction(async () => {
             project = await projectData.save();
-            await User.findByIdAndUpdate(project.leader, { $push: { projects: project._id } }, { session });
+            if(project.leader) await User.findByIdAndUpdate(project.leader, { $push: { projects: project._id } }, { session });
         });
         await session.commitTransaction();
         return project;

@@ -3,6 +3,7 @@ const { updateProjectAndUser, createProjectAndUpdateUser, updateScoreUsersAndFin
 
 const create = async (projectData) => {
     try{
+        if(projectData.leader == "") delete projectData.leader;
         let project = new Project(projectData);
         return await createProjectAndUpdateUser(project);
     }catch(error){
