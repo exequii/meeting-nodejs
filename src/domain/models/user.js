@@ -10,6 +10,7 @@ const typesUser = {
   projects: 'object',
   posts: 'object',
   supporting: 'object',
+  level:'string',
 };
 
 
@@ -25,6 +26,7 @@ class User {
   projects = [];
   posts = [];
   supporting = [];
+  level="";
 
   constructor(userData) {
     for(let key in userData){
