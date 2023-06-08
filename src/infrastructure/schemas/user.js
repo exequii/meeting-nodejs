@@ -44,6 +44,11 @@ const userSchema = new Schema({
     required: false,
     default: 0,
   },
+  level: {
+    type: String,
+    enum: ['Junior','Semi Senior','Senior'],
+    default: 'Junior'
+  },
   githubUsername: {
     type: String,
     required: false,

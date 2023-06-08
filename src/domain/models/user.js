@@ -10,7 +10,7 @@ const typesUser = {
   projects: 'object',
   posts: 'object',
   supporting: 'object',
-  level:'string',
+  level: 'string',
 };
 
 
@@ -26,7 +26,7 @@ class User {
   projects = [];
   posts = [];
   supporting = [];
-  level="";
+  level='Junior';
 
   constructor(userData) {
     for(let key in userData){
@@ -36,6 +36,13 @@ class User {
         else throw new Error("Invalid type for property " + key)
       }
     }
+    this.setLevel();
+  }
+
+  setLevel(){
+    if(this.score > 100 && this.score < 200) this.level = 'Junior';
+    else if(this.score > 200 && this.score < 400) this.level = 'Semi Senior';
+    else if(this.score > 400) this.level = 'Senior';
   }
 
   validateEssentialData(){
