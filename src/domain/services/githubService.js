@@ -170,8 +170,7 @@ const getCommitCountByRepository = async (owner, repo) => {
 
 async function getDevelopersUsernames(owner, repo) {
     try {
-        const url = `https://api.github.com/repos/${owner}/${repo}/contributors`;
-        const response = await axios.get(url);
+        const response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/contributors`, {headers});
         return response.data;
     } catch (error) {
         console.error(error);
@@ -200,7 +199,7 @@ const getMetricsByRepo = async (url) => {
         }
         const contributionDistributionByType = await getContributionDistributionByType(owner, repo);
 
-        contributionsData.commitsByDeveloper = commitsByDevelopers;
+        contributionsData.commitByUser = commitsByDevelopers;
         contributionsData.contributionDistributionByType = contributionDistributionByType
         return contributionsData
     }catch(error){
