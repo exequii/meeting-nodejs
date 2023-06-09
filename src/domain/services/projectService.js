@@ -113,16 +113,14 @@ const finishProject = async (projectId,scores) => {
 const getMetricsByRepo = async (projectId) => {
     let metrics;
     try{
-
         const project = await getProjectById(projectId);
         if(project.urlRepository === null) {
             return false;
-
         }
         if (project.urlRepository.includes('github')) {
-            const metrics = await githubService.getMetricsByRepo(project.urlRepository);
+            metrics = await githubService.getMetricsByRepo(project.urlRepository);
         } else {
-            const metrics = await gitlabService.getMetricsByRepo(project.urlRepository);
+            metrics = await gitlabService.getMetricsByRepo(project.urlRepository);
         }
 
         return metrics;

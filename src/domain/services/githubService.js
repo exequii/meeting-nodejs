@@ -168,31 +168,40 @@ const getCommitCountByRepository = async (owner, repo) => {
     }
 };
 
+async function getDevelopersUsernames(owner, repo) {
+    try {
+        const url = `https://api.github.com/repos/${owner}/${repo}/contributors`;
+        const response = await axios.get(url);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw new Error('Error al obtener los desarrolladores del repositorio');
+    }
+}
+
 const getMetricsByRepo = async (url) => {
     try{
         const myUrl = new URL(url);
     
         const owner = myUrl.pathname.split('/')[1];
         const repo = myUrl.pathname.split('/')[2];
-    
-        const contributionsData = [];
-    
-        const developersUsernames = ['NahuelSavedra', 'exequii', 'JoelE7','jessicadlg','Diego2985'];
-    
+
+        const contributionsData = {};
+        let commitsByDevelopers = [];
+
+        const developersUsernames = await getDevelopersUsernames(owner, repo);
         for (const developerUsername of developersUsernames) {
-            const commitFrequency = await getCommitFrequencyByDeveloper(owner, repo, developerUsername);
-    
-            contributionsData.push({
+            const commitFrequency = await getCommitFrequencyByDeveloper(owner, repo, developerUsername.login);
+
+            commitsByDevelopers.push({
                 'developerUsername': developerUsername,
                 'commits': commitFrequency,
-                })
+            })
         }
         const contributionDistributionByType = await getContributionDistributionByType(owner, repo);
 
-        contributionsData.push({
-            'contributionDistributionByType': contributionDistributionByType
-        })
-    
+        contributionsData.commitsByDeveloper = commitsByDevelopers;
+        contributionsData.contributionDistributionByType = contributionDistributionByType
         return contributionsData
     }catch(error){
         console.error(error);
