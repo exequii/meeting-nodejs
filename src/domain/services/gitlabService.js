@@ -172,7 +172,7 @@ async function getDevelopersUsernames(repoId) {
     }
 }
 
-async function getContributionDistributionByType(repoId) {
+async function getContributionDistributionByType(repoId, owner, repo) {
     try{
         const response = await axios.get(`https://gitlab.com/api/v4/projects/${repoId}/repository/contributors`, { headers });
         const contributors = response.data;
@@ -182,14 +182,18 @@ async function getContributionDistributionByType(repoId) {
             issues: {},
             pullRequest: {}
         };
-
         for (const contributor of contributors) {
-            console.log(contributor)
             const username = contributor.name;
+            const issuesResponse = await axios.get(`https://gitlab.com/api/v4/projects/${owner}%2F${repo}/issues?author_username=${username}`, { headers });
+
+            const issues = issuesResponse.data;
+            const mergeRequestsResponse = await axios.get(`https://gitlab.com/api/v4/projects/${owner}%2F${repo}/merge_requests?author_username=${username}`, { headers });
+            const mergeRequests = mergeRequestsResponse.data;
+            console.log(contributor)
 
             contributionDistribution.commits[username] = contributor.commits;
-            contributionDistribution.issues[username] = 0;
-            contributionDistribution.pullRequest[username] = 0;
+            contributionDistribution.issues[username] = issues.length;
+            contributionDistribution.pullRequest[username] = mergeRequests.length;
         }
 
         return contributionDistribution;
@@ -210,21 +214,21 @@ const getMetricsByRepo = async (url) => {
 
         const developersUsernames = await getDevelopersUsernames(repo.id);
 
-        const contributionsData = [];
+        const contributionsData = {};
+        const commitByUser = [];
 
         for (const developerUsername of developersUsernames) {
             const commitFrequency = await getCommitFrequencyByDeveloper(repo.id, developerUsername);
 
-            contributionsData.push({
+            commitByUser.push({
                 'developerUsername': developerUsername,
                 'commits': commitFrequency,
             })
         }
-        const contributionDistributionByType = await getContributionDistributionByType(repo.id);
+        const contributionDistributionByType = await getContributionDistributionByType(repo.id, owner, repoName);
 
-        contributionsData.push({
-            'contributionDistributionByType': contributionDistributionByType
-        })
+        contributionsData.commitByUser = commitByUser;
+        contributionsData.contributionDistributionByType = contributionDistributionByType;
 
         return contributionsData
     }catch(error){

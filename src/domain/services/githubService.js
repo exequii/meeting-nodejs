@@ -194,7 +194,7 @@ const getMetricsByRepo = async (url) => {
             const commitFrequency = await getCommitFrequencyByDeveloper(owner, repo, developerUsername.login);
 
             commitsByDevelopers.push({
-                'developerUsername': developerUsername,
+                'developerUsername': developerUsername.login,
                 'commits': commitFrequency,
             })
         }
@@ -250,13 +250,17 @@ const getContributionDistributionByType = async (owner, repo) => {
             const username = contributor.login;
 
             const commitsResponse = await axios.get(`https://api.github.com/repos/${owner}/${repo}/commits?author=${username}&all=true&per_page=100`, { headers });
-            const commits = commitsResponse.data;
+            const commitsByUser = commitsResponse.data;
 
-            const commitCount = commits.length;
+            const pullRequestResponse = await axios.get(`https://api.github.com/repos/${owner}/${repo}/pulls?state=all`, { headers });
+            const pullRequestsByUser = pullRequestResponse.data.filter(pullRequest => pullRequest.user.login === username);
 
-            contributionDistribution.commits[username] = commitCount;
-            contributionDistribution.issues[username] = 0;
-            contributionDistribution.pullRequests[username] = 0;
+            const issuesResponse = await axios.get(`https://api.github.com/repos/amitsingh-007/bypass-links/issues`, { headers });
+            const issuesByUser = issuesResponse.data.filter(issue => issue.user.login === username);
+
+            contributionDistribution.commits[username] = commitsByUser.length;
+            contributionDistribution.issues[username] = issuesByUser.length;
+            contributionDistribution.pullRequests[username] = pullRequestsByUser.length;
         }
 
         return contributionDistribution;
