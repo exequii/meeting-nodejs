@@ -1,3 +1,5 @@
+const githubService = require('./githubService');
+const gitlabService = require('./gitlabService');
 const User = require('../models/user');
 const UserRepository = require("../../infrastructure/persistence/userRepository")
 const { getSkipPage } = require('../utils/utilities');
@@ -83,7 +85,70 @@ const getUsersByRanking = async (pagination) => {
     throw new Error(error);
   }
 };
+async function getGithubMetrics(username) {
+  try{
+    const issues = await githubService.getReportedIssuesCount(username);
+    const pullRequests = await githubService.hasContributionsInExternalProjects(username);
+    const projectStats = await githubService.calculateAveragePopularity(username);
+    const quantityProjects = await githubService.getQuantityProjects(username);
+    const commitCounts = await githubService.getUserCommitCounts(username);
 
+    return {
+      'issues' : issues,
+      'pullRequests' : pullRequests,
+      'projectStats' : projectStats,
+      'quantityProjects' : quantityProjects,
+      'commitCounts' : commitCounts
+    }
+  } catch (error) {
+    console.error(error);
+    return { message: 'Internal server error', error: error.message };
+  }
+}
+async function getGitlabMetrics(username) {
+  try{
+    const commitCounts = await gitlabService.getUserCommitCounts(username);
+    const issues = await gitlabService.getReportedIssuesCount(username);
+    const pullRequests = await gitlabService.hasContributionsInExternalProjects(username);
+    const projectStats = await gitlabService.calculateAveragePopularity(username);
+    const quantityProjects = await gitlabService.getQuantityProjects(username);
 
+    return {
+      'issues' : issues,
+      'pullRequests' : pullRequests,
+      'projectStats' : projectStats,
+      'quantityProjects' : quantityProjects,
+      'commitCounts' : commitCounts
+    }
+  } catch (error) {
+    console.error(error);
+    return { message: 'Internal server error', error: error.message };
+  }
+}
 
-module.exports = { createUser, getAllUsers, getUserById, updateUserById, deleteUserById, getUserByCredentials, getUserByFilters, getUsersByRanking };
+async function getLanguagesForUser(id) {
+
+  let languages = {};
+  let githubLanguages = [];
+  let gitlabLanguages = [];
+  const user = await UserRepository.getById(id);
+  try {
+
+    if (user.githubUsername !== ''){
+      githubLanguages = await githubService.getLanguagesForUser(user.githubUsername);
+      languages.githubLanguages = githubLanguages;
+    }
+
+    if (user.gitlabUsername !== ''){
+      gitlabLanguages = await gitlabService.getLanguagesForUser(user.gitlabUsername);
+      languages.gitlabLanguages = gitlabLanguages;
+    }
+
+    return languages;
+  } catch (error) {
+    console.error(error);
+    return { message: 'Internal server error', error: error.message };
+  }
+}
+
+module.exports = { createUser, getAllUsers, getUserById, updateUserById, deleteUserById, getUserByCredentials, getUserByFilters, getUsersByRanking, getLanguagesForUser, getGithubMetrics, getGitlabMetrics };

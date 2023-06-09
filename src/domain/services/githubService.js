@@ -7,7 +7,6 @@ const headers = {
 const getCommits = async (owner, repo) => {
         try {
             const response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/commits`, {headers});
-            console.log("commit",credentials)
             const commits = response.data;
             return commits.length;
         } catch (error) {
@@ -16,8 +15,12 @@ const getCommits = async (owner, repo) => {
         }
 }
 
-async function getReposUser(username) {
+async function getReposUser(username, all = false) {
     try{
+        if (all) {
+            const response = await axios.get(`https://api.github.com/users/${username}/repos?type=all`, {headers});
+            return response.data;
+        }
         const response = await axios.get(`https://api.github.com/users/${username}/repos`, {headers});
         return response.data;
     }catch(error){
@@ -84,8 +87,6 @@ async function getPullRequestsUser(username) {
     try {
         const response = await axios.get(`https://api.github.com/search/issues?q=type:pr+author:${username}`, {headers});
         const data = response.data;
-        // const response = await fetch(`https://api.github.com/search/issues?q=type:pr+author:${username}`);
-        // const data = await response.json();
         return data.total_count;
     } catch (error) {
         console.error(error);
@@ -95,35 +96,21 @@ async function getPullRequestsUser(username) {
 
 async function calculateAveragePopularity(username) {
     try {
-        const forks = await getForksUser(username);
+        const repos = await getReposUser(username);
         let totalStars = 0;
         let maxStars = 0;
 
-        // console.log(forks);
-        if (Array.isArray(forks)) {
-            forks.forEach(fork => {
-                totalStars += fork.stargazers_count;
-                if (fork.stargazers_count > maxStars) {
-                    maxStars = fork.stargazers_count;
+        if (Array.isArray(repos)) {
+            repos.forEach(repo => {
+                totalStars += repo.stargazers_count;
+                if (repo.stargazers_count > maxStars) {
+                    maxStars = repo.stargazers_count;
                 }
             });
         }
 
-        const averagePopularity = Math.round(totalStars / forks.length);
+        const averagePopularity = Math.round(totalStars / repos.length);
         return { averagePopularity, maxStars };
-    } catch (error) {
-        console.error(error);
-        throw new Error(error);
-    }
-}
-
-async function getForksUser(username) {
-    try {
-        const response = await axios.get(`https://api.github.com/users/${username}/repos?type=forks`, {headers});
-        const data = response.data;
-        return data;
-        // const response = await fetch(`https://api.github.com/users/${username}/repos?type=forks`);
-        // return await response.json();
     } catch (error) {
         console.error(error);
         throw new Error(error);
@@ -132,10 +119,10 @@ async function getForksUser(username) {
 
 const getQuantityProjects = async (username) => {
     try {
-        const repositories = await getReposUser(username);
+        const repositories = await getReposUser(username, true);
 
-        const personalProjects = repositories.filter(repo => !repo.fork && repo.owner.login !== username);
-        const outsidelProjects = repositories.filter(repo => repo.fork);
+        const personalProjects = repositories.filter(repo => repo.owner.login == username);
+        const outsidelProjects = repositories.filter(repo => repo.owner.login !== username);
 
         const quantityPersonalProjects = personalProjects.length
         const quantityOutsidelProjects = outsidelProjects.length
@@ -200,11 +187,11 @@ const getMetricsByRepo = async (url) => {
                 'commits': commitFrequency,
                 })
         }
-        // const contributionDistributionByType = await getContributionDistributionByType(owner, repo);
-        //
-        // contributionsData.push({
-        //     'contributionDistributionByType': contributionDistributionByType
-        // })
+        const contributionDistributionByType = await getContributionDistributionByType(owner, repo);
+
+        contributionsData.push({
+            'contributionDistributionByType': contributionDistributionByType
+        })
     
         return contributionsData
     }catch(error){
@@ -215,7 +202,7 @@ const getMetricsByRepo = async (url) => {
 
 const getCommitFrequencyByDeveloper = async (owner, repo, developerUsername) => {
     try {
-        const response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/commits?author=${developerUsername}`, {headers});
+        const response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/commits?author=${developerUsername}&all=true&per_page=100`, {headers});
         const commits = response.data;
 
         const commitCount = Math.round(commits.length);
@@ -228,7 +215,6 @@ const getCommitFrequencyByDeveloper = async (owner, repo, developerUsername) => 
         const lastCommitDate = new Date(commits[0].commit.author.date);
         const timeDiffInDays = Math.abs(lastCommitDate - firstCommitDate) / (1000 * 60 * 60 * 24);
 
-        console.log(commitCount);
         const commitFrequency = Math.round(commitCount / timeDiffInDays);
         return ({
             'commitCount' : commitCount,
@@ -254,7 +240,7 @@ const getContributionDistributionByType = async (owner, repo) => {
         for (const contributor of contributors) {
             const username = contributor.login;
 
-            const commitsResponse = await axios.get(`https://api.github.com/repos/${owner}/${repo}/commits?author=${username}`, { headers });
+            const commitsResponse = await axios.get(`https://api.github.com/repos/${owner}/${repo}/commits?author=${username}&all=true&per_page=100`, { headers });
             const commits = commitsResponse.data;
 
             const commitCount = commits.length;

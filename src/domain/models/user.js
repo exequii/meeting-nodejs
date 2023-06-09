@@ -6,7 +6,8 @@ const typesUser = {
   preferences: 'object',
   disinterest: 'object',
   score: 'number',
-  githubUsername: 'object',
+  githubUsername: 'string',
+  gitlabUsername: 'string',
   projects: 'object',
   posts: 'object',
   supporting: 'object',
@@ -23,6 +24,7 @@ class User {
   disinterest = [];
   score = 0;
   githubUsername = '';
+  gitlabUsername = '';
   projects = [];
   posts = [];
   supporting = [];

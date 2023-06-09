@@ -1,5 +1,6 @@
 const Project = require('../models/project');
 const githubService = require('../services/githubService');
+const gitlabService = require('../services/gitlabService');
 const ProjectRepository = require('../../infrastructure/persistence/projectRepository');
 const { getSkipPage } = require('../utils/utilities');
 const userRepository = require('../../infrastructure/persistence/userRepository');
@@ -110,14 +111,19 @@ const finishProject = async (projectId,scores) => {
 }
 
 const getMetricsByRepo = async (projectId) => {
+    let metrics;
     try{
-        const project = await getProjectById(projectId);
 
+        const project = await getProjectById(projectId);
         if(project.urlRepository === null) {
             return false;
-        }
 
-        const metrics = await githubService.getMetricsByRepo(project.urlRepository);
+        }
+        if (project.urlRepository.includes('github')) {
+            const metrics = await githubService.getMetricsByRepo(project.urlRepository);
+        } else {
+            const metrics = await gitlabService.getMetricsByRepo(project.urlRepository);
+        }
 
         return metrics;
     }catch(error){

@@ -54,6 +54,11 @@ const userSchema = new Schema({
     required: false,
     default:''
   },
+  gitlabUsername: {
+    type: String,
+    required: false,
+    default:''
+  },
   projects: [{
     type: Schema.Types.ObjectId,
     ref: 'Project',

@@ -1,5 +1,6 @@
 const userService = require('../../domain/services/userService');
-const githubService = require('../../domain/services/githubService');
+// const githubService = require('../../domain/services/githubService');
+const gitlabService = require('../../domain/services/gitlabService');
 const { generateHash, comparePasswordWithHash } = require('../../domain/utils/utilities');
 const emailService = require('../../domain/services/emailService');
 const jwt = require('jsonwebtoken');
@@ -113,7 +114,7 @@ const getUsersByRanking = async (req, res) => {
 
 const getLanguagesByRepos = async (req, res) => {
   try {
-    const languages = await githubService.getLanguagesForUser(req.params.username);
+    const languages = await userService.getLanguagesForUser(req.params.id);
     res.status(200).json(languages);
   } catch (error) {
     console.error(error);
@@ -124,23 +125,14 @@ const getLanguagesByRepos = async (req, res) => {
 const getUserMetricsByRepos = async (req, res) => {
   try {
     const username = req.params.username
-    const metrics = []
-    const issues = await githubService.getReportedIssuesCount(username);
-    const pullRequests = await githubService.hasContributionsInExternalProjects(username);
-    const projectStats = await githubService.calculateAveragePopularity(username);
-    const quantityProjects = await githubService.getQuantityProjects(username);
-    const commitCounts = await githubService.getUserCommitCounts(username);
+    const metrics = {}
 
+    const githubMetrics = await userService.getGithubMetrics('NahuelSavedra');
+    metrics.githubMetrics = githubMetrics;
 
+    const gitlabMetrics = await userService.getGitlabMetrics('NahuelSavedra');
+    metrics.gitlabMetrics = gitlabMetrics;
 
-    metrics.push({'issuesReported' : issues,
-                  'contributionsExternalProjects' : pullRequests,
-                  'averagePopularityProjects': projectStats.averagePopularity,
-                  'maxStarsProject': projectStats.maxStars,
-                  'personalProjects': quantityProjects.quantityPersonalProjects,
-                  'outsideProjects': quantityProjects.quantityOutsidelProjects,
-                  'commits': commitCounts
-    })
 
     res.status(200).json(metrics);
   } catch (error) {
