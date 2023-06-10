@@ -3,6 +3,8 @@ const gitlabService = require('./gitlabService');
 const User = require('../models/user');
 const UserRepository = require("../../infrastructure/persistence/userRepository")
 const { getSkipPage } = require('../utils/utilities');
+const NodeCache = require('node-cache');
+const cache = new NodeCache();
 
 const createUser = async (userData) => {
   try {
@@ -125,13 +127,42 @@ async function getGitlabMetrics(username) {
     return { message: 'Internal server error', error: error.message };
   }
 }
+async function getUserMetricsByRepos(id) {
+  let metrics = {};
+  const user = await UserRepository.getById(id);
+
+  if (cache.has("metrics" + user.githubUsername + user.gitlabUsername)) {
+    return cache.get("metrics" + user.githubUsername + user.gitlabUsername);
+  }
+
+  try {
+    if (user.githubUsername !== '') {
+      metrics.githubMetrics = await getGithubMetrics(user.githubUsername);
+    }
+
+    if (user.gitlabUsername !== '') {
+      metrics.gitlabMetrics = await getGitlabMetrics(user.gitlabUsername);
+    }
+
+    cache.set("metrics" + user.githubUsername + user.gitlabUsername, metrics, 60 * 60 * 24);
+    return metrics;
+  } catch (error) {
+    console.error(error);
+    return { message: 'Internal server error', error: error.message };
+  }
+}
+
 
 async function getLanguagesForUser(id) {
-
   let languages = {};
   let githubLanguages = [];
   let gitlabLanguages = [];
   const user = await UserRepository.getById(id);
+
+  if (cache.has("languages" + user.githubUsername + user.gitlabUsername)) {
+    return cache.get("languages" + user.githubUsername + user.gitlabUsername);
+  }
+
   try {
 
     if (user.githubUsername !== ''){
@@ -143,7 +174,7 @@ async function getLanguagesForUser(id) {
       gitlabLanguages = await gitlabService.getLanguagesForUser(user.gitlabUsername);
       languages.gitlabLanguages = gitlabLanguages;
     }
-
+    cache.set("languages" + user.githubUsername + user.gitlabUsername, languages, 60*60*24);
     return languages;
   } catch (error) {
     console.error(error);
@@ -151,4 +182,4 @@ async function getLanguagesForUser(id) {
   }
 }
 
-module.exports = { createUser, getAllUsers, getUserById, updateUserById, deleteUserById, getUserByCredentials, getUserByFilters, getUsersByRanking, getLanguagesForUser, getGithubMetrics, getGitlabMetrics };
+module.exports = { createUser, getAllUsers, getUserById, updateUserById, deleteUserById, getUserByCredentials, getUserByFilters, getUsersByRanking, getLanguagesForUser, getGithubMetrics, getGitlabMetrics, getUserMetricsByRepos };

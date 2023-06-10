@@ -4,6 +4,8 @@ const gitlabService = require('../services/gitlabService');
 const ProjectRepository = require('../../infrastructure/persistence/projectRepository');
 const { getSkipPage } = require('../utils/utilities');
 const userRepository = require('../../infrastructure/persistence/userRepository');
+const NodeCache = require('node-cache');
+const cache = new NodeCache();
 
 const createProject = async (projectData) => {
     try{
@@ -112,8 +114,13 @@ const finishProject = async (projectId,scores) => {
 
 const getMetricsByRepo = async (projectId) => {
     let metrics;
+    const project = await getProjectById(projectId);
+
+    if (cache.has("project" + projectId)) {
+        return cache.get("project" + projectId);
+    }
+
     try{
-        const project = await getProjectById(projectId);
         if(project.urlRepository === null) {
             return false;
         }
@@ -122,7 +129,7 @@ const getMetricsByRepo = async (projectId) => {
         } else {
             metrics = await gitlabService.getMetricsByRepo(project.urlRepository);
         }
-
+        cache.set("project" + projectId, metrics, 60 * 60 * 24);
         return metrics;
     }catch(error){
         throw new Error(error);

@@ -124,16 +124,7 @@ const getLanguagesByRepos = async (req, res) => {
 
 const getUserMetricsByRepos = async (req, res) => {
   try {
-    const username = req.params.username
-    const metrics = {}
-
-    const githubMetrics = await userService.getGithubMetrics('NahuelSavedra');
-    metrics.githubMetrics = githubMetrics;
-
-    const gitlabMetrics = await userService.getGitlabMetrics('NahuelSavedra');
-    metrics.gitlabMetrics = gitlabMetrics;
-
-
+    const metrics = await userService.getUserMetricsByRepos(req.params.id);
     res.status(200).json(metrics);
   } catch (error) {
     console.error(error);
