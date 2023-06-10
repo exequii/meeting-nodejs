@@ -178,6 +178,42 @@ async function getDevelopersUsernames(owner, repo) {
     }
 }
 
+async function getCommitActivity(owner, repo) {
+    try {
+        const response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/commits`, {headers});
+        const commits = response.data;
+
+        const commitsByAuthor = {};
+
+        for (const commit of commits) {
+            console.log(commit);
+            const author = commit.author.login;
+            const commitData = {
+                message: commit.commit.message,
+                date: commit.commit.author.date,
+                html_url: commit.html_url
+            };
+
+            if (commitsByAuthor[author]) {
+                commitsByAuthor[author].push(commitData);
+            } else {
+                commitsByAuthor[author] = [commitData];
+            }
+        }
+
+        const lastCommitsByAuthor = {};
+
+        for (const author in commitsByAuthor) {
+            lastCommitsByAuthor[author] = commitsByAuthor[author].slice(0, 3);
+        }
+
+        return lastCommitsByAuthor;
+    } catch (error) {
+        console.error(error);
+        throw new Error('Error al obtener los últimos commits');
+    }
+}
+
 const getMetricsByRepo = async (url) => {
     try{
         const myUrl = new URL(url);
@@ -199,8 +235,12 @@ const getMetricsByRepo = async (url) => {
         }
         const contributionDistributionByType = await getContributionDistributionByType(owner, repo);
 
+        const commitActivity = await getCommitActivity(owner, repo);
+
         contributionsData.commitByUser = commitsByDevelopers;
         contributionsData.contributionDistributionByType = contributionDistributionByType
+        contributionsData.commitActivity = commitActivity
+
         return contributionsData
     }catch(error){
         console.error(error);
