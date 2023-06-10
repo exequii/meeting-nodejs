@@ -17,15 +17,54 @@ const createProject = async (projectData) => {
     }
 }
 
+const sortProjects = async (projects, userId) => {
+    const leaderProjects = [];
+    const participantProjects = [];
+    const supportProjects = [];
+    const otherProjects = [];
+
+    for (const project of projects) {
+        if (project.leader == userId) {
+            leaderProjects.push({ ...project.toObject(), roleUser: 'leader' });
+        } else if (project.participants.includes(userId)) {
+            participantProjects.push({ ...project.toObject(), roleUser: 'participant' });
+        } else if (project.supports.includes(userId)) {
+            supportProjects.push({ ...project.toObject(), roleUser: 'support' });
+        } else {
+            otherProjects.push(project);
+        }
+    }
+
+    return [
+        ...leaderProjects,
+        ...participantProjects,
+        ...supportProjects,
+        ...otherProjects,
+    ];
+}
+
 const getProjectsByFilters = async(filters, pagination) => {
     try {
+        let userId = null;
         let skipPage = 0;
         if(pagination) {
             skipPage = getSkipPage(pagination);
         }
+
+        if (filters.userId) {
+            userId = filters.userId;
+            delete filters.userId;
+        }
+
         const projects = await ProjectRepository.getByFilters(filters, skipPage);
+
         if(!projects || projects.length == 0) return null;
-        return projects;
+        if (userId) {
+
+            return sortProjects(projects.results, userId);
+        }
+
+        return projects.results;
     } catch (error) {
         throw new Error(error);
     }

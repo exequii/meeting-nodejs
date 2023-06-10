@@ -12,6 +12,7 @@ const typesUser = {
   posts: 'object',
   supporting: 'object',
   level: 'string',
+  mailEnabled: 'boolean',
 };
 
 
@@ -29,6 +30,7 @@ class User {
   posts = [];
   supporting = [];
   level='Junior';
+  mailEnabled = true;
 
   constructor(userData) {
     for(let key in userData){
