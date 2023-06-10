@@ -183,7 +183,7 @@ async function getCommitActivity(owner, repo) {
         const response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/commits`, {headers});
         const commits = response.data;
 
-        const commitsByAuthor = {};
+        const commitsByAuthor = [];
 
         for (const commit of commits) {
             console.log(commit);
@@ -201,10 +201,10 @@ async function getCommitActivity(owner, repo) {
             }
         }
 
-        const lastCommitsByAuthor = {};
+        const lastCommitsByAuthor = [];
 
         for (const author in commitsByAuthor) {
-            lastCommitsByAuthor[author] = commitsByAuthor[author].slice(0, 3);
+            lastCommitsByAuthor.push({'developerUsername': author,'data' : commitsByAuthor[author].slice(0, 3)});
         }
 
         return lastCommitsByAuthor;
