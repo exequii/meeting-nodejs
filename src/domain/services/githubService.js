@@ -299,7 +299,7 @@ const getContributionDistributionByType = async (owner, repo) => {
             pullRequests.push({'developerUsername' : username, 'quantity' : pullRequestsByUser.length});
             issues.push({'developerUsername' : username, 'quantity' : issuesByUser.length});
         }
-        contributionDistribution.push({'type' : 'commits', 'data' : commits});
+        contributionDistribution.push({'type' : 'releases', 'data' : commits});
         contributionDistribution.push({'type' : 'pullRequests', 'data' : pullRequests});
         contributionDistribution.push({'type' : 'issues', 'data' : issues});
 
