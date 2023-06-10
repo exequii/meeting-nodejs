@@ -49,6 +49,11 @@ const userSchema = new Schema({
     enum: ['Junior','Semi Senior','Senior'],
     default: 'Junior'
   },
+  mailEnabled: {
+    type: Boolean,
+    required: false,
+    default: true
+  },
   githubUsername: {
     type: String,
     required: false,
