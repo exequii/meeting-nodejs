@@ -292,7 +292,7 @@ const getContributionDistributionByType = async (owner, repo) => {
             const pullRequestResponse = await axios.get(`https://api.github.com/repos/${owner}/${repo}/pulls?state=all`, { headers });
             const pullRequestsByUser = pullRequestResponse.data.filter(pullRequest => pullRequest.user.login === username);
 
-            const issuesResponse = await axios.get(`https://api.github.com/repos/amitsingh-007/bypass-links/issues`, { headers });
+            const issuesResponse = await axios.get(`https://api.github.com/repos/${owner}/${repo}/issues`, { headers });
             const issuesByUser = issuesResponse.data.filter(issue => issue.user.login === username);
 
             commits.push({'developerUsername' : username, 'quantity' : commitsByUser.length});
