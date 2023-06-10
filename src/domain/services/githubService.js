@@ -186,7 +186,6 @@ async function getCommitActivity(owner, repo) {
         const commitsByAuthor = [];
 
         for (const commit of commits) {
-            console.log(commit);
             const author = commit.author.login;
             const commitData = {
                 message: commit.commit.message,
@@ -279,11 +278,10 @@ const getContributionDistributionByType = async (owner, repo) => {
         const response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/contributors`, { headers });
         const contributors = response.data;
 
-        const contributionDistribution = {
-            commits: {},
-            issues: {},
-            pullRequests: {}
-        };
+        const contributionDistribution = [];
+        const commits = [];
+        const pullRequests = [];
+        const issues = [];
 
         for (const contributor of contributors) {
             const username = contributor.login;
@@ -297,10 +295,13 @@ const getContributionDistributionByType = async (owner, repo) => {
             const issuesResponse = await axios.get(`https://api.github.com/repos/amitsingh-007/bypass-links/issues`, { headers });
             const issuesByUser = issuesResponse.data.filter(issue => issue.user.login === username);
 
-            contributionDistribution.commits[username] = commitsByUser.length;
-            contributionDistribution.issues[username] = issuesByUser.length;
-            contributionDistribution.pullRequests[username] = pullRequestsByUser.length;
+            commits.push({'developerUsername' : username, 'quantity' : commitsByUser.length});
+            pullRequests.push({'developerUsername' : username, 'quantity' : pullRequestsByUser.length});
+            issues.push({'developerUsername' : username, 'quantity' : issuesByUser.length});
         }
+        contributionDistribution.push({'type' : 'commits', 'data' : commits});
+        contributionDistribution.push({'type' : 'pullRequests', 'data' : pullRequests});
+        contributionDistribution.push({'type' : 'issues', 'data' : issues});
 
         return contributionDistribution;
     } catch (error) {
