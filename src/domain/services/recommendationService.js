@@ -1,24 +1,26 @@
 const { technologies, technologiesLength } = require('../models/technologies');
-const { questionsOfTechnologies , questionsOfPosts, questionsOfProyects } = require('../models/questions');
+const { questionsOfPosts, questionsOfProyects } = require('../models/questions');
 const { getTechnologieForQuestions,formatQuestionOfTechnologies } = require('../utils/utilities');
 const projectService = require('../../domain/services/projectService');
 const postService = require('../../domain/services/postService');
 
 const getRecommendation = async (user) => {
     try{
-    var type = getTypeRecommendation(user);
-        var result;
-        switch(type){
-            case "recommendation":
-                result = getQuestionOfTechnologies(user);
-                break;
-            case "project":
-                result = await getProyectsRecommendation(user);
-                break;
-            case "post":
-                result = await getPostsRecommendation(user);
-                break;
-        }
+        do{
+            var type = getTypeRecommendation(user);
+            var result;
+            switch(type){
+                case "recommendation":
+                    result = getQuestionOfTechnologies(user);
+                    break;
+                case "project":
+                    result = await getProyectsRecommendation(user);
+                    break;
+                case "post":
+                    result = await getPostsRecommendation(user);
+                    break;
+            }
+        }while(result == null)
         return {type, result};
     }catch(error){
         throw new Error(error);
@@ -53,11 +55,10 @@ const getQuestionOfTechnologies = (user) => {
 
 const getProyectsRecommendation = async (user) => {
     try{
-        do{
-            var technologie = user.preferences[Math.floor(Math.random() * user.preferences.length)];
-            var question = questionsOfProyects[Math.floor(Math.random() * questionsOfProyects.length)];
-            var projects = await projectService.getProjectsByFilters({technologies: technologie}, {limit: 3});
-        }while(projects.results.length < 1)
+        var technologie = user.preferences[Math.floor(Math.random() * user.preferences.length)];
+        var question = questionsOfProyects[Math.floor(Math.random() * questionsOfProyects.length)];
+        var projects = await projectService.getProjectsByFilters({technologies: technologie}, {limit: 1});
+        if(projects == null || projects.results.length < 1) return null
         return {technologie, question, results: projects.results};
     }catch(error){
         throw new Error(error);
@@ -66,11 +67,10 @@ const getProyectsRecommendation = async (user) => {
 
 const getPostsRecommendation = async (user) => {
     try{
-        do{
-            var technologie = user.preferences[Math.floor(Math.random() * user.preferences.length)] || technologies[Math.floor(Math.random() * technologies.length)];
-            var question = questionsOfPosts[Math.floor(Math.random() * questionsOfPosts.length)];
-            var posts = await postService.getPostsByFilters({technologies: technologie}, {limit: 3});
-        }while(posts.results.length < 1)
+        var technologie = user.preferences[Math.floor(Math.random() * user.preferences.length)] || technologies[Math.floor(Math.random() * technologies.length)];
+        var question = questionsOfPosts[Math.floor(Math.random() * questionsOfPosts.length)];
+        var posts = await postService.getPostsByFilters({technologies: technologie}, {limit: 1});
+        if(posts == null || posts.results.length < 1) return null
         return {technologie, question, results: posts.results};
     }catch(error){
         throw new Error(error);
