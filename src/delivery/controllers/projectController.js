@@ -1,5 +1,6 @@
 const projectService = require('../../domain/services/projectService');
 const emailService = require('../../domain/services/emailService');
+const {verify} = require("jsonwebtoken");
 
 const createProject = async (req, res) => {
     try{
@@ -12,11 +13,18 @@ const createProject = async (req, res) => {
 
 const getProjectsByFilters = async (req, res) => {
     try{
+        if (req.headers.authorization) {
+            const token = req.headers.authorization.split(' ')[1];
+            const decoded = verify(token, process.env.JWT_SECRET);
+            if (decoded.userId) {
+                req.body.userId = decoded.userId;
+            }
+        }
         const projects = await projectService.getProjectsByFilters(req.body,req?.params?.pagination);
         if(!projects){
             return res.status(204).json({results:[], message: 'Projects not found' });
         }
-        res.status(200).json(projects);
+        res.status(200).json({'results': projects});
     }catch(error){
         res.status(500).json({ message: 'Internal Server Error' ,error: error.message});
     }
