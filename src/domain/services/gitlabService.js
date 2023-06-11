@@ -43,7 +43,7 @@ const getUserCommitCounts = async (username) => {
         const repos = await getReposUser(username);
         const commitCountsByRepo = [];
 
-        for (const repo of repos) {
+        for (const repo of repos.slice(0, 10)) {
             const repositoryName = repo.name;
 
             const commitCount = await getCommitCountByRepository(repo.id);
