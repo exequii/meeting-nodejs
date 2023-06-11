@@ -24,7 +24,7 @@ const getProjectsByFilters = async (req, res) => {
         if(!projects){
             return res.status(204).json({results:[], message: 'Projects not found' });
         }
-        res.status(200).json({'results': projects});
+        res.status(200).json(projects);
     }catch(error){
         res.status(500).json({ message: 'Internal Server Error' ,error: error.message});
     }

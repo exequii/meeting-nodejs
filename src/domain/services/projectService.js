@@ -2,7 +2,6 @@ const Project = require('../models/project');
 const githubService = require('../services/githubService');
 const gitlabService = require('../services/gitlabService');
 const ProjectRepository = require('../../infrastructure/persistence/projectRepository');
-const { getSkipPage } = require('../utils/utilities');
 const userRepository = require('../../infrastructure/persistence/userRepository');
 const NodeCache = require('node-cache');
 const cache = new NodeCache();
@@ -22,8 +21,7 @@ const sortProjects = async (projects, userId) => {
     const leaderProjects = [];
     const participantProjects = [];
     const supportProjects = [];
-    const otherProjects = [];
-
+    const projectsWithRole = { results: [], count: 0 }
     //TODO: Refactor this
     for (const project of projects) {
         if (project.leader == userId) {
@@ -32,17 +30,18 @@ const sortProjects = async (projects, userId) => {
             participantProjects.push({ ...project.toObject(), roleUser: 'participant' });
         } else if (project.supports.includes(userId)) {
             supportProjects.push({ ...project.toObject(), roleUser: 'support' });
-        } else {
-            otherProjects.push(project);
         }
     }
 
-    return [
+    projectsWithRole.results = ([
         ...leaderProjects,
         ...participantProjects,
         ...supportProjects,
-        ...otherProjects,
-    ];
+    ]);
+
+    projectsWithRole.count = projectsWithRole.results.length;
+
+    return projectsWithRole;
 }
 
 const getProjectsByFilters = async(filters, pagination) => {
@@ -63,7 +62,7 @@ const getProjectsByFilters = async(filters, pagination) => {
         if (userId) {
             return sortProjects(projects.results, userId);
         }
-        return projects.results;
+        return projects;
     } catch (error) {
         throw new Error(error);
     }
@@ -186,7 +185,7 @@ const validateJoinProject = (project, user) => {
 const validateParticipantInProject = async (projectId, userId) => {
     try{
         let project = await getProjectsByFilters({ _id: projectId ,participants: userId });
-        if(project.length != 0) return null;
+        if(project.results.length != 0) return null;
         project = await getProjectById({ _id: projectId });
         return project;
     }catch(error){

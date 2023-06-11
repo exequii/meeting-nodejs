@@ -1,11 +1,20 @@
 const Project = require('../schemas/project');
-const { updateProjectAndUser, createProjectAndUpdateUser, updateScoreUsersAndFinishProyect, getLength } = require('../utils/utilities');
+const { updateProjectAndUser, createProjectAndUpdateUser, updateScoreUsersAndFinishProyect} = require('../utils/utilities');
 
 const create = async (projectData) => {
     try{
         if(projectData.leader == "") delete projectData.leader;
         let project = new Project(projectData);
         return await createProjectAndUpdateUser(project);
+    }catch(error){
+        throw new Error(error);
+    }
+}
+
+const getLength = async (projects) => {
+    try{
+        const count = await Project.count();
+        return {results: projects, count};
     }catch(error){
         throw new Error(error);
     }
