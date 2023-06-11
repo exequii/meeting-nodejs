@@ -177,30 +177,91 @@ async function getContributionDistributionByType(repoId, owner, repo) {
         const response = await axios.get(`https://gitlab.com/api/v4/projects/${repoId}/repository/contributors`, { headers });
         const contributors = response.data;
 
-        const contributionDistribution = {
-            commits: {},
-            issues: {},
-            pullRequest: {}
-        };
+        const contributionDistribution = [];
+        const commits = [];
+        const pullRequests = [];
+        const issues = [];
+
+        let issuesByUser;
+        let mergeRequestsByUser;
+        let releasesByUser;
+
         for (const contributor of contributors) {
             const username = contributor.name;
-            const issuesResponse = await axios.get(`https://gitlab.com/api/v4/projects/${owner}%2F${repo}/issues?author_username=${username}`, { headers });
+            issuesByUser = [];
+            mergeRequestsByUser = [];
+            releasesByUser = [];
 
-            const issues = issuesResponse.data;
-            const mergeRequestsResponse = await axios.get(`https://gitlab.com/api/v4/projects/${owner}%2F${repo}/merge_requests?author_username=${username}`, { headers });
-            const mergeRequests = mergeRequestsResponse.data;
-            console.log(contributor)
+            const releasesResponse = await axios.get(`https://gitlab.com/api/v4/projects/${repoId}/releases`, { headers });
+            if (releasesResponse.data.length > 0){
+                releasesByUser = releasesResponse.data.filter(release => release.author.name === username);
+            }
 
-            contributionDistribution.commits[username] = contributor.commits;
-            contributionDistribution.issues[username] = issues.length;
-            contributionDistribution.pullRequest[username] = mergeRequests.length;
+            const issuesResponse = await axios.get(`https://gitlab.com/api/v4/projects/${repoId}/issues`, { headers });
+            if (issuesResponse.data.length > 0){
+                issuesByUser = issuesResponse.data.filter(issue => issue.author.name === username);
+            }
+
+            const mergeRequestsResponse = await axios.get(`https://gitlab.com/api/v4/projects/${repoId}/merge_requests`, { headers });
+            mergeRequestsResponse.data.forEach(request => console.log(request.author.name))
+            if (mergeRequestsResponse.data.length > 0){
+                mergeRequestsByUser = mergeRequestsResponse.data.filter(request => request.author.name === username);
+            }
+
+            commits.push({'developerUsername' : username, 'quantity' : (releasesByUser.length ?? 0)});
+            pullRequests.push({'developerUsername' : username, 'quantity' : (mergeRequestsByUser.length ?? 0)});
+            issues.push({'developerUsername' : username, 'quantity' : (issuesByUser.length ?? 0)});
         }
+        contributionDistribution.push({'type' : 'releases', 'data' : commits});
+        contributionDistribution.push({'type' : 'pullRequests', 'data' : pullRequests});
+        contributionDistribution.push({'type' : 'issues', 'data' : issues});
+
 
         return contributionDistribution;
     } catch (error) {
         console.error(error);
         throw new Error(error);
     }
+}
+
+async function getCommitActivity(repoId, username) {
+    try {
+        const response = await axios.get(`https://gitlab.com/api/v4/projects/${repoId}/repository/commits`, { headers });
+        const commits = response.data;
+
+        const commitsByAuthor = {};
+
+        for (const commit of commits) {
+            const author = commit.author_name;
+            const commitData = {
+                message: commit.message,
+                date: commit.committed_date,
+                html_url: commit.web_url
+            };
+            commitData.date = commit.committed_date;
+
+            if (commitsByAuthor[author]) {
+                commitsByAuthor[author].push(commitData);
+            } else {
+                commitsByAuthor[author] = [commitData];
+            }
+
+            commit.web_url = undefined;
+            commit.committed_date = undefined;
+        }
+
+        const lastCommitsByAuthor = [];
+
+        for (const author in commitsByAuthor) {
+            lastCommitsByAuthor.push({ developerUsername: author, data: commitsByAuthor[author].slice(0, 3) });
+        }
+
+        return lastCommitsByAuthor;
+    } catch (error) {
+        console.error(error);
+        throw new Error('Error al obtener los últimos commits');
+    }
+
 }
 
 const getMetricsByRepo = async (url) => {
@@ -216,19 +277,24 @@ const getMetricsByRepo = async (url) => {
 
         const contributionsData = {};
         const commitByUser = [];
+        const commitActivity = [];
 
         for (const developerUsername of developersUsernames) {
+            console.log(developerUsername);
             const commitFrequency = await getCommitFrequencyByDeveloper(repo.id, developerUsername);
 
             commitByUser.push({
                 'developerUsername': developerUsername,
                 'commits': commitFrequency,
             })
+            commitActivity.push(await getCommitActivity(repo.id, developerUsername));
         }
+
         const contributionDistributionByType = await getContributionDistributionByType(repo.id, owner, repoName);
 
         contributionsData.commitByUser = commitByUser;
         contributionsData.contributionDistributionByType = contributionDistributionByType;
+        contributionsData.commitActivity = commitActivity[0]
 
         return contributionsData
     }catch(error){

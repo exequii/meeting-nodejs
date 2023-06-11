@@ -279,7 +279,7 @@ const getContributionDistributionByType = async (owner, repo) => {
         const contributors = response.data;
 
         const contributionDistribution = [];
-        const commits = [];
+        const releases = [];
         const pullRequests = [];
         const issues = [];
 
@@ -295,11 +295,11 @@ const getContributionDistributionByType = async (owner, repo) => {
             const issuesResponse = await axios.get(`https://api.github.com/repos/${owner}/${repo}/issues`, { headers });
             const issuesByUser = issuesResponse.data.filter(issue => issue.user.login === username);
 
-            commits.push({'developerUsername' : username, 'quantity' : releasesByUser.length});
+            releases.push({'developerUsername' : username, 'quantity' : releasesByUser.length});
             pullRequests.push({'developerUsername' : username, 'quantity' : pullRequestsByUser.length});
             issues.push({'developerUsername' : username, 'quantity' : issuesByUser.length});
         }
-        contributionDistribution.push({'type' : 'releases', 'data' : commits});
+        contributionDistribution.push({'type' : 'releases', 'data' : releases});
         contributionDistribution.push({'type' : 'pullRequests', 'data' : pullRequests});
         contributionDistribution.push({'type' : 'issues', 'data' : issues});
 
