@@ -116,7 +116,7 @@ const addProjectToUser = async (userId, projectId, support) => {
         let user = await userRepository.getById(userId);
         if(project.validateSystem && user) {
             if(!validateJoinProject(project, user)) {
-                return { message: "No cumplis con los requisitos minimos para unirte al proyecto" };
+                return { message: "No puedes unirte. Almenos una tecnologia de tus preferencias debe coincidir con las del proyecto." };
             }
             return await ProjectRepository.addProjectToUser(userId, projectId,support);
         }
