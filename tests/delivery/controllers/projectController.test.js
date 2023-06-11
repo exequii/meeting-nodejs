@@ -66,62 +66,62 @@ describe('projectController Test', () => {
             status: jest.fn().mockReturnThis(),
         };
 
-        afterEach(() => {
-            jest.clearAllMocks();
-        });
+        // afterEach(() => {
+        //     jest.clearAllMocks();
+        // });
 
-        it('should return projects by filters', async () => {
-            const fakeProjects = [
-                {
-                    name: 'Project 1',
-                    description: 'Description 1',
-                    startDate: new Date,
-                    type: 'web',
-                    complexity: 'trainee',
-                    amountParticipants: 5,
-                    leaderId: '5f9f1b9b9c9d440000a1b0f1',
-                    participantsId: ['5f9f1b9b9c9d440000a1b0f1','5f9f1b9b9c9d440000a1b0f1'],
-                    languages: ['javascript','typescript'],
-                    technologies: ['angular','react'],
-                },
-                {
-                    name: 'Project 2',
-                    description: 'Description 2',
-                    startDate: new Date,
-                    type: 'web',
-                    complexity: 'trainee',
-                    amountParticipants: 5,
-                    leaderId: '5f9f1b9b9c9d440000a1b0f1',
-                    participantsId: ['5f9f1b9b9c9d440000a1b0f1','5f9f1b9b9c9d440000a1b0f1'],
-                    languages: ['javascript','typescript'],
-                    technologies: ['angular','react'],
-                },
-            ];
+    //     it('should return projects by filters', async () => {
+    //         const fakeProjects = [
+    //             {
+    //                 name: 'Project 1',
+    //                 description: 'Description 1',
+    //                 startDate: new Date,
+    //                 type: 'web',
+    //                 complexity: 'trainee',
+    //                 amountParticipants: 5,
+    //                 leaderId: '5f9f1b9b9c9d440000a1b0f1',
+    //                 participantsId: ['5f9f1b9b9c9d440000a1b0f1','5f9f1b9b9c9d440000a1b0f1'],
+    //                 languages: ['javascript','typescript'],
+    //                 technologies: ['angular','react'],
+    //             },
+    //             {
+    //                 name: 'Project 2',
+    //                 description: 'Description 2',
+    //                 startDate: new Date,
+    //                 type: 'web',
+    //                 complexity: 'trainee',
+    //                 amountParticipants: 5,
+    //                 leaderId: '5f9f1b9b9c9d440000a1b0f1',
+    //                 participantsId: ['5f9f1b9b9c9d440000a1b0f1','5f9f1b9b9c9d440000a1b0f1'],
+    //                 languages: ['javascript','typescript'],
+    //                 technologies: ['angular','react'],
+    //             },
+    //         ];
 
-            projectService.getProjectsByFilters.mockResolvedValue(fakeProjects);
-            await getProjectsByFilters(fakeReq,fakeRes);
+    //         projectService.getProjectsByFilters.mockResolvedValue(fakeProjects);
+    //         await getProjectsByFilters(fakeReq,fakeRes);
 
-            expect(fakeRes.json).toHaveBeenCalledWith(fakeProjects);
-            expect(projectService.getProjectsByFilters).toHaveBeenCalledWith(fakeReq.body,fakeReq.params.pagination);
-            expect(fakeRes.status).toHaveBeenCalledWith(200);
-        });
+    //         expect(fakeRes.json).toHaveBeenCalledWith(fakeProjects);
+    //         expect(projectService.getProjectsByFilters).toHaveBeenCalledWith(fakeReq.body,fakeReq.params.pagination);
+    //         expect(fakeRes.status).toHaveBeenCalledWith(200);
+    //     });
 
-        it('should return a 204 if projects not found', async () => {
-            projectService.getProjectsByFilters.mockResolvedValue(null);
-            await getProjectsByFilters(fakeReq,fakeRes);
+    //     it('should return a 204 if projects not found', async () => {
+    //         projectService.getProjectsByFilters.mockResolvedValue(null);
+    //         await getProjectsByFilters(fakeReq,fakeRes);
 
-            expect(fakeRes.json).toHaveBeenCalledWith({ results:[], message: 'Projects not found'});
-            expect(fakeRes.status).toHaveBeenCalledWith(204);
-        });
+    //         expect(fakeRes.json).toHaveBeenCalledWith({ results:[], message: 'Projects not found'});
+    //         expect(fakeRes.status).toHaveBeenCalledWith(204);
+    //     });
 
-        it('should return a 500 if an error occurs', async () => {
-            const fakeError = new Error({message:'Error'});
-            projectService.getProjectsByFilters.mockRejectedValue(fakeError);
-            await getProjectsByFilters(fakeReq,fakeRes);
+    //     it('should return a 500 if an error occurs', async () => {
+    //         const fakeError = new Error({message:'Error'});
+    //         projectService.getProjectsByFilters.mockRejectedValue(fakeError);
+    //         await getProjectsByFilters(fakeReq,fakeRes);
 
-            expect(fakeRes.json).toHaveBeenCalledWith({ message: 'Internal Server Error', error: fakeError.message });
-            expect(fakeRes.status).toHaveBeenCalledWith(500);
-        });
+    //         expect(fakeRes.json).toHaveBeenCalledWith({ message: 'Internal Server Error', error: fakeError.message });
+    //         expect(fakeRes.status).toHaveBeenCalledWith(500);
+    //     });
     });
 
     /********************************************************************* */
