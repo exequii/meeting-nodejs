@@ -58,8 +58,8 @@ const getProyectsRecommendation = async (user) => {
         var technologie = user.preferences[Math.floor(Math.random() * user.preferences.length)];
         var question = questionsOfProyects[Math.floor(Math.random() * questionsOfProyects.length)];
         var projects = await projectService.getProjectsByFilters({technologies: technologie}, {limit: 1});
-        if(projects == null || projects.results.length < 1) return null
-        return {technologie, question, results: projects.results};
+        if(projects == null || projects.length < 1) return null
+        return {technologie, question, results: projects};
     }catch(error){
         throw new Error(error);
     }

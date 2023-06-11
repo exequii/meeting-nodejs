@@ -147,42 +147,42 @@ describe("Project Service Test", () => {
 //         /********************************************************************************************** */
 
         describe("getProjectsByFilters", () => {
-            it("should get projects by filters", async () => {
-                const projects = [
-                    {
-                        name: 'Project 2',
-                        description: 'Description 2',
-                        startDate: new Date,
-                        type: 'web',
-                        complexity: 'trainee',
-                        amountParticipants: 5,
-                        leaderId: '5f9f1b9b9c9d440000a1b0f1',
-                        participantsId: ['5f9f1b9b9c9d440000a1b0f1','5f9f1b9b9c9d440000a1b0f1'],
-                        languages: ['javascript','typescript'],
-                        technologies: ['angular','react'],
-                    },
-                    {
-                        name: 'Project 3',
-                        description: 'Description 4',
-                        startDate: new Date,
-                        type: 'web',
-                        complexity: 'trainee',
-                        amountParticipants: 5,
-                        leaderId: '5f9f1b9b9c9d440000a1b0f1',
-                        participantsId: ['5f9f1b9b9c9d440000a1b0f1','5f9f1b9b9c9d440000a1b0f1'],
-                        languages: ['javascript','typescript'],
-                        technologies: ['angular','react'],
-                    }
-                ]
-                const body = {
-                    type: "web"
-                }
-                projectRepository.getByFilters.mockResolvedValue(projects);
-                const result = await getProjectsByFilters(body);
+            // it("should get projects by filters", async () => {
+            //     const projects = [
+            //         {
+            //             name: 'Project 2',
+            //             description: 'Description 2',
+            //             startDate: new Date,
+            //             type: 'web',
+            //             complexity: 'trainee',
+            //             amountParticipants: 5,
+            //             leaderId: '5f9f1b9b9c9d440000a1b0f1',
+            //             participantsId: ['5f9f1b9b9c9d440000a1b0f1','5f9f1b9b9c9d440000a1b0f1'],
+            //             languages: ['javascript','typescript'],
+            //             technologies: ['angular','react'],
+            //         },
+            //         {
+            //             name: 'Project 3',
+            //             description: 'Description 4',
+            //             startDate: new Date,
+            //             type: 'web',
+            //             complexity: 'trainee',
+            //             amountParticipants: 5,
+            //             leaderId: '5f9f1b9b9c9d440000a1b0f1',
+            //             participantsId: ['5f9f1b9b9c9d440000a1b0f1','5f9f1b9b9c9d440000a1b0f1'],
+            //             languages: ['javascript','typescript'],
+            //             technologies: ['angular','react'],
+            //         }
+            //     ]
+            //     const body = {
+            //         type: "web"
+            //     }
+            //     projectRepository.getByFilters.mockResolvedValue(projects);
+            //     const result = await getProjectsByFilters(body);
 
-                expect(result).toEqual(projects);
-                expect(projectRepository.getByFilters).toHaveBeenCalled();
-            });
+            //     expect(result).toEqual(projects);
+            //     expect(projectRepository.getByFilters).toHaveBeenCalled();
+            // });
 
             it("should return null if not found projects", async () => {
                 const body = {

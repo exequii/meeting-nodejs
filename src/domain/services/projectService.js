@@ -6,6 +6,7 @@ const { getSkipPage } = require('../utils/utilities');
 const userRepository = require('../../infrastructure/persistence/userRepository');
 const NodeCache = require('node-cache');
 const cache = new NodeCache();
+const { getSkipPage } = require('../utils/utilities');
 
 const createProject = async (projectData) => {
     try{
@@ -23,6 +24,7 @@ const sortProjects = async (projects, userId) => {
     const supportProjects = [];
     const otherProjects = [];
 
+    //TODO: Refactor this
     for (const project of projects) {
         if (project.leader == userId) {
             leaderProjects.push({ ...project.toObject(), roleUser: 'leader' });
@@ -50,20 +52,17 @@ const getProjectsByFilters = async(filters, pagination) => {
         if(pagination) {
             skipPage = getSkipPage(pagination);
         }
-
+        //TODO: Delivery?
         if (filters.userId) {
             userId = filters.userId;
             delete filters.userId;
         }
 
         const projects = await ProjectRepository.getByFilters(filters, skipPage);
-
         if(!projects || projects.length == 0) return null;
         if (userId) {
-
             return sortProjects(projects.results, userId);
         }
-
         return projects.results;
     } catch (error) {
         throw new Error(error);
@@ -122,7 +121,7 @@ const addProjectToUser = async (userId, projectId, support) => {
         let user = await userRepository.getById(userId);
         if(project.validateSystem && user) {
             if(!validateJoinProject(project, user)) {
-                return { message: "No cumplis con los requisitos minimos para unirte al proyecto" };
+                return { message: "No puedes unirte. Almenos una tecnologia de tus preferencias debe coincidir con las del proyecto." };
             }
             return await ProjectRepository.addProjectToUser(userId, projectId,support);
         }
@@ -187,7 +186,7 @@ const validateJoinProject = (project, user) => {
 const validateParticipantInProject = async (projectId, userId) => {
     try{
         let project = await getProjectsByFilters({ _id: projectId ,participants: userId });
-        if(project.results.length != 0) return null;
+        if(project.length != 0) return null;
         project = await getProjectById({ _id: projectId });
         return project;
     }catch(error){
