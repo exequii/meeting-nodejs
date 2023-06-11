@@ -54,13 +54,10 @@ const getProjectsByFilters = async(filters, pagination) => {
         }
 
         const projects = await ProjectRepository.getByFilters(filters, skipPage);
-
         if(!projects || projects.length == 0) return null;
         if (userId) {
-
             return sortProjects(projects.results, userId);
         }
-
         return projects.results;
     } catch (error) {
         throw new Error(error);
@@ -176,7 +173,7 @@ const validateJoinProject = (project, user) => {
 const validateParticipantInProject = async (projectId, userId) => {
     try{
         let project = await getProjectsByFilters({ _id: projectId ,participants: userId });
-        if(project.results.length != 0) return null;
+        if(project.length != 0) return null;
         project = await getProjectById({ _id: projectId });
         return project;
     }catch(error){

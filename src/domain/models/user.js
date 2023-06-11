@@ -42,6 +42,7 @@ class User {
   }
 
   setLevel(){
+    if(this.score < 100) this.level = 'Trainee';
     if(this.score > 100 && this.score < 200) this.level = 'Junior';
     else if(this.score > 200 && this.score < 400) this.level = 'Semi Senior';
     else if(this.score > 400) this.level = 'Senior';
