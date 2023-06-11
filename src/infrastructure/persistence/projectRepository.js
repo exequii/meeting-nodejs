@@ -13,6 +13,7 @@ const create = async (projectData) => {
 
 const getByFilters = async(filters, skipPage) => {
     try {
+        if(filters.technologies?.$all?.length == 0) delete filters.technologies;
         let projects = await Project.find(filters).skip(skipPage).limit(10).cursor().toArray();
         projects = await getLength(projects);
         if(!projects || projects.length == 0) return null;

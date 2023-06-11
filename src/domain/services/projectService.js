@@ -1,8 +1,8 @@
 const Project = require('../models/project');
 const githubService = require('../services/githubService');
 const ProjectRepository = require('../../infrastructure/persistence/projectRepository');
-const { getSkipPage } = require('../utils/utilities');
 const userRepository = require('../../infrastructure/persistence/userRepository');
+const { getSkipPage } = require('../utils/utilities');
 
 const createProject = async (projectData) => {
     try{
@@ -20,6 +20,7 @@ const sortProjects = async (projects, userId) => {
     const supportProjects = [];
     const otherProjects = [];
 
+    //TODO: Refactor this
     for (const project of projects) {
         if (project.leader == userId) {
             leaderProjects.push({ ...project.toObject(), roleUser: 'leader' });
@@ -47,7 +48,7 @@ const getProjectsByFilters = async(filters, pagination) => {
         if(pagination) {
             skipPage = getSkipPage(pagination);
         }
-
+        //TODO: Delivery?
         if (filters.userId) {
             userId = filters.userId;
             delete filters.userId;
