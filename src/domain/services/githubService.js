@@ -286,8 +286,8 @@ const getContributionDistributionByType = async (owner, repo) => {
         for (const contributor of contributors) {
             const username = contributor.login;
 
-            const commitsResponse = await axios.get(`https://api.github.com/repos/${owner}/${repo}/commits?author=${username}&all=true&per_page=100`, { headers });
-            const commitsByUser = commitsResponse.data;
+            const releasesResponse = await axios.get(`https://api.github.com/repos/${owner}/${repo}/releases`, { headers });
+            const releasesByUser = releasesResponse.data.filter(release => release.author.login === username);
 
             const pullRequestResponse = await axios.get(`https://api.github.com/repos/${owner}/${repo}/pulls?state=all`, { headers });
             const pullRequestsByUser = pullRequestResponse.data.filter(pullRequest => pullRequest.user.login === username);
@@ -295,7 +295,7 @@ const getContributionDistributionByType = async (owner, repo) => {
             const issuesResponse = await axios.get(`https://api.github.com/repos/${owner}/${repo}/issues`, { headers });
             const issuesByUser = issuesResponse.data.filter(issue => issue.user.login === username);
 
-            commits.push({'developerUsername' : username, 'quantity' : commitsByUser.length});
+            commits.push({'developerUsername' : username, 'quantity' : releasesByUser.length});
             pullRequests.push({'developerUsername' : username, 'quantity' : pullRequestsByUser.length});
             issues.push({'developerUsername' : username, 'quantity' : issuesByUser.length});
         }
