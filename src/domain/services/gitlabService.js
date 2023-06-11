@@ -203,7 +203,6 @@ async function getContributionDistributionByType(repoId, owner, repo) {
             }
 
             const mergeRequestsResponse = await axios.get(`https://gitlab.com/api/v4/projects/${repoId}/merge_requests`, { headers });
-            mergeRequestsResponse.data.forEach(request => console.log(request.author.name))
             if (mergeRequestsResponse.data.length > 0){
                 mergeRequestsByUser = mergeRequestsResponse.data.filter(request => request.author.name === username);
             }
@@ -280,7 +279,6 @@ const getMetricsByRepo = async (url) => {
         const commitActivity = [];
 
         for (const developerUsername of developersUsernames) {
-            console.log(developerUsername);
             const commitFrequency = await getCommitFrequencyByDeveloper(repo.id, developerUsername);
 
             commitByUser.push({
@@ -305,7 +303,7 @@ const getMetricsByRepo = async (url) => {
 
 const getCommitFrequencyByDeveloper = async (repoId, developerUsername) => {
     try {
-        const response = await axios.get(`https://gitlab.com/api/v4/projects/${repoId}/repository/commits?author_username=${developerUsername}`, {headers});
+        const response = await axios.get(`https://gitlab.com/api/v4/projects/${repoId}/repository/commits?committer_name=${developerUsername}`, {headers});
         const commits = response.data;
         const commitCount = Math.round(commits.filter(commit => commit.author_name === developerUsername).length);
 
@@ -315,14 +313,22 @@ const getCommitFrequencyByDeveloper = async (repoId, developerUsername) => {
                 "commitFrequencyByDay" : 0});
         }
 
-        const firstCommitDate = new Date(commits[commitCount - 1].committed_date);
-        const lastCommitDate = new Date(commits[0].committed_date);
+        const firstCommitDate = new Date(commits[commitCount - 1].created_at);
+        const lastCommitDate = new Date(commits[0].created_at);
         const timeDiffInDays = Math.abs(lastCommitDate - firstCommitDate) / (1000 * 60 * 60 * 24);
 
-        const commitFrequency = Math.round(commitCount / timeDiffInDays);
-        return ({
-            'commitCount' : commitCount,
-            "commitFrequencyByDay" : commitFrequency});
+        let commitFrequency;
+
+        if (timeDiffInDays === 0 || isNaN(timeDiffInDays)) {
+            commitFrequency = 0;
+        } else {
+            commitFrequency = Math.round(commitCount / timeDiffInDays);
+        }
+
+        return {
+            'commitCount': commitCount,
+            'commitFrequencyByDay': commitFrequency,
+        };
 
     } catch (error) {
         console.error(error);
