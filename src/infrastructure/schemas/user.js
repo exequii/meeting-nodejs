@@ -46,7 +46,7 @@ const userSchema = new Schema({
   },
   level: {
     type: String,
-    enum: ['Junior','Semi Senior','Senior'],
+    enum: ['Trainee','Junior','Semi Senior','Senior'],
     default: 'Junior'
   },
   mailEnabled: {

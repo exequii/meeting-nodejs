@@ -6,13 +6,13 @@ const projectSchema = new Schema({
         type: String,
         required: true,
         minLength: [3, 'The name must be at least 3 characters long'],
-        maxLength: [20, 'The name must be at most 20 characters long'],
+        maxLength: [50, 'The name must be at most 20 characters long'],
     },
     description: {
         type: String,
         required: true,
         minLength: [10, 'The description must be at least 10 characters long'],
-        maxLength: [100, 'The description must be at most 100 characters long'],
+        maxLength: [500, 'The description must be at most 500 characters long'],
     },
     type: {
         type: String,
@@ -21,6 +21,10 @@ const projectSchema = new Schema({
         required: true
     },
     urlRepository: {
+        type: String,
+        default: ""
+    },
+    urlRepositoryGitlab: {
         type: String,
         default: ""
     },
