@@ -3,7 +3,6 @@ const typesProject = {
     description: 'string',
     type: 'string',
     urlRepository: 'string',
-    urlRepositoryGitlab: 'string',
     complexity: 'string',
     amountParticipants: 'number',
     leader: 'string',
@@ -23,7 +22,6 @@ class Project{
     description = "";
     type = "Web";
     urlRepository = "";
-    urlRepositoryGitlab = "";
     complexity = "Trainee";
     amountParticipants = 1;
     leader = "";

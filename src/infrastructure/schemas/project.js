@@ -24,10 +24,6 @@ const projectSchema = new Schema({
         type: String,
         default: ""
     },
-    urlRepositoryGitlab: {
-        type: String,
-        default: ""
-    },
     complexity: {
         type: String,
         enum: ['Trainee','Junior','Semisenior','Senior'],
