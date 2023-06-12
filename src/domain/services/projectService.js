@@ -17,10 +17,11 @@ const createProject = async (projectData) => {
     }
 }
 
-const sortProjects = async (projects, userId) => {
+const sortProjects = async (projects, userId, ownProject = false) => {
     const leaderProjects = [];
     const participantProjects = [];
     const supportProjects = [];
+    const otherProjects = [];
     const projectsWithRole = { results: [], count: 0 }
     //TODO: Refactor this
     for (const project of projects) {
@@ -30,14 +31,26 @@ const sortProjects = async (projects, userId) => {
             participantProjects.push({ ...project.toObject(), roleUser: 'participant' });
         } else if (project.supports.includes(userId)) {
             supportProjects.push({ ...project.toObject(), roleUser: 'support' });
+        } else {
+            otherProjects.push({ ...project.toObject(), roleUser: 'none' });
         }
     }
 
-    projectsWithRole.results = ([
-        ...leaderProjects,
-        ...participantProjects,
-        ...supportProjects,
-    ]);
+    console.log("OWN",ownProject)
+    if (ownProject) {
+        projectsWithRole.results = ([
+            ...leaderProjects,
+            ...participantProjects,
+            ...supportProjects,
+        ]);
+    } else {
+        projectsWithRole.results = ([
+            ...leaderProjects,
+            ...participantProjects,
+            ...supportProjects,
+            ...otherProjects
+        ]);
+    }
 
     projectsWithRole.count = projectsWithRole.results.length;
 
@@ -48,6 +61,7 @@ const getProjectsByFilters = async(filters, pagination) => {
     try {
         let userId = null;
         let skipPage = 0;
+        let ownProject = false;
         if(pagination) {
             skipPage = getSkipPage(pagination);
         }
@@ -56,10 +70,18 @@ const getProjectsByFilters = async(filters, pagination) => {
             userId = filters.userId;
             delete filters.userId;
         }
+        if (typeof filters.ownProject !== 'undefined' && filters.ownProject !== null) {
+            ownProject = filters.ownProject
+            delete filters.ownProject
+        }
 
         const projects = await ProjectRepository.getByFilters(filters, skipPage);
         if(!projects || projects.length == 0) return null;
+
         if (userId) {
+            if (ownProject) {
+                return sortProjects(projects.results, userId, ownProject);
+            }
             return sortProjects(projects.results, userId);
         }
         return projects;
