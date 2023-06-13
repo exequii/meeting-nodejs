@@ -44,7 +44,26 @@ const getAllProjects = async (req, res) => {
 
 const getProjectById = async (req, res) => {
     try{
+        let userId = null;
+        if (req.headers.authorization) {
+            const token = req.headers.authorization.split(' ')[1];
+            const decoded = verify(token, process.env.JWT_SECRET);
+            if (decoded.userId) {
+                userId = decoded.userId;
+            }
+        }
+
         const project = await projectService.getProjectById(req.params.id);
+
+        if (project.leader._id === userId) {
+            project.roleUser = 'leader';
+        } else if (project.participants.some(participant => participant.id === userId)) {
+            project.roleUser = 'participant';
+        } else if (project.supports.some(support => support.id === userId)) {
+            project.roleUser = 'support';
+        } else {
+            project.roleUser = 'none';
+        }
         if(!project) {
             return res.status(204).json({ message: 'Project not found' })
         }
