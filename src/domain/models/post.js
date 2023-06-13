@@ -15,6 +15,7 @@ class Post{
     author = "";
     messages = [];
     technologies = [];
+    project = "";
 
     constructor(postData) {
         for(let key in postData){

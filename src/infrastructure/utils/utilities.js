@@ -50,7 +50,6 @@ const createPostAndUpdateRelations = async (postData) => {
     try{
         let post = {};
         await session.withTransaction(async () => {
-            //console.log(projectData)
             post = await postData.save();
             if(postData.project) await Project.findByIdAndUpdate(postData.project, { $push: { posts: post._id } }, { session });
             if(postData.author) await User.findByIdAndUpdate(postData.author, { $push: { posts: post._id } }, { session });
