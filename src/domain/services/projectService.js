@@ -36,7 +36,6 @@ const sortProjects = async (projects, userId, ownProject = false) => {
         }
     }
 
-    console.log("OWN",ownProject)
     if (ownProject) {
         projectsWithRole.results = ([
             ...leaderProjects,

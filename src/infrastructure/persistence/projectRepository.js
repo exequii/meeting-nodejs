@@ -91,7 +91,6 @@ const getSuggestedProjects = async (user) => {
     try{
         let projects = []
         projects = await Project.find({ technologies: { $in: user.preferences }}).limit(5);
-        console.log(projects.length)
         if(projects.length < 5) {
             var concatenacion = await Project.find({ technologies: { $nin: user.preferences }}).limit(5 - projects.length)
             if(projects.length == 0) projects = concatenacion;

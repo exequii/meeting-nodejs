@@ -50,6 +50,7 @@ const createPostAndUpdateRelations = async (postData) => {
     try{
         let post = {};
         await session.withTransaction(async () => {
+            //console.log(projectData)
             post = await postData.save();
             if(postData.project) await Project.findByIdAndUpdate(postData.project, { $push: { posts: post._id } }, { session });
             if(postData.author) await User.findByIdAndUpdate(postData.author, { $push: { posts: post._id } }, { session });
@@ -57,6 +58,7 @@ const createPostAndUpdateRelations = async (postData) => {
         await session.commitTransaction();
         return post;
     }catch(error){
+        console.log(error)
         await session.abortTransaction();
         throw new Error(error);
     }finally{
@@ -102,15 +104,6 @@ const updateScoreUsersAndFinishProyect = async (projectId,scores) => {
     }
 }
 
-const getLength = async (entity) => {
-    try {
-        const count = await User.count();
-        entity = {results: entity, count};
-        return entity;
-    } catch (error) {
-        throw new Error(error);
-    }
-};
 
 module.exports = { 
     updateProjectAndUser,
@@ -118,5 +111,4 @@ module.exports = {
     createPostAndUpdateRelations, 
     createMessageAndUpdateRelations,
     updateScoreUsersAndFinishProyect,
-    getLength
 };

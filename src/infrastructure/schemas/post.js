@@ -6,13 +6,13 @@ const postSchema = new Schema({
         type: String,
         required: [true, 'Title is required'],
         minLength: [3, 'Name must be at least 3 characters long'],
-        maxLength: [30, 'Name must be at most 30 characters long'],
+        maxLength: [50, 'Name must be at most 30 characters long'],
     },
     body: {
         type: String,
         required: [true, 'Body is required'],
         minLength: [5, 'Name must be at least 5 characters long'],
-        maxLength: [300, 'Name must be at most 300 characters long'],
+        maxLength: [1000, 'Name must be at most 500 characters long'],
     },
     technologies: {
         type: [String],
@@ -20,7 +20,7 @@ const postSchema = new Schema({
         enum: ['Angular','React','Vue','Django','Express','Laravel','Spring','Nodejs','Javascript','C#.NET','Java','Php','Python','Ruby','Swift','Typescript',
         'C++','C','C#','Go','Kotlin','Objective-c','Scala','SQL','Dart','Html','Css',
         'Sass','Less','Bash','Powershell','R','Rust','Swift','Visual Basic','Svelte'],
-        deafult: []
+        deafult: [],
     },
     date: {
         type: Date,
@@ -30,13 +30,13 @@ const postSchema = new Schema({
     author: {
         type: Schema.Types.ObjectId,
         ref: 'User',
-        required: true,
+        required: false,
     },
     messages: [{
         type: Schema.Types.ObjectId,
         ref: 'Message',
         required: false,
-        default: []
+        default: [],
     }],
     project : {
         type: Schema.Types.ObjectId,

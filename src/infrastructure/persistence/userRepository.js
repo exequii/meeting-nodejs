@@ -1,5 +1,4 @@
 const User = require('../schemas/user');
-const { getLength } = require('../utils/utilities');
 
 const create = async (userData) => {
     try {
@@ -82,6 +81,15 @@ const getByRanking = async (skipPage) => {
         throw new Error(error);
     }
 };
+
+const getLength = async (users) => {
+    try{
+        const count = await User.count();
+        return {results: users, count};
+    }catch(error){
+        throw new Error(error);
+    }
+}
 
 
 

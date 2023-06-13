@@ -1,12 +1,12 @@
 const Post = require('../schemas/post');
-const { createPostAndUpdateRelations, getLength } = require('../utils/utilities');
+const { createPostAndUpdateRelations } = require('../utils/utilities');
 
 const create = async (postData) => {
     try{
         let post = new Post(postData);
-        console.log(post);
         return await createPostAndUpdateRelations(post);
     }catch(error){
+        console.log(error)
         throw new Error(error);
     }
 }
@@ -59,6 +59,15 @@ const deleteById = async (id) => {
         const postDeleted = await Post.findByIdAndDelete(id);
         if(!postDeleted) return null;
         return postDeleted;
+    }catch(error){
+        throw new Error(error);
+    }
+}
+
+const getLength = async (posts) => {
+    try{
+        const count = await Post.count();
+        return {results: posts, count};
     }catch(error){
         throw new Error(error);
     }
