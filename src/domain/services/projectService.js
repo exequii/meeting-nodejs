@@ -17,7 +17,7 @@ const createProject = async (projectData) => {
     }
 }
 
-const sortProjects = async (projects, userId, ownProject = false) => {
+const sortProjects = async (projects, userId, ownProject = false, count) => {
     const leaderProjects = [];
     const participantProjects = [];
     const supportProjects = [];
@@ -42,6 +42,7 @@ const sortProjects = async (projects, userId, ownProject = false) => {
             ...participantProjects,
             ...supportProjects,
         ]);
+        projectsWithRole.count = projectsWithRole.results.length;
     } else {
         projectsWithRole.results = ([
             ...leaderProjects,
@@ -49,9 +50,9 @@ const sortProjects = async (projects, userId, ownProject = false) => {
             ...supportProjects,
             ...otherProjects
         ]);
+        projectsWithRole.count = count;
     }
-
-    projectsWithRole.count = projectsWithRole.results.length;
+    
 
     return projectsWithRole;
 }
@@ -74,14 +75,14 @@ const getProjectsByFilters = async(filters, pagination) => {
             delete filters.ownProject
         }
 
-        const projects = await ProjectRepository.getByFilters(filters, skipPage);
+        let projects = await ProjectRepository.getByFilters(filters, skipPage);
         if(!projects || projects.length == 0) return null;
 
         if (userId) {
             if (ownProject) {
                 return sortProjects(projects.results, userId, ownProject);
             }
-            return sortProjects(projects.results, userId);
+            return sortProjects(projects.results, userId, false,projects.count);
         }
         return projects;
     } catch (error) {
