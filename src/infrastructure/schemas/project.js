@@ -6,7 +6,7 @@ const projectSchema = new Schema({
         type: String,
         required: true,
         minLength: [3, 'The name must be at least 3 characters long'],
-        maxLength: [50, 'The name must be at most 20 characters long'],
+        maxLength: [100, 'The name must be at most 100 characters long'],
     },
     description: {
         type: String,
