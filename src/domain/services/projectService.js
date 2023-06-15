@@ -206,6 +206,18 @@ const validateParticipantInProject = async (projectId, userId) => {
     }
 }
 
+const updateRequestProject = async (projectId, userId, accepted) => {
+    try{
+        const user = await userRepository.getById(userId);
+        if(!user) return null;
+        const project = await ProjectRepository.updateRequest(projectId, userId, accepted);
+        if(!project) return null;
+        return project;
+    }catch(error){
+        throw new Error(error);
+    }
+}
 
-module.exports = {createProject,getProjectsByFilters, getAllProjects, getProjectById, updateProjectById, deleteProjectById, addProjectToUser, getSuggestedProjects, finishProject, getMetricsByRepo };
+
+module.exports = {createProject,getProjectsByFilters, getAllProjects, getProjectById, updateProjectById, deleteProjectById, addProjectToUser, getSuggestedProjects, finishProject, getMetricsByRepo, updateRequestProject };
 

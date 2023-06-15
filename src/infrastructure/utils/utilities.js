@@ -14,7 +14,7 @@ const updateProjectAndUser = async (userId, projectId,support) => {
                 project = await Project.findByIdAndUpdate(projectId, { $push: { supports: userId } }, { session, new: true });
             }else{
                 await User.findByIdAndUpdate(userId, { $push: { projects: projectId } }, { session });
-                project = await Project.findByIdAndUpdate(projectId, { $push: { participants: userId } }, { session, new: true });
+                project = await Project.findByIdAndUpdate(projectId, { $push: { participants: userId }, $pull: {requests: userId} }, { session, new: true });
             }
         });
         await session.commitTransaction();
@@ -102,6 +102,7 @@ const updateScoreUsersAndFinishProyect = async (projectId,scores) => {
         session.endSession();
     }
 }
+
 
 const getSkipPage = (pagination) => {
     const resultsPerPage = 10;

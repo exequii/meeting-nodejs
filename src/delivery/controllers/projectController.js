@@ -134,12 +134,24 @@ const sendEmailInvite = async (req, res) => {
     }
 }
 
+const updateRequestProject = async (req, res) => {
+    try{
+        const project = await projectService.updateRequestProject(req.params.id,req.body.userId,req.body.accepted);
+        if(!project) {
+            return res.status(204).json({ message: 'Project or User not found' })
+        }
+        res.status(200).json(project);
+    }catch(error){
+        res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+}
+
 module.exports = {createProject, getProjectsByFilters,
     getAllProjects, getProjectById, 
     updateProjectById, deleteProjectById, 
     addProjectToUser, getSuggestedProjects, 
     finishProject, getMetricsByRepo,
-    sendEmailInvite 
+    sendEmailInvite, updateRequestProject
 };
 
 

@@ -119,6 +119,19 @@ const finishProject = async (projectId,scores) => {
     }
 }
 
+const updateRequest = async (projectId, userId, accepted) => {
+    try{
+        let project = {};
+        if(accepted) 
+            project = await updateProjectAndUser(userId, projectId, false);
+        else 
+            project = await Project.findByIdAndUpdate(projectId,{ $pull: {requests: userId}},{ new: true });
+        return project;
+    }catch(error){
+        throw new Error(error);
+    }
+}
 
-module.exports = {create,getByFilters, getAll, getById, updateById, deleteById, addProjectToUser, getSuggestedProjects, finishProject };
+
+module.exports = {create,getByFilters, getAll, getById, updateById, deleteById, addProjectToUser, getSuggestedProjects, finishProject, updateRequest};
 

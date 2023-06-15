@@ -160,6 +160,7 @@ const sendEmailContact = async (req, res) => {
     res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 }
+
 const verifyCurrentUser = async (req, res) => {
   try {
     let validate = false;
