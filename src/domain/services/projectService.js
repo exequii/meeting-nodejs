@@ -5,7 +5,6 @@ const ProjectRepository = require('../../infrastructure/persistence/projectRepos
 const userRepository = require('../../infrastructure/persistence/userRepository');
 const NodeCache = require('node-cache');
 const cache = new NodeCache();
-const { getSkipPage } = require('../utils/utilities');
 
 const createProject = async (projectData) => {
     try{
@@ -60,11 +59,7 @@ const sortProjects = async (projects, userId, ownProject = false, count) => {
 const getProjectsByFilters = async(filters, pagination) => {
     try {
         let userId = null;
-        let skipPage = 0;
         let ownProject = false;
-        if(pagination) {
-            skipPage = getSkipPage(pagination);
-        }
         //TODO: Delivery?
         if (filters.userId) {
             userId = filters.userId;
@@ -75,7 +70,7 @@ const getProjectsByFilters = async(filters, pagination) => {
             delete filters.ownProject
         }
 
-        let projects = await ProjectRepository.getByFilters(filters, skipPage);
+        let projects = await ProjectRepository.getByFilters(filters, pagination);
         if(!projects || projects.length == 0) return null;
 
         if (userId) {
@@ -92,11 +87,7 @@ const getProjectsByFilters = async(filters, pagination) => {
 
 const getAllProjects = async (pagination) => {
     try{
-        let skipPage = 0;
-        if(pagination) {
-            skipPage = getSkipPage(pagination);
-        }
-        const projects = await ProjectRepository.getAll(skipPage);
+        const projects = await ProjectRepository.getAll(pagination);
         if(!projects || projects.length == 0) return null;
         return projects;
     }catch(error){

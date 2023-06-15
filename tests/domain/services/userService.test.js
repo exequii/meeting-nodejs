@@ -1,8 +1,6 @@
 const { createUser, getAllUsers, getUserById, getUserByCredentials, updateUserById, deleteUserById, getUserByFilters, getUsersByRanking } = require('../../../src/domain/services/userService');
 const userRepository = require('../../../src/infrastructure/persistence/userRepository');
-const { getSkipPage } = require('../../../src/domain/utils/utilities');
 jest.mock('../../../src/infrastructure/persistence/userRepository');
-jest.mock('../../../src/domain/utils/utilities');
 
 describe('UserService Test', () => {
     afterEach(() => {

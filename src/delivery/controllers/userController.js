@@ -1,7 +1,7 @@
 const userService = require('../../domain/services/userService');
 // const githubService = require('../../domain/services/githubService');
 const gitlabService = require('../../domain/services/gitlabService');
-const { generateHash, comparePasswordWithHash } = require('../../domain/utils/utilities');
+const { generateHash, comparePasswordWithHash } = require('../../domain/utils/encript');
 const emailService = require('../../domain/services/emailService');
 const jwt = require('jsonwebtoken');
 
@@ -152,7 +152,7 @@ const getUserMetricsByRepos = async (req, res) => {
 const sendEmailContact = async (req, res) => {
   try {
     const { user, email, message } = req.body;
-    const emailResponse = await emailService.sendEmail(user, email, message);
+    const emailResponse = await emailService.sendTypeEmail(user, email, message);
     res.status(200).json(emailResponse);
   } catch (error) {
     console.error(error);

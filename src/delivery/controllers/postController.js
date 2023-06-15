@@ -73,7 +73,7 @@ const deletePostById = async (req, res) => {
 const sendEmailSuggest = async (req, res) => {
     try{
         const { user, email, message, post } = req.body;
-        const emailResponse = await emailService.sendEmail(user, email, message, null, post);
+        const emailResponse = await emailService.sendTypeEmail(user, email, message, null, post);
         res.status(200).json(emailResponse);
     }catch(error){
         res.status(500).json({ message: 'Internal server error', error: error.message });

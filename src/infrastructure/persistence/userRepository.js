@@ -1,4 +1,6 @@
 const User = require('../schemas/user');
+const { getSkipPage } = require('../utils/utilities');
+
 
 const create = async (userData) => {
     try {
@@ -71,8 +73,9 @@ const deleteById = async (id) => {
     }
 };
 
-const getByRanking = async (skipPage) => {
+const getByRanking = async (pagination) => {
     try {
+        const skipPage = getSkipPage(pagination);
         let users = await User.find().select('-password').sort({ score: -1 }).skip(skipPage).limit(10).cursor().toArray();
         users = await getLength(users);
         if (!users || users.length == 0) return null;

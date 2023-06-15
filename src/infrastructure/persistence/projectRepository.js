@@ -1,5 +1,5 @@
 const Project = require('../schemas/project');
-const { updateProjectAndUser, createProjectAndUpdateUser, updateScoreUsersAndFinishProyect} = require('../utils/utilities');
+const { updateProjectAndUser, createProjectAndUpdateUser, updateScoreUsersAndFinishProyect, getSkipPage} = require('../utils/utilities');
 
 const create = async (projectData) => {
     try{
@@ -20,8 +20,12 @@ const getLength = async (projects) => {
     }
 }
 
-const getByFilters = async(filters, skipPage) => {
+const getByFilters = async(filters, pagination) => {
     try {
+        let skipPage = 0;
+        if(pagination) {
+            skipPage = getSkipPage(pagination);
+        }
         if(filters.technologies?.$all?.length == 0) delete filters.technologies;
         let projects = await Project.find(filters).skip(skipPage).limit(10).cursor().toArray();
         projects = await getLength(projects);
@@ -32,8 +36,12 @@ const getByFilters = async(filters, skipPage) => {
     }
 }
 
-const getAll = async (skipPage) => {
+const getAll = async (pagination) => {
     try{
+        let skipPage = 0;
+        if(pagination) {
+            skipPage = getSkipPage(pagination);
+        }
         let projects = await Project.find().skip(skipPage).limit(10).cursor().toArray();
         projects = await getLength(projects);
         if(!projects || projects.length == 0) return null;

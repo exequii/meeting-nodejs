@@ -103,6 +103,12 @@ const updateScoreUsersAndFinishProyect = async (projectId,scores) => {
     }
 }
 
+const getSkipPage = (pagination) => {
+    const resultsPerPage = 10;
+    const skipPage = (parseInt(pagination) * resultsPerPage) - resultsPerPage ;
+    return skipPage;
+};
+
 
 module.exports = { 
     updateProjectAndUser,
@@ -110,4 +116,5 @@ module.exports = {
     createPostAndUpdateRelations, 
     createMessageAndUpdateRelations,
     updateScoreUsersAndFinishProyect,
+    getSkipPage
 };

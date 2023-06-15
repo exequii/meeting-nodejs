@@ -53,6 +53,12 @@ const projectSchema = new Schema({
         required: false,
         default: []
     }],
+    requests: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: false,
+        default: []
+    }],
     posts : [{
         type: Schema.Types.ObjectId,
         ref: 'Post',

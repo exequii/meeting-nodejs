@@ -1,5 +1,5 @@
 const Post = require('../schemas/post');
-const { createPostAndUpdateRelations } = require('../utils/utilities');
+const { createPostAndUpdateRelations, getSkipPage } = require('../utils/utilities');
 
 const create = async (postData) => {
     try{
@@ -11,8 +11,12 @@ const create = async (postData) => {
     }
 }
 
-const getByFilters = async(filters, skipPage) => {
+const getByFilters = async(filters, pagination) => {
     try {
+        let skipPage = 0;
+        if(pagination) {
+            skipPage = getSkipPage(pagination);
+        }
         let posts = await Post.find(filters).populate({path: 'author', select: '-password'}).skip(skipPage).limit(10).cursor().toArray();
         posts = await getLength(posts);
         if(!posts || posts.length == 0) return null;
@@ -22,8 +26,12 @@ const getByFilters = async(filters, skipPage) => {
     }
 }
 
-const getAll = async (skipPage) => {
+const getAll = async (pagination) => {
     try{
+        let skipPage = 0;
+        if(pagination) {
+            skipPage = getSkipPage(pagination);
+        }
         let posts = await Post.find().populate({path: 'author', select: '-password'}).skip(skipPage).limit(10).cursor().toArray();
         posts = await getLength(posts);
         if(!posts || posts.length == 0) return null;

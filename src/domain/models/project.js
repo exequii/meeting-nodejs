@@ -15,6 +15,7 @@ const typesProject = {
     status: 'string',
     requestSupport: 'boolean',
     validateSystem: 'boolean',
+    request: 'object',
 }
 
 class Project{
@@ -28,6 +29,7 @@ class Project{
     participants = [];
     supports = [];
     posts = [];
+    requests = [];
     startDate = new Date();
     endDate;
     technologies = [];

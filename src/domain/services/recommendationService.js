@@ -1,6 +1,6 @@
 const { technologies, technologiesLength } = require('../models/technologies');
 const { questionsOfPosts, questionsOfProyects } = require('../models/questions');
-const { getTechnologieForQuestions,formatQuestionOfTechnologies } = require('../utils/utilities');
+const { getTechnologieForQuestions,formatQuestionOfTechnologies } = require('../services/technologieService');
 const projectService = require('../../domain/services/projectService');
 const postService = require('../../domain/services/postService');
 

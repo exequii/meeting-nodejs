@@ -2,7 +2,6 @@ const githubService = require('./githubService');
 const gitlabService = require('./gitlabService');
 const User = require('../models/user');
 const UserRepository = require("../../infrastructure/persistence/userRepository")
-const { getSkipPage } = require('../utils/utilities');
 const NodeCache = require('node-cache');
 const cache = new NodeCache();
 
@@ -79,8 +78,7 @@ const deleteUserById = async (id) => {
 
 const getUsersByRanking = async (pagination) => {
   try {
-    const skipPage = getSkipPage(pagination);
-    const users = await UserRepository.getByRanking(skipPage);
+    const users = await UserRepository.getByRanking(pagination);
     if (!users || users.length == 0) return null;
     return users;
   } catch (error) {
