@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const { generateHash, comparePasswordWithHash, getSkipPage} = require('../../../src/domain/utils/utilities');
+const { generateHash, comparePasswordWithHash} = require('../../../src/domain/utils/encript');
 
 jest.mock('bcrypt', () => ({
     genSalt: jest.fn(() => Promise.resolve('mockedSalt')),

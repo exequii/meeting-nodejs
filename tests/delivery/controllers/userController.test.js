@@ -1,9 +1,9 @@
 const { createUser, getAllUsers, getUserById, updateUserById, deleteUserById,getUserByCredentials, getUserByFilters, getUsersByRanking } = require('../../../src/delivery/controllers/userController');
-const { generateHash, comparePasswordWithHash } = require('../../../src/domain/utils/utilities');
+const { generateHash, comparePasswordWithHash } = require('../../../src/domain/utils/encript');
 const userService = require('../../../src/domain/services/userService');
 const jwt = require('jsonwebtoken');
 jest.mock('../../../src/domain/services/userService');
-jest.mock('../../../src/domain/utils/utilities');
+jest.mock('../../../src/domain/utils/encript');
 jest.mock('jsonwebtoken');
 
 describe('userController Test', () => {
@@ -19,7 +19,7 @@ describe('userController Test', () => {
         });
 
         it('should return the user', async () => {
-            const fakeUser = { id: 1, name: 'Carlos' };
+            const fakeUser = { id: 1, name: 'Carlos', projects: [] };
             userService.getUserById.mockResolvedValue(fakeUser);
 
             await getUserById(fakeReq, fakeRes);

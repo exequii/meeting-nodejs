@@ -35,20 +35,21 @@ const getAllUsers = async (req, res) => {
   const getUserById = async (req, res) => {
     try {
       const user = await userService.getUserById(req.params.id);
-      for (const project of user.projects) {
-        let roleUser;
+      if(user && user.projects.length > 0){
+        for (const project of user.projects) {
+          let roleUser;
 
-        if (project.leader.toString() == req.params.id) {
-          roleUser = 'leader';
-        } else if (project.participants.includes(req.params.id)) {
-          roleUser = 'participant';
-        } else if (project.supports.includes(req.params.id)) {
-          roleUser = 'support';
-        } else {
-          roleUser = 'none';
+          if (project.leader.toString() == req.params.id) {
+            roleUser = 'leader';
+          } else if (project.participants.includes(req.params.id)) {
+            roleUser = 'participant';
+          } else if (project.supports.includes(req.params.id)) {
+            roleUser = 'support';
+          } else {
+            roleUser = 'none';
+          }
+          project._doc.roleUser = roleUser;
         }
-
-        project._doc.roleUser = roleUser;
       }
 
       if (!user) {
