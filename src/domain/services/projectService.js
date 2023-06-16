@@ -218,6 +218,19 @@ const updateRequestProject = async (projectId, userId, accepted) => {
     }
 }
 
+const leaveProject = async (projectId, userId) => {
+    try{
+        const user = await userRepository.getById(userId);
+        if(!user) return null;
+        const project = await ProjectRepository.leave(projectId, userId);
+        if(!project) return null;
+        return project;
+    }catch(error){
+        throw new Error(error);
+    }
+}
 
-module.exports = {createProject,getProjectsByFilters, getAllProjects, getProjectById, updateProjectById, deleteProjectById, addProjectToUser, getSuggestedProjects, finishProject, getMetricsByRepo, updateRequestProject };
+
+
+module.exports = {createProject,getProjectsByFilters, getAllProjects, getProjectById, updateProjectById, deleteProjectById, addProjectToUser, getSuggestedProjects, finishProject, getMetricsByRepo, updateRequestProject, leaveProject };
 

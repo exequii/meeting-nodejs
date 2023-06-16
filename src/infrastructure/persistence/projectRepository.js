@@ -1,5 +1,5 @@
 const Project = require('../schemas/project');
-const { updateProjectAndUser, createProjectAndUpdateUser, updateScoreUsersAndFinishProyect, getSkipPage} = require('../utils/utilities');
+const { updateProjectAndUser, createProjectAndUpdateUser, updateScoreUsersAndFinishProyect,leaveProjectAndUpdateUser, getSkipPage} = require('../utils/utilities');
 
 const create = async (projectData) => {
     try{
@@ -132,6 +132,14 @@ const updateRequest = async (projectId, userId, accepted) => {
     }
 }
 
+const leave = async (projectId, userId) => {
+    try{
+        const project = await leaveProjectAndUpdateUser(userId, projectId);
+        return project;
+    }catch(error){
+        throw new Error(error);
+    }
+}
 
-module.exports = {create,getByFilters, getAll, getById, updateById, deleteById, addProjectToUser, getSuggestedProjects, finishProject, updateRequest};
+module.exports = {create,getByFilters, getAll, getById, updateById, deleteById, addProjectToUser, getSuggestedProjects, finishProject, updateRequest, leave};
 

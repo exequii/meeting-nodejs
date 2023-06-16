@@ -27,6 +27,25 @@ const updateProjectAndUser = async (userId, projectId,support) => {
     }
 }
 
+const leaveProjectAndUpdateUser = async (userId, projectId) => {
+    const session = await mongoose.startSession();
+    try{
+        let project = {};
+        await session.withTransaction(async () => {
+            await User.findByIdAndUpdate(userId, { $pull: { projects: projectId }, $inc: {score: -500} }, { session });
+            project = await Project.findByIdAndUpdate(projectId, { $pull: { participants: userId }}, { session, new: true });
+            console.log(project)
+        });
+        await session.commitTransaction();
+        return project;
+    }catch(error){
+        await session.abortTransaction();
+        throw new Error(error);
+    }finally{
+        session.endSession();
+    }
+}
+
 const createProjectAndUpdateUser = async (projectData) => {
     const session = await mongoose.startSession();
     try{
@@ -117,5 +136,6 @@ module.exports = {
     createPostAndUpdateRelations, 
     createMessageAndUpdateRelations,
     updateScoreUsersAndFinishProyect,
+    leaveProjectAndUpdateUser,
     getSkipPage
 };
