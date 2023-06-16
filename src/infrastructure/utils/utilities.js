@@ -27,12 +27,21 @@ const updateProjectAndUser = async (userId, projectId,support) => {
     }
 }
 
+const setLevel = (user) => {
+    if(user.score < 100) return 'Trainee';
+    if(user.score > 100 && user.score < 200) return 'Junior';
+    else if(user.score > 200 && user.score < 400) return 'Semi Senior';
+    else if(user.score > 400) return 'Senior';
+}
+
 const leaveProjectAndUpdateUser = async (userId, projectId) => {
     const session = await mongoose.startSession();
     try{
         let project = {};
         await session.withTransaction(async () => {
-            await User.findByIdAndUpdate(userId, { $pull: { projects: projectId }, $inc: {score: -500} }, { session });
+            let userUpdated = await User.findByIdAndUpdate(userId, { $pull: { projects: projectId }, $inc: {score: -500}}, { session,new: true });
+            let levelUpdated = setLevel(userUpdated)
+            await User.findByIdAndUpdate(userId, { level: levelUpdated }, { session });
             project = await Project.findByIdAndUpdate(projectId, { $pull: { participants: userId }}, { session, new: true });
             console.log(project)
         });
@@ -107,9 +116,11 @@ const updateScoreUsersAndFinishProyect = async (projectId,scores) => {
     try{
         let project = {}
         await session.withTransaction(async () => {
-            project = await Project.findByIdAndUpdate(projectId, { status: 'Done' }, { new: true });
+            project = await Project.findByIdAndUpdate(projectId, { status: 'Done' }, { session,new: true });
             scores.forEach(async (score) => {
-                await User.findByIdAndUpdate(score.userId, { $inc: { score: score.score } });
+                let userUpdated = await User.findByIdAndUpdate(score.userId, { $inc: { score: score.score } }, { session,new: true });
+                let levelUpdated = setLevel(userUpdated)
+                await User.findByIdAndUpdate(score.userId, { level: levelUpdated }, { session });
             });
         });
         await session.commitTransaction();
