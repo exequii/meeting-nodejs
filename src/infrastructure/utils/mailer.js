@@ -166,5 +166,75 @@ const sendEmailPlatform = async (user, projects) => {
     }
 };
 
+const sendRequest = async (user,leader,project, status) => {
+    try{
+        await transporter.sendMail({
+            from: `<${process.env.EMAIL_USER}>`,
+            to: leader.email,
+            subject: "Meeting - Solicitudes de tu Proyecto",
+            html: `
+                <style>
+                    @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+                    *{
+                        font-family: 'Poppins', sans-serif;
+                    }
+                    hr{
+                        border: 1px solid #c42e6c;
+                        width: 50%;
+                    }
+                    #contenedor{
+                        background-color: #ffffff;
+                        padding: 20px;
+                        text-align: center;
+                        border: 1px solid #c42e6c;
+                        border-radius: 10px;
+                    }
+                    .button{
+                        padding: 5px 10px;
+                        border-radius: 5px;
+                        background-color: #c42e6c;
+                        color: white;
+                        text-decoration: none;
+                        margin-bottom: 15px;
+                    }
+                    #proyecto{
+                        background-color: #ffffff;
+                        padding: 20px;
+                        text-align: center;
+                        border: 1px solid #c42e6c;
+                        border-radius: 10px;
+                    }
+                </style>
+                <div id="contenedor">
+                <h1>¡Has recibido una actualizacion de solicitudes de tu proyecto ${project.name}!</h1>
+                <p>Recuerda revisar detalladamente el perfil del usuario para verificar que cumpla con tus requisitos.</p>
+                <div id="proyecto">
+                    <h3>${user.name} - ${status ? 'Ha solicitado unirse' : 'Ha cancelado la solicitud'}</h3>
+                    <hr>
+                    <p>${user.level}</p>
+                    <br/>
+                    <p>Si te interesa, podes verlo en el siguiente link:</p>
+                    <br/>
+                    <a href="${process.env.FRONTEND_URL}/projects/${project._id}" class="button">${project.name}</a>
+                </div>
+                <br>
+                <span>Gracias por usar Meeting</span>
+                <br/>
+                <span>Seguinos en nuestras redes sociales</span>
+                <br/><br/>
+                <div>
+                    <a href="${process.env.INSTAGRAM_URL}" class="button">Instagram</a>
+                    <a href="${process.env.TWITTER_URL}" class="button">Twitter</a>
+                    <a href="${process.env.LINKEDIN_URL}" class="button">LinkedIn</a>
+                </div>
+            </div>
+            `
+        });
+    }catch(error){
+        console.log(error);
+        throw new Error(error);
+    }
+}
 
-module.exports = { sendEmail, sendEmailPlatform };
+
+module.exports = { sendEmail, sendEmailPlatform, sendRequest };

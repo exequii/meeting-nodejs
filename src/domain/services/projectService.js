@@ -1,6 +1,7 @@
 const Project = require('../models/project');
 const githubService = require('../services/githubService');
 const gitlabService = require('../services/gitlabService');
+const emailService = require('../services/emailService');
 const ProjectRepository = require('../../infrastructure/persistence/projectRepository');
 const userRepository = require('../../infrastructure/persistence/userRepository');
 const NodeCache = require('node-cache');
@@ -231,6 +232,21 @@ const leaveProject = async (projectId, userId) => {
 }
 
 
+const updateRequestByProjectId = async (id, newData) => {
+    try{
+        const projectUpdated = await ProjectRepository.updateById(id,newData);
+        if(newData.hasOwnProperty("$push")) await emailService.sendEmailRequest(projectUpdated,newData.$push.requests,true);
+        if(newData.hasOwnProperty("$pull")) await emailService.sendEmailRequest(projectUpdated,newData.$pull.requests,false);
+        if(!projectUpdated) return null;
+        return projectUpdated;
+    }catch(error){
+        throw new Error(error);
+    }
+}
 
-module.exports = {createProject,getProjectsByFilters, getAllProjects, getProjectById, updateProjectById, deleteProjectById, addProjectToUser, getSuggestedProjects, finishProject, getMetricsByRepo, updateRequestProject, leaveProject };
+
+module.exports = {createProject,getProjectsByFilters, getAllProjects, getProjectById,
+    updateProjectById, deleteProjectById, addProjectToUser, getSuggestedProjects, finishProject,
+    getMetricsByRepo, updateRequestProject, leaveProject,updateRequestByProjectId 
+};
 

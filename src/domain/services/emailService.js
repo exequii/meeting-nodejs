@@ -1,5 +1,5 @@
-const { sendEmail, sendEmailPlatform } = require('../../infrastructure/utils/mailer');
-const { getAllProjects } = require('../../domain/services/projectService');
+const { sendEmail, sendEmailPlatform, sendRequest } = require('../../infrastructure/utils/mailer');
+const userService = require('../../domain/services/userService');
 
 const sendTypeEmail = async (user, email, message, project, post) => {
     try{
@@ -10,17 +10,27 @@ const sendTypeEmail = async (user, email, message, project, post) => {
     }
 };
 
-const sendEmailPlatformMeeting = async (user) => {
+const sendEmailPlatformMeeting = async (user,projects) => {
     try{
-        const projects = await getAllProjects();
-        const projectsSend = projects.results.slice(0,3);
-        await sendEmailPlatform(user,projectsSend);
+        await sendEmailPlatform(user,projects);
     }catch(error){
         console.log(error);
         throw new Error(error);
     }
 };
 
-module.exports = { sendTypeEmail, sendEmailPlatformMeeting};
+const sendEmailRequest = async (project, idUser, status) => {
+    try{
+        const userRequest = await userService.getUserById(idUser);
+        const userLeader = await userService.getUserById(project.leader);
+        console.log(userLeader.email)
+        await sendRequest(userRequest,userLeader,project,status);
+    }catch(error){
+        console.log(error);
+        throw new Error(error);
+    }
+}
+
+module.exports = { sendTypeEmail, sendEmailPlatformMeeting, sendEmailRequest};
 
 

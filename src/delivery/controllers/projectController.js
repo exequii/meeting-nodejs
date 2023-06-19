@@ -158,13 +158,25 @@ const leaveProject = async (req, res) => {
     }
 }
 
+const updateRequestByProjectId = async (req, res) => {
+    try{
+        const project = await projectService.updateRequestByProjectId(req.params.id, req.body);
+        if(!project) {
+            return res.status(204).json({ message: 'Project not found' })
+        }
+        res.status(200).json(project);
+    }catch(error){
+        res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+}
+
 module.exports = {createProject, getProjectsByFilters,
     getAllProjects, getProjectById, 
     updateProjectById, deleteProjectById, 
     addProjectToUser, getSuggestedProjects, 
     finishProject, getMetricsByRepo,
     sendEmailInvite, updateRequestProject,
-    leaveProject
+    leaveProject,updateRequestByProjectId
 };
 
 
