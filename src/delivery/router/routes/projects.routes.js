@@ -14,7 +14,7 @@ router.post('/finish/:id', authMiddleware, finishProject);
 router.post('/invite', authMiddleware, sendEmailInvite)
 router.post('/request/:id', authMiddleware, updateRequestProject)
 router.get('/:id', getProjectById);
-router.put('/:id', authMiddleware, updateProjectById);
+router.put('/:id',authMiddleware, updateProjectById);
 router.put('/leave/:id', authMiddleware, leaveProject);
 router.get('/getMetrics/:id' , getMetricsByRepo);
 router.delete('/:id', authMiddleware, deleteProjectById);

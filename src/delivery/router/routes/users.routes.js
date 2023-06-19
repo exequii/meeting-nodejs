@@ -11,7 +11,7 @@ router.get('/:id', getUserById);
 router.get('/ranking/:pagination', getUsersByRanking);
 router.get('/languages/:id',getLanguagesByRepos);
 router.get('/metrics/:id', getUserMetricsByRepos);
-router.put('/:id', updateUserById);
+router.put('/:id',authMiddleware ,updateUserById);
 router.delete('/:id', authMiddleware, deleteUserById);
 router.post('/verify' , verifyCurrentUser);
 

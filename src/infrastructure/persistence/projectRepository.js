@@ -54,6 +54,7 @@ const getAll = async (pagination) => {
 const getById = async (id) => {
     try{
         const project = await Project.findById(id)
+        .populate({path: 'requests', select: '-password'})
         .populate({path: 'leader', select: '-password'})
         .populate({path: 'participants', select: '-password'})
         .populate({path: 'supports',select: '-password'})
