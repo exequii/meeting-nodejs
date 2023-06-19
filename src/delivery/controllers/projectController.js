@@ -136,7 +136,7 @@ const sendEmailInvite = async (req, res) => {
 
 const updateRequestProject = async (req, res) => {
     try{
-        const project = await projectService.updateRequestProject(req.params.id,req.body.userId,req.body.accepted);
+        const project = await projectService.updateRequestProject(req.params.id,req.body.idUser,req.body.accepted);
         if(!project) {
             return res.status(204).json({ message: 'Project or User not found' })
         }
