@@ -1,6 +1,9 @@
 const projectService = require('../../domain/services/projectService');
 const emailService = require('../../domain/services/emailService');
+const pdfService = require('../../domain/services/pdfService');
 const {verify} = require("jsonwebtoken");
+const path = require('path');
+const fs = require('fs');
 
 const createProject = async (req, res) => {
     try{
@@ -170,13 +173,22 @@ const updateRequestByProjectId = async (req, res) => {
     }
 }
 
+const downloadPDF = async (req, res) => {
+    try{
+        const pdf = await pdfService.downloadCertificatePDF(req.body.html);
+        res.status(200).send(pdf);
+    }catch(error){
+        res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+}
+
 module.exports = {createProject, getProjectsByFilters,
     getAllProjects, getProjectById, 
     updateProjectById, deleteProjectById, 
     addProjectToUser, getSuggestedProjects, 
     finishProject, getMetricsByRepo,
     sendEmailInvite, updateRequestProject,
-    leaveProject,updateRequestByProjectId
+    leaveProject,updateRequestByProjectId,downloadPDF
 };
 
 
