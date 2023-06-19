@@ -2,8 +2,6 @@ const projectService = require('../../domain/services/projectService');
 const emailService = require('../../domain/services/emailService');
 const pdfService = require('../../domain/services/pdfService');
 const {verify} = require("jsonwebtoken");
-const path = require('path');
-const fs = require('fs');
 
 const createProject = async (req, res) => {
     try{
