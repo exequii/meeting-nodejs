@@ -69,7 +69,7 @@ const getById = async (id) => {
 
 const updateById = async (id, newData) => {
     try{
-        const projectUpdated = await Project.findByIdAndUpdate(id,newData, { new: true });
+        const projectUpdated = await Project.findByIdAndUpdate(id,newData, { new: true }).populate({path: 'participants', select: '-password'});
         if(!projectUpdated) return null;
         return projectUpdated;
     }catch(error){

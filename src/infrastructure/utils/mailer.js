@@ -236,5 +236,73 @@ const sendRequest = async (user,leader,project, status) => {
     }
 }
 
+const sendUpdateStatusProyect = async (user,project) => {
+    try{
+        await transporter.sendMail({
+            from: `<${process.env.EMAIL_USER}>`,
+            to: user.email,
+            subject: "Meeting - Actualizaciones en tu Proyecto",
+            html: `
+                <style>
+                    @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+                    *{
+                        font-family: 'Poppins', sans-serif;
+                    }
+                    hr{
+                        border: 1px solid #c42e6c;
+                        width: 50%;
+                    }
+                    #contenedor{
+                        background-color: #ffffff;
+                        padding: 20px;
+                        text-align: center;
+                        border: 1px solid #c42e6c;
+                        border-radius: 10px;
+                    }
+                    .button{
+                        padding: 5px 10px;
+                        border-radius: 5px;
+                        background-color: #c42e6c;
+                        color: white;
+                        text-decoration: none;
+                        margin-bottom: 15px;
+                    }
+                    #proyecto{
+                        background-color: #ffffff;
+                        padding: 20px;
+                        text-align: center;
+                        border: 1px solid #c42e6c;
+                        border-radius: 10px;
+                    }
+                </style>
+                <div id="contenedor">
+                    <h1>¡El proyecto ${project.name} ha sido actualizado!</h1>
+                    <p>El lider del proyecto en el que participas ha actualizado las preferencias, ¿que te parece si las revisamos?.</p>
+                    <div id="proyecto">
+                        <h3>${project.name}</h3>
+                        <hr>
+                        <p>Podes ver los cambios en el siguiente link:</p>
+                        <br/>
+                        <a href="${process.env.FRONTEND_URL}/projects/${project._id}" class="button">${project.name}</a>
+                    </div>
+                    <br>
+                    <span>Gracias por usar Meeting</span>
+                    <br/>
+                    <span>Seguinos en nuestras redes sociales</span>
+                    <br/><br/>
+                    <div>
+                        <a href="${process.env.INSTAGRAM_URL}" class="button">Instagram</a>
+                        <a href="${process.env.TWITTER_URL}" class="button">Twitter</a>
+                        <a href="${process.env.LINKEDIN_URL}" class="button">LinkedIn</a>
+                    </div>
+                </div>
+                `
+        });
+    }catch(error){
+        console.log(error);
+        throw new Error(error);
+    }
+}
 
-module.exports = { sendEmail, sendEmailPlatform, sendRequest };
+
+module.exports = { sendEmail, sendEmailPlatform, sendRequest, sendUpdateStatusProyect };

@@ -110,6 +110,9 @@ const getProjectById = async (id) => {
 const updateProjectById = async (id, newData) => {
     try{
         const projectUpdated = await ProjectRepository.updateById(id,newData);
+        projectUpdated.participants.forEach(async (participant) => {
+            if(participant.mailEnabled) await emailService.sendEmailUpdateStatusProyect(participant,projectUpdated);
+        });
         if(!projectUpdated) return null;
         return projectUpdated;
     }catch(error){

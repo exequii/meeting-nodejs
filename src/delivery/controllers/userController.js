@@ -71,7 +71,7 @@ const getUserByCredentials = async (req, res) => {
     if (!validPassword) return res.status(400).json({ message: 'Password not valid' })
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION });
     const projects = await projectService.getAllProjects();
-    await emailService.sendEmailPlatformMeeting(user,projects.results.slice(0,3));
+    if(user.mailEnabled) await emailService.sendEmailPlatformMeeting(user,projects.results.slice(0,3));
     res.status(200).json({'token' : token, 'user': user});
   }catch(error){
     //console.error(error)
