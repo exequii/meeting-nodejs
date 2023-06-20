@@ -1,5 +1,6 @@
 const userService = require('../../domain/services/userService');
 // const githubService = require('../../domain/services/githubService');
+const projectService = require('../../domain/services/projectService');
 const gitlabService = require('../../domain/services/gitlabService');
 const { generateHash, comparePasswordWithHash } = require('../../domain/utils/encript');
 const emailService = require('../../domain/services/emailService');
@@ -69,6 +70,8 @@ const getUserByCredentials = async (req, res) => {
     const validPassword = await comparePasswordWithHash(req.body.password, user.password);
     if (!validPassword) return res.status(400).json({ message: 'Password not valid' })
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION });
+    const projects = await projectService.getAllProjects();
+    if(user.mailEnabled) await emailService.sendEmailPlatformMeeting(user,projects.results.slice(0,3));
     res.status(200).json({'token' : token, 'user': user});
   }catch(error){
     //console.error(error)
