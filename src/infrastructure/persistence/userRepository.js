@@ -53,6 +53,15 @@ const getById = async (id) => {
     }
 };
 
+const updateTechnologies = async (id, technologiesToSave) => {
+    try {
+        const userUpdated = await User.findByIdAndUpdate(id, {technologies: technologiesToSave}, { new: true,runValidators: true });
+        if(!userUpdated) return null;
+    } catch (error) {
+        throw new Error(error);
+    }
+}
+
 const updateById = async (id, newData) => {
     try {
         const userUpdated = await User.findByIdAndUpdate(id,newData, { new: true }).select('-password');
@@ -96,4 +105,4 @@ const getLength = async (users) => {
 
 
 
-module.exports = { create, getAll, getById, updateById, deleteById, getByCredentials, getByFilters, getByRanking };
+module.exports = { create, getAll, getById, updateById, deleteById, getByCredentials, getByFilters, getByRanking, updateTechnologies };

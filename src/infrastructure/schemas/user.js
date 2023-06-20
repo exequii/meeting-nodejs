@@ -1,6 +1,25 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
+const technologies = ['Angular','React','Vue','Django','Express','Laravel','Spring','Nodejs','Javascript','C#.NET','Java','Php','Python','Ruby','Swift','Typescript',
+  'C++','C','C#','Go','Kotlin','Objective-c','Scala','SQL','Dart','Html','Css',
+  'Sass','Less','Bash','Powershell','R','Rust','Swift','Visual Basic','Svelte'];
+
+const levels = ['Trainee','Junior','Semi Senior','Senior'];
+
+const roles = ['FullStack','Frontend','Backend','Diseñador/a','QA','Analista Funcional','Otro'];
+
+const technologySchema = new mongoose.Schema({
+  nameTechnologie:{
+    type: String,
+    enum: technologies,
+  },
+  experience:{
+    type: String,
+    enum: levels
+  }
+}, { _id: false });
+
 const userSchema = new Schema({
   name: {
     type: String,
@@ -20,23 +39,19 @@ const userSchema = new Schema({
   },
   role: {
     type: String,
-    enum: ['FullStack','Frontend','Backend','Diseñador/a','QA','Analista Funcional','Otro'],
+    enum: roles,
     default: 'Otro'
   },
   preferences: {
     type: [String],
     required: false,
-    enum: ['Angular','React','Vue','Django','Express','Laravel','Spring','Nodejs','Javascript','C#.NET','Java','Php','Python','Ruby','Swift','Typescript',
-    'C++','C','C#','Go','Kotlin','Objective-c','Scala','SQL','Dart','Html','Css',
-    'Sass','Less','Bash','Powershell','R','Rust','Swift','Visual Basic','Svelte'],
+    enum: technologies,
     default: []
   },
   disinterest: {
     type: [String],
     required: false,
-    enum: ['Angular','React','Vue','Django','Express','Laravel','Spring','Nodejs','Javascript','C#.NET','Java','Php','Python','Ruby','Swift','Typescript',
-    'C++','C','C#','Go','Kotlin','Objective-c','Scala','SQL','Dart','Html','Css',
-    'Sass','Less','Bash','Powershell','R','Rust','Swift','Visual Basic'],
+    enum: technologies,
     default: []
   },
   score: {
@@ -46,7 +61,7 @@ const userSchema = new Schema({
   },
   level: {
     type: String,
-    enum: ['Trainee','Junior','Semi Senior','Senior'],
+    enum: levels,
     default: 'Junior'
   },
   mailEnabled: {
@@ -81,7 +96,17 @@ const userSchema = new Schema({
     ref: 'Project',
     required: false,
     default: []
-  }]
+  }],
+  technologies: {
+    type: [technologySchema],
+    validate: {
+      validator: function(arr) {
+        return arr.length <= 3;
+      },
+      message: 'El campo "technologies" no puede contener más de 3 elementos.'
+    },
+    default: []
+  },
 });
 
 module.exports = mongoose.model('User', userSchema);

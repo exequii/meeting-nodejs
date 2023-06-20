@@ -46,9 +46,108 @@ const getAllUsers = async () => {
   }
 };
 
-  const getUserById = async (id) => {
+function validateTechnologies(technologies, newTechnologies) {
+  const updatedTechnologies = [];
+
+  for (const newTech of newTechnologies) {
+    const existingTech = technologies.find(
+        (tech) => tech.nameTechnologie === newTech.nameTechnologie
+    );
+
+    if (existingTech) {
+      if (newTech.experience > existingTech.experience) {
+        updatedTechnologies.push(newTech);
+      } else {
+        updatedTechnologies.push(existingTech);
+      }
+    } else {
+      updatedTechnologies.push(newTech);
+    }
+  }
+
+  return updatedTechnologies;
+}
+
+function getNameTechnologie(technology) {
+  const words = technology.toLowerCase().split(' ');
+
+  const capitalizedWords = words.map(word => word.charAt(0).toUpperCase() + word.slice(1));
+
+  return capitalizedWords.join(' ');
+}
+
+function getExperience(technology) {
+  return technology > 10 ? 'Senior' : technology > 7 ? 'Semi Senior' : technology > 5 ? 'Junior' : 'Trainee';
+}
+
+function getFormattedTechnologies(technologiesByRepos) {
+  const technologiesToExclude = ["Html", "Css"];
+  const result = [];
+  const technologyCount = {};
+
+  technologiesByRepos.forEach((tech) => {
+      let { technology, quantity } = tech;
+      technology = getNameTechnologie(technology);
+    if (!technologiesToExclude.includes(technology)) {
+      if (technologyCount.hasOwnProperty(technology)) {
+        technologyCount[technology] += quantity;
+      } else {
+        technologyCount[technology] = quantity;
+      }
+    }
+  });
+
+  for (const technology in technologyCount) {
+    result.push({ technology, quantity: technologyCount[technology] });
+  }
+
+  return result.sort((a, b) => b.quantity - a.quantity).slice(0, 3);
+}
+
+async function updateTechnologies(user) {
+  let languages = await getLanguagesForUser(user);
+  let technologies = user.technologies;
+  let technologiesByRepos = [];
+  let technologiesToSave = [];
+
+  if (Array.isArray(languages.gitlabLanguages) && languages.gitlabLanguages.length > 0) {
+    let gitlabLanguages = languages.gitlabLanguages;
+    technologiesByRepos = technologiesByRepos.concat(gitlabLanguages);
+  }
+
+  if (Array.isArray(languages.githubLanguages) && languages.githubLanguages.length > 0) {
+    let githubLanguages = languages.githubLanguages;
+    technologiesByRepos = technologiesByRepos.concat(githubLanguages);
+
+  }
+
+  if (Array.isArray(languages.projectsLanguages) && languages.projectsLanguages.length > 0) {
+    let projectsLanguages = languages.projectsLanguages;
+    technologiesByRepos = technologiesByRepos.concat(projectsLanguages);
+
+  }
+
+  technologiesByRepos = getFormattedTechnologies(technologiesByRepos);
+
+  technologiesByRepos.forEach(technology => {
+    technologiesToSave.push({
+      'nameTechnologie': getNameTechnologie(technology.technology),
+      'experience': getExperience(technology.quantity)
+    });
+  });
+
+  technologiesToSave = validateTechnologies(technologies, technologiesToSave);
+  console.log(technologiesToSave);
+  if (technologiesToSave.length > 0) {
+    user.technologies = technologiesToSave;
+    await UserRepository.updateTechnologies(user._id, technologiesToSave);
+  }
+}
+
+const getUserById = async (id) => {
     try {
       const user = await UserRepository.getById(id);
+      await updateTechnologies(user);
       if (!user) return null;
       return user;
     } catch (error) {
@@ -151,10 +250,27 @@ async function getUserMetricsByRepos(id) {
 }
 
 
+async function getLanguagesFromProjects(user) {
+  const languages = [];
+
+  user.projects.forEach((project) => {
+    project.technologies.forEach((technology) => {
+      const existingTechnology = languages.find((item) => item.technology === technology);
+      if (existingTechnology) {
+        existingTechnology.quantity++;
+      } else {
+        languages.push({ technology: technology, quantity: 1 });
+      }
+    });
+  });
+  return languages;
+}
+
 async function getLanguagesForUser(id) {
   let languages = {};
   let githubLanguages = [];
   let gitlabLanguages = [];
+  let projectLanguages = [];
   const user = await UserRepository.getById(id);
 
   if (cache.has("languages" + user.githubUsername + user.gitlabUsername)) {
@@ -165,13 +281,19 @@ async function getLanguagesForUser(id) {
 
     if (user.githubUsername !== ''){
       githubLanguages = await githubService.getLanguagesForUser(user.githubUsername);
-      languages.githubLanguages = githubLanguages;
+      languages.githubLanguages = githubLanguages.sort((a, b) => b.quantity - a.quantity);
     }
 
     if (user.gitlabUsername !== ''){
       gitlabLanguages = await gitlabService.getLanguagesForUser(user.gitlabUsername);
-      languages.gitlabLanguages = gitlabLanguages;
+      languages.gitlabLanguages = gitlabLanguages.sort((a, b) => b.quantity - a.quantity);
     }
+
+    if (user.projects.length > 0) {
+      projectLanguages = await getLanguagesFromProjects(user);
+      languages.projectsLanguages = projectLanguages.sort((a, b) => b.quantity - a.quantity);
+    }
+
     cache.set("languages" + user.githubUsername + user.gitlabUsername, languages, 60*60*24);
     return languages;
   } catch (error) {

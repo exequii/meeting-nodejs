@@ -13,6 +13,7 @@ const typesUser = {
   supporting: 'object',
   level: 'string',
   mailEnabled: 'boolean',
+  technologies: 'object',
 };
 
 
@@ -31,6 +32,7 @@ class User {
   supporting = [];
   level='Junior';
   mailEnabled = true;
+  technologies = [];
 
   constructor(userData) {
     for(let key in userData){
