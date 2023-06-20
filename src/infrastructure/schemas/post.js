@@ -42,7 +42,12 @@ const postSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Project',
         required: false,
-    }
+    },
+    experience : {
+        type: String,
+        required: true,
+        default: 'Trainee'
+    },
 });
 
 module.exports = mongoose.model('Post', postSchema);

@@ -81,34 +81,32 @@ function getExperience(technology) {
 }
 
 function getFormattedTechnologies(technologiesByRepos) {
-  const technologiesToExclude = ["Html", "Css"];
+  // const technologiesToExclude = ["Html", "Css"];
   const result = [];
   const technologyCount = {};
 
   technologiesByRepos.forEach((tech) => {
       let { technology, quantity } = tech;
       technology = getNameTechnologie(technology);
-    if (!technologiesToExclude.includes(technology)) {
+    // if (!technologiesToExclude.includes(technology)) {
       if (technologyCount.hasOwnProperty(technology)) {
         technologyCount[technology] += quantity;
       } else {
         technologyCount[technology] = quantity;
       }
-    }
+    // }
   });
 
   for (const technology in technologyCount) {
     result.push({ technology, quantity: technologyCount[technology] });
   }
 
-  return result.sort((a, b) => b.quantity - a.quantity).slice(0, 3);
+  return result.sort((a, b) => b.quantity - a.quantity);
 }
 
-async function updateTechnologies(user) {
+async function getAllTechnologies(user) {
   let languages = await getLanguagesForUser(user);
-  let technologies = user.technologies;
   let technologiesByRepos = [];
-  let technologiesToSave = [];
 
   if (Array.isArray(languages.gitlabLanguages) && languages.gitlabLanguages.length > 0) {
     let gitlabLanguages = languages.gitlabLanguages;
@@ -127,7 +125,17 @@ async function updateTechnologies(user) {
 
   }
 
-  technologiesByRepos = getFormattedTechnologies(technologiesByRepos);
+  return getFormattedTechnologies(technologiesByRepos);
+}
+
+async function updateTechnologies(user) {
+  let technologiesToSave = [];
+  let technologiesByRepos = [];
+  let technologies = user.technologies;
+
+  technologiesByRepos = await getAllTechnologies(user);
+
+  technologiesByRepos = technologiesByRepos.slice(0, 3);
 
   technologiesByRepos.forEach(technology => {
     technologiesToSave.push({
@@ -137,7 +145,7 @@ async function updateTechnologies(user) {
   });
 
   technologiesToSave = validateTechnologies(technologies, technologiesToSave);
-  console.log(technologiesToSave);
+
   if (technologiesToSave.length > 0) {
     user.technologies = technologiesToSave;
     await UserRepository.updateTechnologies(user._id, technologiesToSave);
@@ -302,4 +310,4 @@ async function getLanguagesForUser(id) {
   }
 }
 
-module.exports = { createUser, getAllUsers, getUserById, updateUserById, deleteUserById, getUserByCredentials, getUserByFilters, getUsersByRanking, getLanguagesForUser, getGithubMetrics, getGitlabMetrics, getUserMetricsByRepos };
+module.exports = { createUser, getAllUsers, getUserById, updateUserById, deleteUserById, getUserByCredentials, getUserByFilters, getUsersByRanking, getLanguagesForUser, getUserMetricsByRepos, getAllTechnologies, getExperience };
