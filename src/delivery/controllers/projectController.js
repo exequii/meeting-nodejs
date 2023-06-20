@@ -174,6 +174,8 @@ const updateRequestByProjectId = async (req, res) => {
 const downloadPDF = async (req, res) => {
     try{
         const pdf = await pdfService.downloadCertificatePDF(req.body.html);
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename=file.pdf');
         res.status(200).send(pdf);
     }catch(error){
         res.status(500).json({ message: 'Internal server error', error: error.message });
