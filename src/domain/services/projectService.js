@@ -16,69 +16,10 @@ const createProject = async (projectData) => {
     }
 }
 
-const sortProjects = async (projects, userId, ownProject = false, count) => {
-    const leaderProjects = [];
-    const participantProjects = [];
-    const supportProjects = [];
-    const otherProjects = [];
-    const projectsWithRole = { results: [], count: 0 }
-    //TODO: Refactor this
-    for (const project of projects) {
-        if (project.leader == userId) {
-            leaderProjects.push({ ...project.toObject(), roleUser: 'leader' });
-        } else if (project.participants.includes(userId)) {
-            participantProjects.push({ ...project.toObject(), roleUser: 'participant' });
-        } else if (project.supports.includes(userId)) {
-            supportProjects.push({ ...project.toObject(), roleUser: 'support' });
-        } else {
-            otherProjects.push({ ...project.toObject(), roleUser: 'none' });
-        }
-    }
-
-    if (ownProject) {
-        projectsWithRole.results = ([
-            ...leaderProjects,
-            ...participantProjects,
-            ...supportProjects,
-        ]);
-        projectsWithRole.count = projectsWithRole.results.length;
-    } else {
-        projectsWithRole.results = ([
-            ...leaderProjects,
-            ...participantProjects,
-            ...supportProjects,
-            ...otherProjects
-        ]);
-        projectsWithRole.count = count;
-    }
-    
-
-    return projectsWithRole;
-}
-
 const getProjectsByFilters = async(filters, pagination) => {
     try {
-        let userId = null;
-        let ownProject = false;
-        //TODO: Delivery?
-        if (filters.userId) {
-            userId = filters.userId;
-            delete filters.userId;
-        }
-        if (typeof filters.ownProject !== 'undefined' && filters.ownProject !== null) {
-            ownProject = filters.ownProject
-            delete filters.ownProject
-        }
-
         let projects = await ProjectRepository.getByFilters(filters, pagination);
         if(!projects || projects.length == 0) return null;
-
-        if (userId) {
-            if (ownProject) {
-                return sortProjects(projects.results, userId, ownProject);
-            }
-            return sortProjects(projects.results, userId, false,projects.count);
-        }
         return projects;
     } catch (error) {
         throw new Error(error);

@@ -20,21 +20,105 @@ const getLength = async (projects) => {
     }
 }
 
-const getByFilters = async(filters, pagination) => {
+const sortProjects = async (projects, userId, ownProject = false) => {
+    const projectsWithRole = [];
+    const roleProjects = {
+        leader: [],
+        participant: [],
+        support: [],
+        none: []
+    };
+
+    projects.forEach((project) => {
+        const roleUser = getRoleUser(project, userId);
+        console.log(roleUser)
+        roleProjects[roleUser].push({ ...project.toObject(), 'roleUser': roleUser });
+    });
+
+    if (ownProject) {
+        projectsWithRole.push([
+            ...roleProjects.leader,
+            ...roleProjects.participant,
+            ...roleProjects.support
+        ]);
+    } else {
+        projectsWithRole.push([
+            ...roleProjects.leader,
+            ...roleProjects.participant,
+            ...roleProjects.support,
+            ...roleProjects.none
+        ]);
+    }
+
+    return projectsWithRole[0];
+};
+
+function getRoleUser(project, userId) {
+    if (project.leader == userId) {
+        return 'leader';
+    }
+
+    if (project.participants.includes(userId)) {
+        return 'participant';
+    }
+
+    if (project.supports.includes(userId)) {
+        return 'support';
+    }
+
+    return 'none';
+}
+
+const getFilters = (filters) => {
+    let userId = null;
+    let ownProject = false;
+
+    if (filters.userId) {
+        userId = filters.userId;
+        delete filters.userId;
+    }
+
+    if (typeof filters.ownProject !== 'undefined' && filters.ownProject !== null) {
+        ownProject = filters.ownProject
+        delete filters.ownProject
+    }
+
+    if (filters.technologies?.$all?.length == 0) delete filters.technologies;
+
+
+    return {
+        'userId': userId,
+        'ownProject': ownProject,
+    };
+};
+
+const getByFilters = async (filters, pagination) => {
     try {
         let skipPage = 0;
-        if(pagination) {
+
+        if (pagination) {
             skipPage = getSkipPage(pagination);
         }
-        if(filters.technologies?.$all?.length == 0) delete filters.technologies;
-        let projects = await Project.find(filters).skip(skipPage).limit(10).cursor().toArray();
-        projects = await getLength(projects);
-        if(!projects || projects.length == 0) return null;
-        return projects;
+
+        const customFilters = getFilters(filters);
+
+        let projects = await Project.find(filters);
+        if (customFilters.userId) {
+
+            projects = await sortProjects(projects, customFilters.userId, customFilters.ownProject);
+        }
+        const count = projects.length;
+
+        const paginatedProjects = projects.slice(skipPage, skipPage + 10);
+
+        return {
+            results: paginatedProjects,
+            count: count
+        };
     } catch (error) {
         throw new Error(error);
     }
-}
+};
 
 const getAll = async (pagination) => {
     try{
