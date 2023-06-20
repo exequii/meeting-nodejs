@@ -3,6 +3,8 @@ const { createPostAndUpdateRelations, getSkipPage } = require('../utils/utilitie
 
 const create = async (postData) => {
     try{
+        if(postData.project == "") delete postData.project;
+        if(postData.author == "") delete postData.author;
         let post = new Post(postData);
         return await createPostAndUpdateRelations(post);
     }catch(error){

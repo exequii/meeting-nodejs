@@ -4,7 +4,7 @@ const authMiddleware = require('../../middlewares/authMiddleware');
 const {createProject,getProjectsByFilters, getAllProjects, getProjectById,
     updateProjectById, deleteProjectById, addProjectToUser, getSuggestedProjects,
     finishProject , getMetricsByRepo, sendEmailInvite, updateRequestProject, leaveProject,
-    updateRequestByProjectId
+    updateRequestByProjectId,downloadPDF
 } = require('../../controllers/projectController');
 
 router.post('/', authMiddleware, createProject);
@@ -12,8 +12,9 @@ router.post('/join', authMiddleware, addProjectToUser)
 router.post('/filter/:pagination?', getProjectsByFilters);
 router.post('/suggestions', getSuggestedProjects);
 router.post('/finish/:id', authMiddleware, finishProject);
-router.post('/invite', authMiddleware, sendEmailInvite)
-router.post('/request/:id', authMiddleware, updateRequestProject)
+router.post('/invite', authMiddleware, sendEmailInvite);
+router.post('/request/:id', authMiddleware, updateRequestProject);
+router.post('/download', authMiddleware, downloadPDF);
 router.get('/:id', getProjectById);
 router.put('/:id',authMiddleware, updateProjectById);
 router.put('/request/:id',authMiddleware, updateRequestByProjectId);
