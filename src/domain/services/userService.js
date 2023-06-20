@@ -281,8 +281,10 @@ async function getLanguagesForUser(id) {
   let projectLanguages = [];
   const user = await UserRepository.getById(id);
 
-  if (cache.has("languages" + user.githubUsername + user.gitlabUsername)) {
-    return cache.get("languages" + user.githubUsername + user.gitlabUsername);
+  let cacheKey = "languages" + user.githubUsername + user.gitlabUsername + user.projects.length;
+
+  if (cache.has(cacheKey)) {
+    return cache.get(cacheKey);
   }
 
   try {
@@ -302,7 +304,7 @@ async function getLanguagesForUser(id) {
       languages.projectsLanguages = projectLanguages.sort((a, b) => b.quantity - a.quantity);
     }
 
-    cache.set("languages" + user.githubUsername + user.gitlabUsername, languages, 60*60*24);
+    cache.set(cacheKey, languages, 60*60*24);
     return languages;
   } catch (error) {
     console.error(error);

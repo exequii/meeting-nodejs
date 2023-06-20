@@ -9,7 +9,6 @@ const getPostSeniority = async (post) => {
 
     if (technologies.length > 0) {
         const seniority = technologies.map((tech) => {
-            console.log(tech);
             const foundTech = languages.find((language) => language.technology === tech);
             const quantity = foundTech ? foundTech.quantity : 0;
             return { technology: tech, quantity };
