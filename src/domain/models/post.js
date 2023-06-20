@@ -12,10 +12,10 @@ class Post{
     title = "";
     body = "";
     date = new Date()
-    author = "";
+    author;
     messages = [];
     technologies = [];
-    project = "";
+    project;
 
     constructor(postData) {
         for(let key in postData){
@@ -28,7 +28,7 @@ class Post{
     }
 
     validateEssentialData(){
-        if(!this.title || !this.body || !this.date || !this.author) return false;
+        if(!this.title || !this.body || !this.date) return false;
         return true;
     }
 
