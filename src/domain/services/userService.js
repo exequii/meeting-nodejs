@@ -50,24 +50,39 @@ function validateTechnologies(technologies, newTechnologies) {
   const updatedTechnologies = [];
 
   for (const newTech of newTechnologies) {
-    const existingTech = technologies.find(
+    const existingTechIndex = technologies.findIndex(
         (tech) => tech.nameTechnologie === newTech.nameTechnologie
     );
 
-    if (existingTech) {
-      if (newTech.experience > existingTech.experience) {
-        updatedTechnologies.push(newTech);
-      } else {
-        updatedTechnologies.push(existingTech);
+    if (existingTechIndex !== -1) {
+      const existingTech = technologies[existingTechIndex];
+
+      if (getExperienceRank(newTech.experience) > getExperienceRank(existingTech.experience)) {
+        technologies[existingTechIndex] = newTech;
       }
     } else {
-      updatedTechnologies.push(newTech);
+      technologies.push(newTech);
     }
   }
 
-  return updatedTechnologies;
+  technologies.sort((a, b) => getExperienceRank(b.experience) - getExperienceRank(a.experience));
+  return technologies.slice(0, 3);
 }
 
+function getExperienceRank(experience) {
+  switch (experience) {
+    case 'Trainee':
+      return 0;
+    case 'Junior':
+      return 1;
+    case 'Semi senior':
+      return 2;
+    case 'Senior':
+      return 3;
+    default:
+      return -1;
+  }
+}
 function getNameTechnologie(technology) {
   const words = technology.toLowerCase().split(' ');
 
@@ -135,7 +150,7 @@ async function updateTechnologies(user) {
 
   technologiesByRepos = await getAllTechnologies(user);
 
-  technologiesByRepos = technologiesByRepos.slice(0, 3);
+  // technologiesByRepos = technologiesByRepos.slice(0, 3);
 
   technologiesByRepos.forEach(technology => {
     technologiesToSave.push({
