@@ -2,27 +2,17 @@ const Post = require('../models/post');
 const PostRepository = require('../../infrastructure/persistence/postRepository');
 const userService = require('./userService');
 
-const getPostSeniority = async (post) => {
+const getPostTechnologiesExperience = async (post) => {
     const technologies = post.technologies
     const user = await userService.getUserById(post.author);
     const languages = await userService.getAllTechnologies(user);
 
     if (technologies.length > 0) {
-        const seniority = technologies.map((tech) => {
+        post.experience = technologies.map((tech) => {
             const foundTech = languages.find((language) => language.technology === tech);
             const quantity = foundTech ? foundTech.quantity : 0;
-            return { technology: tech, quantity };
+            return {nameTechnologie: tech, experience: userService.getExperience(quantity)};
         });
-
-        const maxQuantityTech = seniority.reduce((maxTech, currentTech) => {
-            if (currentTech.quantity > maxTech.quantity) {
-                return currentTech;
-            } else {
-                return maxTech;
-            }
-        });
-
-        post.experience = userService.getExperience(maxQuantityTech.quantity);
     }
     return post;
 }
@@ -31,7 +21,7 @@ const createPost = async (postData) => {
     try{
         let post = new Post(postData);
         if (!post.validateEssentialData()) throw new Error("Invalid post data");
-        post = await getPostSeniority(post);
+        post = await getPostTechnologiesExperience(post);
         return await PostRepository.create(post);
     }catch(error){
         throw new Error(error);

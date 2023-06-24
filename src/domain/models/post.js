@@ -6,7 +6,7 @@ const typesPost = {
     messages: 'object',
     project: 'string',
     technologies: 'object',
-    experience: 'string',
+    experience: 'object',
 }
 
 class Post{
@@ -17,7 +17,7 @@ class Post{
     messages = [];
     technologies = [];
     project;
-    experience;
+    experience = [];
 
     constructor(postData) {
         for(let key in postData){

@@ -1,6 +1,23 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
+const technologies = ['Angular','React','Vue','Django','Express','Laravel','Spring','Nodejs','Javascript','C#.NET','Java','Php','Python','Ruby','Swift','Typescript',
+    'C++','C','C#','Go','Kotlin','Objective-c','Scala','SQL','Sql','Dart','Html','Css',
+    'Sass','Less','Bash','Powershell','R','Rust','Swift','Visual Basic','Svelte'];
+
+const levels = ['Trainee','Junior','Semi Senior','Senior'];
+
+const technologySchema = new mongoose.Schema({
+    nameTechnologie:{
+        type: String,
+        enum: technologies,
+    },
+    experience:{
+        type: String,
+        enum: levels
+    }
+}, { _id: false });
+
 const postSchema = new Schema({
     title: {
         type: String,
@@ -17,9 +34,7 @@ const postSchema = new Schema({
     technologies: {
         type: [String],
         required: false,
-        enum: ['Angular','React','Vue','Django','Express','Laravel','Spring','Nodejs','Javascript','C#.NET','Java','Php','Python','Ruby','Swift','Typescript',
-        'C++','C','C#','Go','Kotlin','Objective-c','Scala','SQL','Dart','Html','Css',
-        'Sass','Less','Bash','Powershell','R','Rust','Swift','Visual Basic','Svelte'],
+        enum: technologies,
         deafult: [],
     },
     date: {
@@ -44,9 +59,14 @@ const postSchema = new Schema({
         required: false,
     },
     experience : {
-        type: String,
-        required: true,
-        default: 'Trainee'
+        type: [technologySchema],
+        validate: {
+            validator: function(arr) {
+                return arr.length <= 3;
+            },
+            message: 'El campo "experience" no puede contener más de 3 elementos.'
+        },
+        default: []
     },
 });
 
