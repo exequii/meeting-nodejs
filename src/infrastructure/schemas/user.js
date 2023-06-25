@@ -107,6 +107,11 @@ const userSchema = new Schema({
     },
     default: []
   },
+    urlImage: {
+      type: String,
+      required: false,
+      default: 'https://bootdey.com/img/Content/avatar/avatar5.png'
+    }
 });
 
 module.exports = mongoose.model('User', userSchema);
