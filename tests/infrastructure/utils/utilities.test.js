@@ -1,4 +1,4 @@
-const { getSkipPage } = require('../../../src/infrastructure/utils/utilities');
+const { getSkipPage } = require('../../../src/infrastructure/utils/utilitiesDatabase');
 
 
 describe('getSkipPage', () => {

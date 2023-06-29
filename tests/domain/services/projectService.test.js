@@ -1,7 +1,7 @@
 const { createProject, getAllProjects, getProjectById, getProjectsByFilters, updateProjectById, deleteProjectById } = require("../../../src/domain/services/projectService");
 const projectRepository = require("../../../src/infrastructure/persistence/projectRepository");
-const Utils = require("../../../src/infrastructure/utils/utilities");
-jest.mock('../../../src/infrastructure/utils/utilities');
+const Utils = require("../../../src/infrastructure/utils/utilitiesDatabase");
+jest.mock('../../../src/infrastructure/utils/utilitiesDatabase');
 jest.mock('../../../src/infrastructure/persistence/projectRepository');
 
 describe("Project Service Test", () => {

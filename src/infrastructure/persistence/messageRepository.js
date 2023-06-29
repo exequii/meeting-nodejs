@@ -1,5 +1,5 @@
 const Message = require('../schemas/message');
-const { createMessageAndUpdateRelations } = require('../utils/utilities');
+const { createMessageAndUpdateRelations } = require('../utils/utilitiesDatabase');
 
 const create = async (messageData) => {
     try{

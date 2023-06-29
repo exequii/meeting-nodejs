@@ -1,5 +1,5 @@
 const Post = require('../schemas/post');
-const { createPostAndUpdateRelations, getSkipPage } = require('../utils/utilities');
+const { createPostAndUpdateRelations, getSkipPage } = require('../utils/utilitiesDatabase');
 
 const create = async (postData) => {
     try{

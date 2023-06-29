@@ -1,5 +1,5 @@
 const User = require('../schemas/user');
-const { getSkipPage } = require('../utils/utilities');
+const { getSkipPage } = require('../utils/utilitiesDatabase');
 
 
 const create = async (userData) => {

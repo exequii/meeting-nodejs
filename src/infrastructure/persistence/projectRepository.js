@@ -1,5 +1,5 @@
 const Project = require('../schemas/project');
-const { updateProjectAndUser, createProjectAndUpdateUser, updateScoreUsersAndFinishProyect,leaveProjectAndUpdateUser, getSkipPage} = require('../utils/utilities');
+const { updateProjectAndUser, createProjectAndUpdateUser, updateScoreUsersAndFinishProyect,leaveProjectAndUpdateUser, getSkipPage} = require('../utils/utilitiesDatabase');
 
 const create = async (projectData) => {
     try{

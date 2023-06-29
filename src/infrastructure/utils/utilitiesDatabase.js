@@ -118,7 +118,8 @@ const updateScoreUsersAndFinishProyect = async (projectId,scores) => {
         await session.withTransaction(async () => {
             project = await Project.findByIdAndUpdate(projectId, { status: 'Done' }, { session,new: true });
             scores.forEach(async (score) => {
-                let userUpdated = await User.findByIdAndUpdate(score.userId, { $inc: { score: score.score } }, { session,new: true });
+                let multiplyComplexity = project.complexity == 'Trainee' ? 1 : project.complexity == 'Junior' ? 2 : project.complexity == 'Semisenior' ? 3 : 5;
+                let userUpdated = await User.findByIdAndUpdate(score.userId, { $inc: { score: (score.score * multiplyComplexity ) } }, { session,new: true });
                 let levelUpdated = setLevel(userUpdated)
                 await User.findByIdAndUpdate(score.userId, { level: levelUpdated }, { session });
             });
