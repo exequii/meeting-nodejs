@@ -27,11 +27,11 @@ const updateProjectAndUser = async (userId, projectId,support) => {
     }
 }
 
-const setLevel = (user) => {
-    if(user.score < 100) return 'Trainee';
-    if(user.score > 100 && user.score < 200) return 'Junior';
-    else if(user.score > 200 && user.score < 400) return 'Semi Senior';
-    else if(user.score > 400) return 'Senior';
+const setLevel = (newScore) => {
+    if(newScore < 100) return 'Trainee';
+    if(newScore > 100 && newScore < 200) return 'Junior';
+    else if(newScore > 200 && newScore < 400) return 'Semi Senior';
+    else if(newScore > 400) return 'Senior';
 }
 
 const leaveProjectAndUpdateUser = async (userId, projectId) => {
@@ -43,7 +43,7 @@ const leaveProjectAndUpdateUser = async (userId, projectId) => {
             let levelUpdated = setLevel(userUpdated)
             await User.findByIdAndUpdate(userId, { level: levelUpdated }, { session });
             project = await Project.findByIdAndUpdate(projectId, { $pull: { participants: userId }}, { session, new: true });
-            console.log(project)
+            // console.log(project)
         });
         await session.commitTransaction();
         return project;
@@ -117,12 +117,13 @@ const updateScoreUsersAndFinishProyect = async (projectId,scores) => {
         let project = {}
         await session.withTransaction(async () => {
             project = await Project.findByIdAndUpdate(projectId, { status: 'Done' }, { session,new: true });
-            scores.forEach(async (score) => {
+            for (const score of scores) {
                 let multiplyComplexity = project.complexity == 'Trainee' ? 1 : project.complexity == 'Junior' ? 2 : project.complexity == 'Semisenior' ? 3 : 5;
-                let userUpdated = await User.findByIdAndUpdate(score.userId, { $inc: { score: (score.score * multiplyComplexity ) } }, { session,new: true });
-                let levelUpdated = setLevel(userUpdated)
-                await User.findByIdAndUpdate(score.userId, { level: levelUpdated }, { session });
-            });
+                let userToUpdate =await User.findById(score.userId).exec();
+                let newScore = userToUpdate.score + (score.score * multiplyComplexity);
+                let levelUpdated = setLevel(newScore)
+                await User.findByIdAndUpdate(score.userId, { level: levelUpdated, score : newScore }, { session });
+            }
         });
         await session.commitTransaction();
         return project;
