@@ -20,54 +20,6 @@ const getLength = async (projects) => {
     }
 }
 
-const sortProjects = async (projects, userId, ownProject = false) => {
-    const projectsWithRole = [];
-    const roleProjects = {
-        leader: [],
-        participant: [],
-        support: [],
-        none: []
-    };
-
-    projects.forEach((project) => {
-        const roleUser = getRoleUser(project, userId);
-        roleProjects[roleUser].push({ ...project.toObject(), 'roleUser': roleUser });
-    });
-
-    if (ownProject) {
-        projectsWithRole.push([
-            ...roleProjects.leader,
-            ...roleProjects.participant,
-            ...roleProjects.support
-        ]);
-    } else {
-        projectsWithRole.push([
-            ...roleProjects.leader,
-            ...roleProjects.participant,
-            ...roleProjects.support,
-            ...roleProjects.none
-        ]);
-    }
-
-    return projectsWithRole[0];
-};
-
-function getRoleUser(project, userId) {
-    if (project.leader == userId) {
-        return 'leader';
-    }
-
-    if (project.participants.includes(userId)) {
-        return 'participant';
-    }
-
-    if (project.supports.includes(userId)) {
-        return 'support';
-    }
-
-    return 'none';
-}
-
 const getFilters = (filters) => {
     let userId = null;
     let ownProject = false;
@@ -93,22 +45,17 @@ const getFilters = (filters) => {
 
 const getByFilters = async (filters, pagination) => {
     try {
-        let skipPage = 0;
-
-        if (pagination) {
-            skipPage = getSkipPage(pagination);
-        }
-
+        const skipPage = pagination ? getSkipPage(pagination) : 0;
         const customFilters = getFilters(filters);
 
-        let projects = await Project.find(filters);
-        if (customFilters.userId) {
+        const updatedFilters = customFilters.ownProject ? addOwnProjectFilters(filters, customFilters) : filters;
 
-            projects = await sortProjects(projects, customFilters.userId, customFilters.ownProject);
-        }
+        const projects = await Project.find(updatedFilters);
         const count = projects.length;
 
-        const paginatedProjects = projects.slice(skipPage, skipPage + 10);
+        const sortedProjects = sortProjectsByCriteria(projects, customFilters.userId);
+
+        const paginatedProjects = sortedProjects.slice(skipPage, skipPage + 10);
 
         return {
             results: paginatedProjects,
@@ -117,6 +64,42 @@ const getByFilters = async (filters, pagination) => {
     } catch (error) {
         throw new Error(error);
     }
+};
+
+const addOwnProjectFilters = (filters, customFilters) => {
+    return {
+        $or: [
+            { leader: customFilters.userId },
+            { participants: customFilters.userId },
+            { supports: customFilters.userId }
+        ],
+        ...filters
+    };
+};
+
+const sortProjectsByCriteria = (projects, userId) => {
+    const criteria = [
+        { field: 'leader', value: userId },
+        { field: 'participants', value: userId },
+        { field: 'supports', value: userId }
+    ];
+
+    return projects.sort((a, b) => {
+        for (const criterion of criteria) {
+            const aValue = a[criterion.field];
+            const bValue = b[criterion.field];
+            const hasAValue = Array.isArray(aValue) ? aValue.includes(criterion.value) : aValue === criterion.value;
+            const hasBValue = Array.isArray(bValue) ? bValue.includes(criterion.value) : bValue === criterion.value;
+
+            if (hasAValue && !hasBValue) {
+                return -1;
+            } else if (!hasAValue && hasBValue) {
+                return 1;
+            }
+        }
+
+        return 0;
+    });
 };
 
 const getAll = async (pagination) => {

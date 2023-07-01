@@ -11,20 +11,74 @@ const createProject = async (req, res) => {
         res.status(500).json({ message: 'Internal server error', error: error.message });
     }
 }
+function getRoleUser(project, userId) {
+    if (project.leader == userId) {
+        return 'leader';
+    }
+
+    if (project.participants.includes(userId)) {
+        return 'participant';
+    }
+
+    if (project.supports.includes(userId)) {
+        return 'support';
+    }
+
+    return 'none';
+}
+
+const sortProjects = async (projects, userId, ownProject = false) => {
+    const projectsWithRole = [];
+    const roleProjects = {
+        leader: [],
+        participant: [],
+        support: [],
+        none: []
+    };
+    console.log(userId);
+    projects.forEach((project) => {
+        const roleUser = getRoleUser(project, userId);
+        roleProjects[roleUser].push({ ...project.toObject(), 'roleUser': roleUser });
+    });
+
+    if (ownProject) {
+        projectsWithRole.push([
+            ...roleProjects.leader,
+            ...roleProjects.participant,
+            ...roleProjects.support
+        ]);
+    } else {
+        projectsWithRole.push([
+            ...roleProjects.leader,
+            ...roleProjects.participant,
+            ...roleProjects.support,
+            ...roleProjects.none
+        ]);
+    }
+
+    return projectsWithRole[0];
+};
 
 const getProjectsByFilters = async (req, res) => {
     try{
+        let decoded;
         if (req.headers.authorization) {
             const token = req.headers.authorization.split(' ')[1];
-            const decoded = verify(token, process.env.JWT_SECRET);
+            decoded = verify(token, process.env.JWT_SECRET);
             if (decoded.userId) {
                 req.body.userId = decoded.userId;
             }
         }
-        const projects = await projectService.getProjectsByFilters(req.body,req?.params?.pagination);
+
+        let projects = await projectService.getProjectsByFilters(req.body,req?.params?.pagination);
         if(!projects){
             return res.status(204).json({results:[], message: 'Projects not found' });
+
         }
+        if (decoded.userId) {
+            projects.results = await sortProjects(projects.results, decoded.userId, req.body.ownProject);
+        }
+
         res.status(200).json(projects);
     }catch(error){
         res.status(500).json({ message: 'Internal Server Error' ,error: error.message});
