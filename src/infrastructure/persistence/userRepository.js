@@ -47,7 +47,24 @@ const getById = async (id) => {
     try {
     const user = await User.findById(id).select('-password').populate('projects').populate('supporting').populate('posts');
     if (!user) return null;
-    return user;
+        if(user.projects.length > 0){
+            for (const project of user.projects) {
+                let roleUser;
+
+                if (project.leader.toString() == id) {
+                    roleUser = 'leader';
+                } else if (project.participants.includes(id)) {
+                    roleUser = 'participant';
+                } else if (project.supports.includes(id)) {
+                    roleUser = 'support';
+                } else {
+                    roleUser = 'none';
+                }
+                project._doc.roleUser = roleUser;
+            }
+        }
+
+        return user;
     } catch (error) {
     throw new Error(error);
     }
