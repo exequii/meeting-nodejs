@@ -75,10 +75,10 @@ const getProjectsByFilters = async (req, res) => {
             return res.status(204).json({results:[], message: 'Projects not found' });
 
         }
-        if (decoded.userId) {
+        
+        if (decoded?.userId) {
             projects.results = await sortProjects(projects.results, decoded.userId, req.body.ownProject);
         }
-
         res.status(200).json(projects);
     }catch(error){
         res.status(500).json({ message: 'Internal Server Error' ,error: error.message});
