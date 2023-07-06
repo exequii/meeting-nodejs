@@ -9,13 +9,13 @@ const typesProject = {
     participants: 'object',
     supports: 'object',
     posts: 'object',
+    requests: 'object',
     startDate: 'string',
     endDate: 'string',
     technologies: 'object',
     status: 'string',
     requestSupport: 'boolean',
     validateSystem: 'boolean',
-    request: 'object',
 }
 
 class Project{
@@ -41,7 +41,7 @@ class Project{
         for(let key in projectData){
             if(this.hasOwnProperty(key)){
                 if(typeof projectData[key] === typesProject[key])
-                    this[key] = projectData[key];
+                    this[key] = projectData[key];       
                 else throw new Error("Invalid type for property " + key)
             }
         }
