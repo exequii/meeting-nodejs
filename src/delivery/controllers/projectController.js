@@ -35,7 +35,7 @@ const sortProjects = async (projects, userId, ownProject = false) => {
         support: [],
         none: []
     };
-    console.log(userId);
+
     projects.forEach((project) => {
         const roleUser = getRoleUser(project, userId);
         roleProjects[roleUser].push({ ...project.toObject(), 'roleUser': roleUser });

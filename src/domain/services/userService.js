@@ -46,29 +46,6 @@ const getAllUsers = async () => {
   }
 };
 
-function validateTechnologies(technologies, newTechnologies) {
-  const updatedTechnologies = [];
-
-  for (const newTech of newTechnologies) {
-    const existingTechIndex = technologies.findIndex(
-        (tech) => tech.nameTechnologie === newTech.nameTechnologie
-    );
-
-    if (existingTechIndex !== -1) {
-      const existingTech = technologies[existingTechIndex];
-
-      if (getExperienceRank(newTech.experience) > getExperienceRank(existingTech.experience)) {
-        technologies[existingTechIndex] = newTech;
-      }
-    } else {
-      technologies.push(newTech);
-    }
-  }
-
-  technologies.sort((a, b) => getExperienceRank(b.experience) - getExperienceRank(a.experience));
-  return technologies.slice(0, 3);
-}
-
 function getExperienceRank(experience) {
   switch (experience) {
     case 'Trainee':
@@ -96,20 +73,17 @@ function getExperience(technology) {
 }
 
 function getFormattedTechnologies(technologiesByRepos) {
-  // const technologiesToExclude = ["Html", "Css"];
   const result = [];
   const technologyCount = {};
 
   technologiesByRepos.forEach((tech) => {
       let { technology, quantity } = tech;
       technology = getNameTechnologie(technology);
-    // if (!technologiesToExclude.includes(technology)) {
       if (technologyCount.hasOwnProperty(technology)) {
         technologyCount[technology] += quantity;
       } else {
         technologyCount[technology] = quantity;
       }
-    // }
   });
 
   for (const technology in technologyCount) {
@@ -140,7 +114,25 @@ async function getAllTechnologies(user) {
 
   }
 
+  if (technologiesByRepos.length < 3) {
+    let preferencesToAdd = formatPreferences(user.preferences,3 - technologiesByRepos.length);
+    technologiesByRepos = technologiesByRepos.concat(preferencesToAdd);
+  }
+
   return getFormattedTechnologies(technologiesByRepos);
+}
+function formatPreferences(userPreferences, remainingSlots) {
+  let preferences = [];
+  if (userPreferences.length >= 3){
+    preferences = userPreferences.slice(0, 3);
+  } else {
+    let defaultPreferences = ["HTML", "CSS", "Javascript"].slice(0, (3 - userPreferences.length))
+    preferences = userPreferences.concat(defaultPreferences)
+  }
+
+  return preferences.map((technology) => {
+    return { technology: technology, quantity: 1 };
+  });
 }
 
 async function updateTechnologies(user) {
@@ -150,7 +142,7 @@ async function updateTechnologies(user) {
 
   technologiesByRepos = await getAllTechnologies(user);
 
-  // technologiesByRepos = technologiesByRepos.slice(0, 3);
+  technologiesByRepos = technologiesByRepos.slice(0, 3);
 
   technologiesByRepos.forEach(technology => {
     technologiesToSave.push({
@@ -158,8 +150,6 @@ async function updateTechnologies(user) {
       'experience': getExperience(technology.quantity)
     });
   });
-
-  technologiesToSave = validateTechnologies(technologies, technologiesToSave);
 
   if (technologiesToSave.length > 0) {
     user.technologies = technologiesToSave;
