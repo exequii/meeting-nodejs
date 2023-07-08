@@ -251,7 +251,7 @@ async function getUserMetricsByRepos(id) {
       if (githubUserExists) {
         metrics.githubMetrics = await getGithubMetrics(user.githubUsername);
       } else {
-        throw { code: 404, message: "El usuario de GitHub no existe" };
+        throw new Error();
       }
     }
 
@@ -260,18 +260,14 @@ async function getUserMetricsByRepos(id) {
       if (gitlabUserExists) {
         metrics.gitlabMetrics = await getGitlabMetrics(user.gitlabUsername);
       } else {
-        throw { code: 404, message: "El usuario de GitLab no existe" };
+        throw new Error();
       }
     }
 
     cache.set("metrics" + user.githubUsername + user.gitlabUsername, metrics, 60 * 60 * 24);
     return metrics;
   } catch (error) {
-    if (error.code === 404) {
-      return { message: 'User not found', error: error.message };
-    } else {
-      return { message: 'Internal server error', error: error.message };
-    }
+      return { message: 'User not found', error: "El usuario no existe" };
   }
 }
 

@@ -136,17 +136,13 @@ const getMetricsByRepo = async (projectId) => {
         }
 
         if (!repoExists) {
-            throw { code: 404, message: "El repositorio no existe" };
+            throw new Error();
         }
 
         // cache.set("project" + projectId, metrics, 60 * 60 * 24);
         return metrics;
     } catch (error) {
-        if (error.code === 404) {
-            return { message: 'Repo not found', error: error.message };
-        } else {
-            return { message: 'Internal server error', error: error.message };
-        }
+        return { message: 'Repo not found', error: "El repositorio no existe" };
     }
 };
 
