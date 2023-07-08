@@ -241,9 +241,9 @@ async function getUserMetricsByRepos(id) {
   let metrics = {};
   const user = await UserRepository.getById(id);
 
-  // if (cache.has("metrics" + user.githubUsername + user.gitlabUsername)) {
-  //   return cache.get("metrics" + user.githubUsername + user.gitlabUsername);
-  // }
+  if (cache.has("metrics" + user.githubUsername + user.gitlabUsername)) {
+    return cache.get("metrics" + user.githubUsername + user.gitlabUsername);
+  }
 
   try {
     if (user.githubUsername !== '') {
@@ -297,9 +297,9 @@ async function getLanguagesForUser(id) {
 
   let cacheKey = "languages" + user.githubUsername + user.gitlabUsername + user.projects.length;
 
-  // if (cache.has(cacheKey)) {
-  //   return cache.get(cacheKey);
-  // }
+  if (cache.has(cacheKey)) {
+    return cache.get(cacheKey);
+  }
 
   try {
     if (user.githubUsername !== '') {
@@ -311,7 +311,6 @@ async function getLanguagesForUser(id) {
         languages.githubLanguages = false;
       }
     }
-    console.log(githubLanguages)
 
     if (user.gitlabUsername !== '') {
       const gitlabUserExists = await gitlabService.checkGitLabUserExists(user.gitlabUsername);

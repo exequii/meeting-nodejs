@@ -55,6 +55,7 @@ const updateProjectById = async (id, newData) => {
             if(participant.mailEnabled) await emailService.sendEmailUpdateStatusProyect(participant,projectUpdated);
         });
         if(!projectUpdated) return null;
+        cache.del("project" + id);
         return projectUpdated;
     }catch(error){
         throw new Error(error);
@@ -112,9 +113,9 @@ const getMetricsByRepo = async (projectId) => {
     let repoExists = false;
     const project = await getProjectById(projectId);
 
-    // if (cache.has("project" + projectId)) {
-    //     return cache.get("project" + projectId);
-    // }
+    if (cache.has("project" + projectId)) {
+        return cache.get("project" + projectId);
+    }
 
 
     try{
@@ -134,7 +135,7 @@ const getMetricsByRepo = async (projectId) => {
             }
         }
 
-        // cache.set("project" + projectId, metrics, 60 * 60 * 24);
+        cache.set("project" + projectId, metrics, 60 * 60 * 24);
         return metrics;
     } catch (error) {
         return { message: 'Repo not found', error: "El repositorio no existe" };
