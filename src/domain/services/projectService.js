@@ -78,7 +78,7 @@ const addProjectToUser = async (userId, projectId, support) => {
         let user = await userRepository.getById(userId);
         if(project.validateSystem && user) {
             if(!validateJoinProject(project, user)) {
-                return { message: "No puedes unirte. Almenos una tecnologia de tus preferencias debe coincidir con las del proyecto." };
+                return { message: "No puedes unirte. Al menos una tecnologia de tus preferencias debe coincidir con las del proyecto." };
             }
             return await ProjectRepository.addProjectToUser(userId, projectId,support);
         }
@@ -119,17 +119,37 @@ const getMetricsByRepo = async (projectId) => {
         if(project.urlRepository === null) {
             return false;
         }
+
+        let repoExists = false;
+
         if (project.urlRepository.includes('github')) {
-            metrics = await githubService.getMetricsByRepo(project.urlRepository);
+            console.log("github")
+            repoExists = await githubService.checkGitHubRepoExists(project.urlRepository);
+            if (repoExists) {
+                metrics = await githubService.getMetricsByRepo(project.urlRepository);
+            }
         } else {
-            metrics = await gitlabService.getMetricsByRepo(project.urlRepository);
+            repoExists = await gitlabService.checkGitLabRepoExists(project.urlRepository);
+            if (repoExists) {
+                metrics = await gitlabService.getMetricsByRepo(project.urlRepository);
+            }
         }
+
+        if (!repoExists) {
+            throw { code: 404, message: "El repositorio no existe" };
+        }
+
         cache.set("project" + projectId, metrics, 60 * 60 * 24);
         return metrics;
-    }catch(error){
-        throw new Error(error);
+    } catch (error) {
+        if (error.code === 404) {
+            return { message: 'Repo not found', error: error.message };
+        } else {
+            return { message: 'Internal server error', error: error.message };
+        }
     }
-}
+};
+
 
 const validateJoinProject = (project, user) => {
     try{

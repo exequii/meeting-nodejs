@@ -124,7 +124,10 @@ const getById = async (id) => {
         .populate({path: 'leader', select: '-password'})
         .populate({path: 'participants', select: '-password'})
         .populate({path: 'supports',select: '-password'})
-        .populate('posts');
+            .populate({
+                path: 'posts',
+                populate: { path: 'author', select: ['name','urlImage'] }
+            });
         if(!project) return null;
         return project;
     }catch(error){

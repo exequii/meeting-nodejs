@@ -169,8 +169,8 @@ const getMetricsByRepo = async (req, res) => {
     try{
         const metrics = await projectService.getMetricsByRepo(req.params.id);
 
-        if(!metrics) {
-            return res.status(204).json({ message: 'Project sync failed' })
+        if(metrics.message === 'Repo not found') {
+            return res.status(404).json(metrics)
         }
 
         res.status(200).json(metrics);
