@@ -156,21 +156,38 @@ async function getRepo(owner, repoName) {
     }
 }
 
-async function getDevelopersUsernames(repoId) {
+async function getDevelopersUsernames(repoId, developersByProject) {
     try {
         const response = await axios.get(`https://gitlab.com/api/v4/projects/${repoId}/repository/contributors`, {headers});
         const contributors = response.data;
 
-        const developers = [];
+        let developersByRepo = [];
         for (const contributor of contributors) {
-            developers.push(contributor.name);
+            developersByRepo.push(contributor.name);
         }
-        return developers;
+        return removeNonMatchingNames(developersByRepo, developersByProject);
     } catch (error) {
         console.error(error);
         throw new Error(error);
     }
 }
+
+function removeNonMatchingNames(array1, names) {
+    return array1.filter(item1 => {
+        for (const name of names) {
+            const item1Lower = item1.toLowerCase();
+            const nameLower = name.toLowerCase();
+            const intersection = new Set([...item1Lower].filter(char => nameLower.includes(char)));
+            const union = new Set([...item1Lower, ...nameLower]);
+            const similarity = intersection.size / union.size;
+            if (similarity >= 0.5) {
+                return true;
+            }
+        }
+        return false;
+    });
+}
+
 async function checkGitLabUserExists(username) {
     try {
         const response = await axios.get(`https://gitlab.com/api/v4/users?username=${username}`);
@@ -286,16 +303,43 @@ async function getCommitActivity(repoId, username) {
 
 }
 
-const getMetricsByRepo = async (url) => {
+async function getDevelopersByProject(project) {
+    const developersByProject = [];
+
+    if (project.leader && project.leader.name) {
+        developersByProject.push(project.leader.name);
+    }
+
+    if (project.participants && project.participants.length > 0) {
+        project.participants.forEach(participant => {
+            if (participant.name) {
+                developersByProject.push(participant.name);
+            }
+        });
+    }
+
+    if (project.supports && project.supports.length > 0) {
+        project.supports.forEach(support => {
+            if (support.name) {
+                developersByProject.push(support.name);
+            }
+        });
+    }
+
+    return developersByProject;
+}
+
+const getMetricsByRepo = async (project) => {
     try{
-        const myUrl = new URL(url);
+        const myUrl = new URL(project.urlRepository);
         const owner = myUrl.pathname.split('/')[1];
         const repoName = myUrl.pathname.split('/')[2];
 
         const repo = await getRepo(owner, repoName);
 
+        const developersByProject = await getDevelopersByProject(project);
 
-        const developersUsernames = await getDevelopersUsernames(repo.id);
+        const developersUsernames = await getDevelopersUsernames(repo.id, developersByProject);
 
         const contributionsData = {};
         const commitByUser = [];

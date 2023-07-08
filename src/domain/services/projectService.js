@@ -111,9 +111,10 @@ const getMetricsByRepo = async (projectId) => {
     let metrics;
     const project = await getProjectById(projectId);
 
-    if (cache.has("project" + projectId)) {
-        return cache.get("project" + projectId);
-    }
+    // if (cache.has("project" + projectId)) {
+    //     return cache.get("project" + projectId);
+    // }
+
 
     try{
         if(project.urlRepository === null) {
@@ -123,7 +124,6 @@ const getMetricsByRepo = async (projectId) => {
         let repoExists = false;
 
         if (project.urlRepository.includes('github')) {
-            console.log("github")
             repoExists = await githubService.checkGitHubRepoExists(project.urlRepository);
             if (repoExists) {
                 metrics = await githubService.getMetricsByRepo(project.urlRepository);
@@ -131,7 +131,7 @@ const getMetricsByRepo = async (projectId) => {
         } else {
             repoExists = await gitlabService.checkGitLabRepoExists(project.urlRepository);
             if (repoExists) {
-                metrics = await gitlabService.getMetricsByRepo(project.urlRepository);
+                metrics = await gitlabService.getMetricsByRepo(project);
             }
         }
 
@@ -139,7 +139,7 @@ const getMetricsByRepo = async (projectId) => {
             throw { code: 404, message: "El repositorio no existe" };
         }
 
-        cache.set("project" + projectId, metrics, 60 * 60 * 24);
+        // cache.set("project" + projectId, metrics, 60 * 60 * 24);
         return metrics;
     } catch (error) {
         if (error.code === 404) {
