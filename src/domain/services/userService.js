@@ -247,18 +247,31 @@ async function getUserMetricsByRepos(id) {
 
   try {
     if (user.githubUsername !== '') {
-      metrics.githubMetrics = await getGithubMetrics(user.githubUsername);
+      const githubUserExists = await githubService.checkGitHubUserExists(user.githubUsername);
+      if (githubUserExists) {
+        metrics.githubMetrics = await getGithubMetrics(user.githubUsername);
+      } else {
+        throw { code: 404, message: "El usuario de GitHub no existe" };
+      }
     }
 
     if (user.gitlabUsername !== '') {
-      metrics.gitlabMetrics = await getGitlabMetrics(user.gitlabUsername);
+      const gitlabUserExists = await gitlabService.checkGitLabUserExists(user.gitlabUsername);
+      if (gitlabUserExists) {
+        metrics.gitlabMetrics = await getGitlabMetrics(user.gitlabUsername);
+      } else {
+        throw { code: 404, message: "El usuario de GitLab no existe" };
+      }
     }
 
     cache.set("metrics" + user.githubUsername + user.gitlabUsername, metrics, 60 * 60 * 24);
     return metrics;
   } catch (error) {
-    console.error(error);
-    return { message: 'Internal server error', error: error.message };
+    if (error.code === 404) {
+      return { message: 'User not found', error: error.message };
+    } else {
+      return { message: 'Internal server error', error: error.message };
+    }
   }
 }
 
@@ -294,12 +307,12 @@ async function getLanguagesForUser(id) {
 
   try {
 
-    if (user.githubUsername !== ''){
+    if (user.githubUsername !== '' && await githubService.checkGitHubUserExists(user.githubUsername)) {
       githubLanguages = await githubService.getLanguagesForUser(user.githubUsername);
       languages.githubLanguages = githubLanguages.sort((a, b) => b.quantity - a.quantity);
     }
 
-    if (user.gitlabUsername !== ''){
+    if (user.gitlabUsername !== '' && await gitlabService.checkGitLabUserExists(user.gitlabUsername)){
       gitlabLanguages = await gitlabService.getLanguagesForUser(user.gitlabUsername);
       languages.gitlabLanguages = gitlabLanguages.sort((a, b) => b.quantity - a.quantity);
     }
@@ -312,7 +325,6 @@ async function getLanguagesForUser(id) {
     cache.set(cacheKey, languages, 60*60*24);
     return languages;
   } catch (error) {
-    console.error(error);
     return { message: 'Internal server error', error: error.message };
   }
 }

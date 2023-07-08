@@ -171,6 +171,17 @@ async function getDevelopersUsernames(repoId) {
         throw new Error(error);
     }
 }
+async function checkGitLabUserExists(username) {
+    try {
+        const response = await axios.get(`https://gitlab.com/api/v4/users?username=${username}`);
+        return response.data.length > 0;
+    } catch (error) {
+        if (error.response && error.response.status === 404) {
+            return false;
+        }
+        throw error;
+    }
+}
 
 async function getContributionDistributionByType(repoId, owner, repo) {
     try{
@@ -336,4 +347,4 @@ const getCommitFrequencyByDeveloper = async (repoId, developerUsername) => {
     }
 }
 
-module.exports = {getLanguagesForUser, getUserCommitCounts, getReportedIssuesCount, hasContributionsInExternalProjects, getQuantityProjects, calculateAveragePopularity, getMetricsByRepo};
+module.exports = {getLanguagesForUser, getUserCommitCounts, getReportedIssuesCount, hasContributionsInExternalProjects, getQuantityProjects, calculateAveragePopularity, getMetricsByRepo, checkGitLabUserExists};

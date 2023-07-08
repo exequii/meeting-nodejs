@@ -178,6 +178,17 @@ async function getDevelopersUsernames(owner, repo) {
     }
 }
 
+async function checkGitHubUserExists(username) {
+    try {
+        const response = await axios.get(`https://api.github.com/users/${username}`);
+        return response.status === 200;
+    } catch (error) {
+        if (error.response && error.response.status === 404) {
+            return false;
+        }
+    }
+}
+
 async function getCommitActivity(owner, repo) {
     try {
         const response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/commits`, {headers});
@@ -310,4 +321,4 @@ const getContributionDistributionByType = async (owner, repo) => {
     }
 };
 
-module.exports = {getCommits,getLanguagesForUser,getReportedIssuesCount, hasContributionsInExternalProjects, calculateAveragePopularity, getQuantityProjects, getUserCommitCounts, getMetricsByRepo};
+module.exports = {getCommits,getLanguagesForUser,getReportedIssuesCount, hasContributionsInExternalProjects, calculateAveragePopularity, getQuantityProjects, getUserCommitCounts, getMetricsByRepo, checkGitHubUserExists};
