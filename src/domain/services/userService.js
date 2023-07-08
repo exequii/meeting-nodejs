@@ -306,11 +306,15 @@ async function getLanguagesForUser(id) {
     if (user.githubUsername !== '' && await githubService.checkGitHubUserExists(user.githubUsername)) {
       githubLanguages = await githubService.getLanguagesForUser(user.githubUsername);
       languages.githubLanguages = githubLanguages.sort((a, b) => b.quantity - a.quantity);
+    } else {
+      throw new Error();
     }
 
     if (user.gitlabUsername !== '' && await gitlabService.checkGitLabUserExists(user.gitlabUsername)){
       gitlabLanguages = await gitlabService.getLanguagesForUser(user.gitlabUsername);
       languages.gitlabLanguages = gitlabLanguages.sort((a, b) => b.quantity - a.quantity);
+    } else {
+      throw new Error();
     }
 
     if (user.projects.length > 0) {
@@ -321,7 +325,7 @@ async function getLanguagesForUser(id) {
     cache.set(cacheKey, languages, 60*60*24);
     return languages;
   } catch (error) {
-    return { message: 'Internal server error', error: error.message };
+    return { message: 'User not found', error: "El usuario no existe" };
   }
 }
 

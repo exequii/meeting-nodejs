@@ -118,7 +118,11 @@ const getUsersByRanking = async (req, res) => {
 const getLanguagesByRepos = async (req, res) => {
   try {
     const languages = await userService.getLanguagesForUser(req.params.id);
-    res.status(200).json(languages);
+    if (languages.message === 'User not found') {
+      res.status(404).json(languages);
+    } else {
+      res.status(200).json(languages);
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error', error: error.message });
@@ -132,7 +136,8 @@ const getUserMetricsByRepos = async (req, res) => {
       res.status(404).json(metrics);
     } else {
       res.status(200).json(metrics);
-    }  } catch (error) {
+    }
+  } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error', error: error.message });
   }
