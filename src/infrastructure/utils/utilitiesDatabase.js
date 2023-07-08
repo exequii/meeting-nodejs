@@ -115,8 +115,11 @@ const updateScoreUsersAndFinishProyect = async (projectId,scores) => {
     const session = await mongoose.startSession();
     try{
         let project = {}
+        const currentDate = new Date();
+        currentDate.setHours(currentDate.getHours() - 3);
+
         await session.withTransaction(async () => {
-            project = await Project.findByIdAndUpdate(projectId, { status: 'Done' }, { session,new: true });
+            project = await Project.findByIdAndUpdate(projectId, { status: 'Done', endDate: currentDate}, { session,new: true });
             for (const score of scores) {
                 let multiplyComplexity = project.complexity == 'Trainee' ? 1 : project.complexity == 'Junior' ? 2 : project.complexity == 'Semisenior' ? 3 : 5;
                 let userToUpdate =await User.findById(score.userId).exec();
