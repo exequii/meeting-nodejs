@@ -117,12 +117,8 @@ const getUsersByRanking = async (req, res) => {
 
 const getLanguagesByRepos = async (req, res) => {
   try {
-    const {languages,githubUserExists, gitlabUserExists} = await userService.getLanguagesForUser(req.params.id);
-    if (languages.message === 'User not found') {
-      res.status(404).json(languages,githubUserExists, gitlabUserExists);
-    } else {
-      res.status(200).json({languages,githubUserExists, gitlabUserExists});
-    }
+    const languages = await userService.getLanguagesForUser(req.params.id);
+      res.status(200).json(languages);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error', error: error.message });
@@ -132,11 +128,7 @@ const getLanguagesByRepos = async (req, res) => {
 const getUserMetricsByRepos = async (req, res) => {
   try {
     const metrics = await userService.getUserMetricsByRepos(req.params.id);
-    if (metrics.message === 'User not found') {
-      res.status(404).json(metrics);
-    } else {
       res.status(200).json(metrics);
-    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error', error: error.message });

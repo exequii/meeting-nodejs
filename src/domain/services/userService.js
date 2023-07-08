@@ -241,9 +241,9 @@ async function getUserMetricsByRepos(id) {
   let metrics = {};
   const user = await UserRepository.getById(id);
 
-  if (cache.has("metrics" + user.githubUsername + user.gitlabUsername)) {
-    return cache.get("metrics" + user.githubUsername + user.gitlabUsername);
-  }
+  // if (cache.has("metrics" + user.githubUsername + user.gitlabUsername)) {
+  //   return cache.get("metrics" + user.githubUsername + user.gitlabUsername);
+  // }
 
   try {
     if (user.githubUsername !== '') {
@@ -251,7 +251,7 @@ async function getUserMetricsByRepos(id) {
       if (githubUserExists) {
         metrics.githubMetrics = await getGithubMetrics(user.githubUsername);
       } else {
-        throw new Error();
+        metrics.githubMetrics = false;
       }
     }
 
@@ -260,7 +260,7 @@ async function getUserMetricsByRepos(id) {
       if (gitlabUserExists) {
         metrics.gitlabMetrics = await getGitlabMetrics(user.gitlabUsername);
       } else {
-        throw new Error();
+        metrics.gitlabMetrics = false;
       }
     }
 
@@ -297,9 +297,9 @@ async function getLanguagesForUser(id) {
 
   let cacheKey = "languages" + user.githubUsername + user.gitlabUsername + user.projects.length;
 
-  if (cache.has(cacheKey)) {
-    return cache.get(cacheKey);
-  }
+  // if (cache.has(cacheKey)) {
+  //   return cache.get(cacheKey);
+  // }
 
   try {
     if (user.githubUsername !== '') {
@@ -307,22 +307,21 @@ async function getLanguagesForUser(id) {
       if (githubUserExists) {
         githubLanguages = await githubService.getLanguagesForUser(user.githubUsername);
         languages.githubLanguages = githubLanguages.sort((a, b) => b.quantity - a.quantity);
+      } else {
+        languages.githubLanguages = false;
       }
     }
+    console.log(githubLanguages)
 
     if (user.gitlabUsername !== '') {
       const gitlabUserExists = await gitlabService.checkGitLabUserExists(user.gitlabUsername);
       if (gitlabUserExists) {
         gitlabLanguages = await gitlabService.getLanguagesForUser(user.gitlabUsername);
         languages.gitlabLanguages = gitlabLanguages.sort((a, b) => b.quantity - a.quantity);
+      } else {
+        languages.gitlabLanguages = false;
       }
     }
-
-    if (!githubUserExists  && !gitlabUserExists) {
-      throw new Error();
-    }
-
-
 
     if (user.projects.length > 0) {
       projectLanguages = await getLanguagesFromProjects(user);
@@ -330,7 +329,7 @@ async function getLanguagesForUser(id) {
     }
 
     cache.set(cacheKey, languages, 60*60*24);
-    return {languages, githubUserExists, gitlabUserExists};
+    return languages;
   } catch (error) {
     return { message: 'User not found', error: "El usuario no existe" };
   }
