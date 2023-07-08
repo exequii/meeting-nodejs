@@ -117,11 +117,11 @@ const getUsersByRanking = async (req, res) => {
 
 const getLanguagesByRepos = async (req, res) => {
   try {
-    const languages = await userService.getLanguagesForUser(req.params.id);
+    const {languages,githubUserExists, gitlabUserExists} = await userService.getLanguagesForUser(req.params.id);
     if (languages.message === 'User not found') {
-      res.status(404).json(languages);
+      res.status(404).json(languages,githubUserExists, gitlabUserExists);
     } else {
-      res.status(200).json(languages);
+      res.status(200).json({languages,githubUserExists, gitlabUserExists});
     }
   } catch (error) {
     console.error(error);

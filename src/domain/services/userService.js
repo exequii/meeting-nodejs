@@ -302,20 +302,27 @@ async function getLanguagesForUser(id) {
   }
 
   try {
+    if (user.githubUsername !== '') {
+      const githubUserExists = await githubService.checkGitHubUserExists(user.githubUsername);
+      if (githubUserExists) {
+        githubLanguages = await githubService.getLanguagesForUser(user.githubUsername);
+        languages.githubLanguages = githubLanguages.sort((a, b) => b.quantity - a.quantity);
+      }
+    }
 
-    if (user.githubUsername !== '' && await githubService.checkGitHubUserExists(user.githubUsername)) {
-      githubLanguages = await githubService.getLanguagesForUser(user.githubUsername);
-      languages.githubLanguages = githubLanguages.sort((a, b) => b.quantity - a.quantity);
-    } else {
+    if (user.gitlabUsername !== '') {
+      const gitlabUserExists = await gitlabService.checkGitLabUserExists(user.gitlabUsername);
+      if (gitlabUserExists) {
+        gitlabLanguages = await gitlabService.getLanguagesForUser(user.gitlabUsername);
+        languages.gitlabLanguages = gitlabLanguages.sort((a, b) => b.quantity - a.quantity);
+      }
+    }
+
+    if (!githubUserExists  && !gitlabUserExists) {
       throw new Error();
     }
 
-    if (user.gitlabUsername !== '' && await gitlabService.checkGitLabUserExists(user.gitlabUsername)){
-      gitlabLanguages = await gitlabService.getLanguagesForUser(user.gitlabUsername);
-      languages.gitlabLanguages = gitlabLanguages.sort((a, b) => b.quantity - a.quantity);
-    } else {
-      throw new Error();
-    }
+
 
     if (user.projects.length > 0) {
       projectLanguages = await getLanguagesFromProjects(user);
@@ -323,7 +330,7 @@ async function getLanguagesForUser(id) {
     }
 
     cache.set(cacheKey, languages, 60*60*24);
-    return languages;
+    return {languages, githubUserExists, gitlabUserExists};
   } catch (error) {
     return { message: 'User not found', error: "El usuario no existe" };
   }
