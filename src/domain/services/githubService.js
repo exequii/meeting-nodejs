@@ -194,10 +194,7 @@ async function checkGitHubRepoExists (repositoryUrl) {
         const response = await axios.get(repositoryUrl);
         return response.status === 200;
     } catch (error) {
-        if (error.response && error.response.status === 404) {
-            return false;
-        }
-        throw error;
+        return false;
     }
 };
 

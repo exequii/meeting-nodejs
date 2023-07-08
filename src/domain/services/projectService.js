@@ -108,7 +108,8 @@ const finishProject = async (projectId,scores) => {
 }
 
 const getMetricsByRepo = async (projectId) => {
-    let metrics;
+    let metrics = false;
+    let repoExists = false;
     const project = await getProjectById(projectId);
 
     // if (cache.has("project" + projectId)) {
@@ -121,8 +122,6 @@ const getMetricsByRepo = async (projectId) => {
             return false;
         }
 
-        let repoExists = false;
-
         if (project.urlRepository.includes('github')) {
             repoExists = await githubService.checkGitHubRepoExists(project.urlRepository);
             if (repoExists) {
@@ -133,10 +132,6 @@ const getMetricsByRepo = async (projectId) => {
             if (repoExists) {
                 metrics = await gitlabService.getMetricsByRepo(project);
             }
-        }
-
-        if (!repoExists) {
-            throw new Error();
         }
 
         // cache.set("project" + projectId, metrics, 60 * 60 * 24);

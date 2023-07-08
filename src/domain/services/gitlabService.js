@@ -202,13 +202,10 @@ async function checkGitLabUserExists(username) {
 
 const checkGitLabRepoExists = async (repositoryUrl) => {
     try {
-        const response = await axios.get(repositoryUrl);
+        const response = await axios.get(repositoryUrl, {headers});
         return response.status === 200;
     } catch (error) {
-        if (error.response && error.response.status === 404) {
-            return false;
-        }
-        throw error;
+        return false;
     }
 };
 
