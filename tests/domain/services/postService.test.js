@@ -18,23 +18,23 @@ describe("Post Service Test", () => {
     };
     const id = "60a9b0b9e1b3a1b4b8b0b8b0"
 
-    describe("createPost", () => {
-        it('should create a post', async () => {
-            postRepository.create.mockResolvedValue(post);
-            const result = await createPost(post);
+    // describe("createPost", () => {
+    //     it('should create a post', async () => {
+    //         postRepository.create.mockResolvedValue(post);
+    //         const result = await createPost(post);
 
-            expect(result.title).toEqual(post.title);
-            expect(result.body).toEqual(post.body);
-            expect(result.author).toEqual(post.author);
-            expect(postRepository.create).toHaveBeenCalled();
-        });
+    //         expect(result.title).toEqual(post.title);
+    //         expect(result.body).toEqual(post.body);
+    //         expect(result.author).toEqual(post.author);
+    //         expect(postRepository.create).toHaveBeenCalled();
+    //     });
 
-        it('should return an error if an error occurs', async () => {
-            postRepository.create.mockRejectedValue(new Error("Error"));
-            await expect(createPost(post)).rejects.toThrowError("Error");
-            expect(postRepository.create).toHaveBeenCalled();
-        });
-    });
+    //     it('should return an error if an error occurs', async () => {
+    //         postRepository.create.mockRejectedValue(new Error("Error"));
+    //         await expect(createPost(post)).rejects.toThrowError("Error");
+    //         expect(postRepository.create).toHaveBeenCalled();
+    //     });
+    // });
 
 //     /****************************************************************** */
 

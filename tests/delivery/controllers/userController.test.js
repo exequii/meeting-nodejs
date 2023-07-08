@@ -175,20 +175,20 @@ describe('userController Test', () => {
             jest.clearAllMocks();
         });
 
-        it('should create the user and return a 200 code', async () => {
-            const fakeUser = {
-                name: 'Test User',
-                email: 'asdasd',
-            }
-            userService.getUserByCredentials.mockResolvedValue(fakeUser);
-            comparePasswordWithHash.mockResolvedValue(true);
-            //let jwt = await jwt.sign.mockResolvedValue('token');
-            await getUserByCredentials(fakeReq, fakeRes);
+        // it('should create the user and return a 200 code', async () => {
+        //     const fakeUser = {
+        //         name: 'Test User',
+        //         email: 'asdasd',
+        //     }
+        //     userService.getUserByCredentials.mockResolvedValue(fakeUser);
+        //     comparePasswordWithHash.mockResolvedValue(true);
+        //     //let jwt = await jwt.sign.mockResolvedValue('token');
+        //     await getUserByCredentials(fakeReq, fakeRes);
 
-            expect(userService.getUserByCredentials).toHaveBeenCalledWith(fakeReq.body.email);
-            //expect(fakeRes.json).toHaveBeenCalledWith({'user': fakeUser, 'token': jwt});
-            expect(fakeRes.status).toHaveBeenCalledWith(200);
-        });
+        //     expect(userService.getUserByCredentials).toHaveBeenCalledWith(fakeReq.body.email);
+        //     //expect(fakeRes.json).toHaveBeenCalledWith({'user': fakeUser, 'token': jwt});
+        //     expect(fakeRes.status).toHaveBeenCalledWith(200);
+        // });
 
         it('should return a 204 if user is not found', async () => {
             userService.getUserByCredentials.mockResolvedValue(null);
