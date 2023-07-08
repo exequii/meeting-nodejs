@@ -270,26 +270,44 @@ const getMetricsByRepo = async (url) => {
     }
 };
 
+function getCommitFrequency(commits, newCommitCount) {
+    const firstCommitDate = new Date(commits[newCommitCount - 1].commit.author.date);
+    const lastCommitDate = new Date(commits[0].commit.author.date);
+    const timeDiffInDays = Math.abs(lastCommitDate - firstCommitDate) / (1000 * 60 * 60 * 24);
+
+    return Math.round(newCommitCount / timeDiffInDays);
+}
+
 const getCommitFrequencyByDeveloper = async (owner, repo, developerUsername) => {
+    let page = 1;
+    let commitCount = 0;
+    let commitFrequency = 0;
+
     try {
-        const response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/commits?author=${developerUsername}&all=true&per_page=100`, {headers});
-        const commits = response.data;
+        while (true) {
+            const response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/commits?author=${developerUsername}&all=true&per_page=100&page=${page}`, { headers });
+            const commits = response.data;
+            const newCommitCount = Math.round(commits.length);
 
-        const commitCount = Math.round(commits.length);
+            if (newCommitCount < 2) {
+                break;
+            }
+            const newCommitFrequency = getCommitFrequency(commits, newCommitCount);
 
-        if (commitCount < 2) {
-            return 0
+            commitCount += newCommitCount;
+            commitFrequency += newCommitFrequency;
+
+            if (newCommitCount < 100) {
+                break;
+            }
+
+            page++;
         }
 
-        const firstCommitDate = new Date(commits[commitCount - 1].commit.author.date);
-        const lastCommitDate = new Date(commits[0].commit.author.date);
-        const timeDiffInDays = Math.abs(lastCommitDate - firstCommitDate) / (1000 * 60 * 60 * 24);
-
-        const commitFrequency = Math.round(commitCount / timeDiffInDays);
-        return ({
-            'commitCount' : commitCount,
-            "commitFrequencyByDay" : commitFrequency});
-
+        return {
+            commitCount,
+            commitFrequencyByDay: commitFrequency
+        };
     } catch (error) {
         console.error(error);
         throw new Error(error);
