@@ -15,6 +15,7 @@ const create = async (postData) => {
 
 const getByFilters = async(filters, pagination) => {
     try {
+        if (filters.technologies?.$all?.length == 0) delete filters.technologies;
         let skipPage = 0;
         if(pagination) {
             skipPage = getSkipPage(pagination);
