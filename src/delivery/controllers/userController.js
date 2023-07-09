@@ -49,7 +49,7 @@ const getAllUsers = async (req, res) => {
 const getUserByCredentials = async (req, res) => {
   try{
     const user = await userService.getUserByCredentials(req.body.email);
-    if(!user) return res.status(204).json({ message: 'User not found' });
+    if(!user) return res.status(404).json({ message: 'User not found' });
     const validPassword = await comparePasswordWithHash(req.body.password, user.password);
     if (!validPassword) return res.status(400).json({ message: 'Password not valid' })
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION });
