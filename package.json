@@ -7,8 +7,7 @@
     "coverage": "jest --coverage --forceExit --detectOpenHandles --collectCoverageFrom='./src/**'",
     "test": "jest --forceExit --detectOpenHandles",
     "dev": "nodemon ./src",
-    "start": "node ./src",
-    "prod": "npm install --force"
+    "start": "node ./src"
   },
   "author": "",
   "license": "ISC",
